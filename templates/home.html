@@ -1,0 +1,276 @@
+{% extends 'base.html' %}
+
+{% block title %}Trade Simplified - Trading for Everyone, Everywhere, Anytime{% endblock %}
+
+{% block content %}
+
+<!-- Crypto Ticker -->
+<div class="bg-slate-900/50 border-y border-slate-800 overflow-hidden py-3">
+    <div class="flex space-x-8 crypto-ticker" id="crypto-ticker">
+        <!-- Will be populated by JavaScript -->
+    </div>
+</div>
+
+<!-- Hero Section with Video Carousel -->
+<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <!-- Background Video/Animation -->
+    <div class="absolute inset-0 z-0">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-cyan-900/20 to-purple-900/20"></div>
+        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%233b82f6&quot; fill-opacity=&quot;0.05&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    </div>
+    
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="mb-8">
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-900/30 border border-blue-500/30 mb-6">
+                <span class="w-2 h-2 bg-green-400 rounded-full mr-2 pulse-glow"></span>
+                <span class="text-sm text-gray-300">24/7 Trading • Global Markets • Live Support</span>
+            </div>
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-black mb-6">
+            <span class="gradient-text">Trading for anyone.</span><br>
+            <span class="text-white">Anywhere. Anytime.</span>
+        </h1>
+        
+        <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+            Trade Stocks, Options, Crypto and More on global financial markets, all in one place with 24/7 trading and worldwide support.
+        </p>
+        
+        <a href="{% url 'register' %}" class="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
+            Get Started <i class="fas fa-arrow-right ml-2"></i>
+        </a>
+        
+        <!-- Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-3xl font-bold gradient-text mb-2">$2.5B+</div>
+                <div class="text-gray-400">Trading Volume</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-3xl font-bold gradient-text mb-2">150K+</div>
+                <div class="text-gray-400">Active Traders</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-3xl font-bold gradient-text mb-2">50+</div>
+                <div class="text-gray-400">Cryptocurrencies</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-3xl font-bold gradient-text mb-2">24/7</div>
+                <div class="text-gray-400">Support</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TradingView Chart Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="gradient-text">Live Market</span> Analysis
+            </h2>
+            <p class="text-xl text-gray-400">Real-time crypto prices and advanced trading charts</p>
+        </div>
+        
+        <div class="crypto-card rounded-2xl overflow-hidden">
+            <!-- TradingView Widget -->
+            <div class="tradingview-widget-container" style="height: 600px;">
+                <div id="tradingview_chart"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Benefits Section -->
+<section class="py-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                Why Choose <span class="gradient-text">Trade Simplified</span>
+            </h2>
+            <p class="text-xl text-gray-400">Everything you need to succeed in crypto trading</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-shield-alt text-cyan-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">Secure & Safe</h3>
+                <p class="text-gray-400">Bank-level security with multi-layer encryption and cold storage for your assets.</p>
+            </div>
+            
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-chart-line text-blue-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">Advanced Trading</h3>
+                <p class="text-gray-400">Professional trading tools with AI-powered bots and real-time analytics.</p>
+            </div>
+            
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-users text-purple-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">Copy Trading</h3>
+                <p class="text-gray-400">Follow and copy trades from top-performing professional traders automatically.</p>
+            </div>
+            
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-mobile-alt text-green-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">Trade Anywhere</h3>
+                <p class="text-gray-400">Fully responsive platform. Trade on desktop, tablet, or mobile with ease.</p>
+            </div>
+            
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-clock text-yellow-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">24/7 Support</h3>
+                <p class="text-gray-400">Round-the-clock customer support to help you whenever you need assistance.</p>
+            </div>
+            
+            <div class="crypto-card p-8 rounded-2xl">
+                <div class="text-5xl mb-4"><i class="fas fa-bolt text-red-400"></i></div>
+                <h3 class="text-2xl font-bold mb-4">Instant Deposits</h3>
+                <p class="text-gray-400">Quick deposits and withdrawals with support for major cryptocurrencies.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-20 bg-slate-900/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="gradient-text">How to Get Started</span>
+            </h2>
+            <p class="text-xl text-gray-400">Start trading in 3 simple steps</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-12">
+            <!-- Step 1 -->
+            <div class="text-center">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-blue-500/50">
+                        1
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Create Account</h3>
+                <p class="text-gray-400 mb-4">Sign up with your email and complete the quick registration process. Verify your account to get started.</p>
+                <div class="text-cyan-400">
+                    <i class="fas fa-user-plus text-3xl"></i>
+                </div>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="text-center">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-purple-500/50">
+                        2
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Fund Your Account</h3>
+                <p class="text-gray-400 mb-4">Deposit funds using Bitcoin, Ethereum, or other supported cryptocurrencies. Secure and instant deposits.</p>
+                <div class="text-purple-400">
+                    <i class="fas fa-wallet text-3xl"></i>
+                </div>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="text-center">
+                <div class="relative inline-block mb-6">
+                    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-green-500/50">
+                        3
+                    </div>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">Start Trading</h3>
+                <p class="text-gray-400 mb-4">Access trading bots, copy professional traders, or trade manually. Watch your profits grow daily.</p>
+                <div class="text-green-400">
+                    <i class="fas fa-chart-line text-3xl"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <a href="{% url 'register' %}" class="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
+                Start Trading Now <i class="fas fa-rocket ml-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="crypto-card p-12 rounded-3xl">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                Ready to Start Your <span class="gradient-text">Trading Journey?</span>
+            </h2>
+            <p class="text-xl text-gray-400 mb-8">
+                Join thousands of traders who are already profiting from our advanced trading platform.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
+                    Create Free Account
+                </a>
+                <a href="{% url 'login' %}" class="bg-slate-700 hover:bg-slate-600 px-10 py-4 rounded-xl text-lg font-bold text-white transition">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<!-- TradingView Widget Script -->
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    // TradingView Chart
+    new TradingView.widget({
+        "width": "100%",
+        "height": 600,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "D",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#0f172a",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tradingview_chart"
+    });
+    
+    // Crypto Ticker
+    const cryptoSymbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'USDT'];
+    const ticker = document.getElementById('crypto-ticker');
+    
+    async function updateTicker() {
+        try {
+            const response = await fetch('/api/crypto-prices/');
+            const prices = await response.json();
+            
+            let tickerHTML = '';
+            cryptoSymbols.forEach(symbol => {
+                const price = prices[symbol] || 0;
+                const change = (Math.random() * 10 - 5).toFixed(2); // Mock change percentage
+                const isPositive = change >= 0;
+                
+                tickerHTML += `
+                    <div class="flex items-center space-x-3 px-6">
+                        <span class="font-bold text-cyan-400">${symbol}</span>
+                        <span class="text-white font-semibold">$${price.toLocaleString()}</span>
+                        <span class="${isPositive ? 'text-green-400' : 'text-red-400'} text-sm">
+                            ${isPositive ? '↑' : '↓'} ${Math.abs(change)}%
+                        </span>
+                    </div>
+                `;
+            });
+            
+            // Duplicate for seamless scroll
+            ticker.innerHTML = tickerHTML + tickerHTML;
+        } catch (error) {
+            console.error('Error fetching prices:', error);
+        }
+    }
+    
+    updateTicker();
+    setInterval(updateTicker, 10000); // Update every 10 seconds
+</script>
+{% endblock %}

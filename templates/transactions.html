@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+
+{% block title %}Transactions - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                <span class="gradient-text">Transaction History</span>
+            </h1>
+            <p class="text-gray-400">View all your trading activities</p>
+        </div>
+        
+        <!-- Filter Tabs -->
+        <div class="mb-6 flex flex-wrap gap-3">
+            <button onclick="filterTransactions('all')" class="filter-btn active px-6 py-2 rounded-lg bg-cyan-600 font-semibold transition">
+                All
+            </button>
+            <button onclick="filterTransactions('DEPOSIT')" class="filter-btn px-6 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold transition">
+                Deposits
+            </button>
+            <button onclick="filterTransactions('WITHDRAWAL')" class="filter-btn px-6 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold transition">
+                Withdrawals
+            </button>
+            <button onclick="filterTransactions('TRADE')" class="filter-btn px-6 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold transition">
+                Trades
+            </button>
+            <button onclick="filterTransactions('PROFIT')" class="filter-btn px-6 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold transition">
+                Profits
+            </button>
+        </div>
+        
+        <!-- Transactions Table -->
+        <div class="crypto-card rounded-2xl overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-800/50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Transaction ID</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Type</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Amount</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Crypto</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Date</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for transaction in transactions %}
+                        <tr class="transaction-row hover:bg-slate-800/30 transition" data-type="{{ transaction.transaction_type }}">
+                            <td class="px-6 py-4">
+                                <div class="font-mono text-sm">{{ transaction.transaction_id|truncatechars:12 }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    {% if transaction.transaction_type == 'DEPOSIT' %}
+                                    <div class="w-10 h-10 bg-green-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-arrow-down text-green-400"></i>
+                                    </div>
+                                    <span>Deposit</span>
+                                    {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                    <div class="w-10 h-10 bg-red-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-arrow-up text-red-400"></i>
+                                    </div>
+                                    <span>Withdrawal</span>
+                                    {% elif transaction.transaction_type == 'PROFIT' %}
+                                    <div class="w-10 h-10 bg-cyan-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-chart-line text-cyan-400"></i>
+                                    </div>
+                                    <span>Profit</span>
+                                    {% elif transaction.transaction_type == 'TRADE' %}
+                                    <div class="w-10 h-10 bg-blue-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-exchange-alt text-blue-400"></i>
+                                    </div>
+                                    <span>Trade</span>
+                                    {% elif transaction.transaction_type == 'BOT_PURCHASE' %}
+                                    <div class="w-10 h-10 bg-purple-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-robot text-purple-400"></i>
+                                    </div>
+                                    <span>Bot Purchase</span>
+                                    {% elif transaction.transaction_type == 'COPY_TRADE' %}
+                                    <div class="w-10 h-10 bg-orange-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-users text-orange-400"></i>
+                                    </div>
+                                    <span>Copy Trade</span>
+                                    {% else %}
+                                    <div class="w-10 h-10 bg-gray-900/30 rounded-lg flex items-center justify-center mr-3">
+                                        <i class="fas fa-circle text-gray-400"></i>
+                                    </div>
+                                    <span>{{ transaction.transaction_type|title }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-bold text-lg">
+                                    {% if transaction.transaction_type == 'DEPOSIT' or transaction.transaction_type == 'PROFIT' %}
+                                    <span class="text-green-400">+${{ transaction.amount|floatformat:2 }}</span>
+                                    {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                    <span class="text-red-400">-${{ transaction.amount|floatformat:2 }}</span>
+                                    {% else %}
+                                    <span>${{ transaction.amount|floatformat:2 }}</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if transaction.crypto_currency %}
+                                <div class="flex items-center">
+                                    <span class="px-3 py-1 bg-slate-700 rounded-full text-sm font-semibold">
+                                        {{ transaction.crypto_currency }}
+                                    </span>
+                                    <span class="text-xs text-gray-400 ml-2">
+                                        {{ transaction.crypto_amount|floatformat:8 }}
+                                    </span>
+                                </div>
+                                {% else %}
+                                <span class="text-gray-500">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if transaction.status == 'COMPLETED' or transaction.status == 'APPROVED' %}
+                                <span class="px-4 py-2 bg-green-900/30 text-green-400 rounded-full text-sm font-semibold">
+                                    <i class="fas fa-check-circle mr-1"></i>{{ transaction.status|title }}
+                                </span>
+                                {% elif transaction.status == 'PENDING' %}
+                                <span class="px-4 py-2 bg-yellow-900/30 text-yellow-400 rounded-full text-sm font-semibold">
+                                    <i class="fas fa-clock mr-1"></i>{{ transaction.status|title }}
+                                </span>
+                                {% else %}
+                                <span class="px-4 py-2 bg-red-900/30 text-red-400 rounded-full text-sm font-semibold">
+                                    <i class="fas fa-times-circle mr-1"></i>{{ transaction.status|title }}
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm">{{ transaction.created_at|date:"M d, Y" }}</div>
+                                <div class="text-xs text-gray-400">{{ transaction.created_at|date:"H:i A" }}</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <button onclick="viewDetails('{{ transaction.transaction_id }}')" 
+                                        class="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">
+                                    View <i class="fas fa-eye ml-1"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="px-6 py-16 text-center">
+                                <i class="fas fa-inbox text-6xl text-gray-600 mb-4 block"></i>
+                                <p class="text-xl text-gray-400 mb-4">No transactions yet</p>
+                                <a href="{% url 'deposit' %}" class="btn-primary inline-block px-6 py-3 rounded-lg">
+                                    Make Your First Deposit
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+            <div class="crypto-card p-6 rounded-xl text-center">
+                <div class="text-sm text-gray-400 mb-2">Total Deposits</div>
+                <div class="text-2xl font-bold text-green-400">${{ user.total_deposit|floatformat:2 }}</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl text-center">
+                <div class="text-sm text-gray-400 mb-2">Total Withdrawals</div>
+                <div class="text-2xl font-bold text-red-400">${{ user.total_withdrawal|floatformat:2 }}</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl text-center">
+                <div class="text-sm text-gray-400 mb-2">Total Profits</div>
+                <div class="text-2xl font-bold text-cyan-400">${{ user.total_profit|floatformat:2 }}</div>
+            </div>
+            <div class="crypto-card p-6 rounded-xl text-center">
+                <div class="text-sm text-gray-400 mb-2">Total Trades</div>
+                <div class="text-2xl font-bold">{{ user.trading_count }}</div>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<script>
+    function filterTransactions(type) {
+        // Update active button
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.classList.remove('active', 'bg-cyan-600');
+            btn.classList.add('bg-slate-700');
+        });
+        event.target.classList.add('active', 'bg-cyan-600');
+        event.target.classList.remove('bg-slate-700');
+        
+        // Filter rows
+        const rows = document.querySelectorAll('.transaction-row');
+        rows.forEach(row => {
+            if (type === 'all' || row.dataset.type === type) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+    
+    function viewDetails(transactionId) {
+        alert('Transaction Details for: ' + transactionId + '\n\nDetailed view coming soon!');
+    }
+</script>
+{% endblock %}

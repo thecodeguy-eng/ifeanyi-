@@ -1,0 +1,256 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Welcome Header -->
+        <div class="mb-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                        Hello, <span class="gradient-text">{{ user.legal_first_name }} {{ user.legal_last_name }}</span> 👋
+                    </h1>
+                    <p class="text-gray-400">Your Trading Journey Starts Here, Market simplified for you</p>
+                </div>
+                <div class="flex gap-3 mt-4 md:mt-0">
+                    <a href="{% url 'deposit' %}" class="btn-primary px-6 py-3 rounded-lg font-semibold">
+                        <i class="fas fa-plus-circle mr-2"></i>Deposit
+                    </a>
+                    {% if withdrawal_enabled %}
+                    <a href="{% url 'withdrawal' %}" class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold transition">
+                        <i class="fas fa-minus-circle mr-2"></i>Withdraw
+                    </a>
+                    {% else %}
+                    <button disabled class="bg-slate-700 px-6 py-3 rounded-lg font-semibold opacity-50 cursor-not-allowed">
+                        <i class="fas fa-lock mr-2"></i>Withdraw (Pending Approval)
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Account Balance -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-4xl"><i class="fas fa-wallet text-blue-400"></i></div>
+                    <span class="text-xs bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full">Balance</span>
+                </div>
+                <div class="text-sm text-gray-400 mb-1">Account Balance</div>
+                <div class="text-3xl font-bold">${{ user.account_balance|floatformat:2 }}</div>
+                <div class="text-xs text-gray-500 mt-2">{{ user.preferred_currency }}</div>
+            </div>
+            
+            <!-- Total Profit -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-4xl"><i class="fas fa-chart-line text-green-400"></i></div>
+                    <span class="text-xs bg-green-900/30 text-green-400 px-3 py-1 rounded-full">Profit</span>
+                </div>
+                <div class="text-sm text-gray-400 mb-1">Total Profit</div>
+                <div class="text-3xl font-bold text-green-400">${{ user.total_profit|floatformat:2 }}</div>
+                <div class="text-xs text-green-400 mt-2">+{{ user.total_profit|floatformat:1 }}%</div>
+            </div>
+            
+            <!-- Bonus -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-4xl"><i class="fas fa-gift text-purple-400"></i></div>
+                    <span class="text-xs bg-purple-900/30 text-purple-400 px-3 py-1 rounded-full">Bonus</span>
+                </div>
+                <div class="text-sm text-gray-400 mb-1">Bonus</div>
+                <div class="text-3xl font-bold text-purple-400">${{ user.bonus|floatformat:2 }}</div>
+            </div>
+            
+            <!-- Trading Count -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-4xl"><i class="fas fa-exchange-alt text-cyan-400"></i></div>
+                    <span class="text-xs bg-cyan-900/30 text-cyan-400 px-3 py-1 rounded-full">Trades</span>
+                </div>
+                <div class="text-sm text-gray-400 mb-1">Trading Count</div>
+                <div class="text-3xl font-bold">{{ user.trading_count }}</div>
+                <div class="text-xs text-gray-500 mt-2">Total trades</div>
+            </div>
+        </div>
+        
+        <!-- Additional Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Commission -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm text-gray-400">Commission</div>
+                    <i class="fas fa-percent text-yellow-400"></i>
+                </div>
+                <div class="text-2xl font-bold">${{ user.commission|floatformat:2 }}</div>
+            </div>
+            
+            <!-- Total Deposit -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm text-gray-400">Total Deposit</div>
+                    <i class="fas fa-arrow-down text-green-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-green-400">${{ user.total_deposit|floatformat:2 }}</div>
+            </div>
+            
+            <!-- Total Withdrawal -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm text-gray-400">Total Withdrawal</div>
+                    <i class="fas fa-arrow-up text-red-400"></i>
+                </div>
+                <div class="text-2xl font-bold text-red-400">${{ user.total_withdrawal|floatformat:2 }}</div>
+            </div>
+            
+            <!-- Latest Deposit -->
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm text-gray-400">Latest Deposit</div>
+                    <i class="fas fa-clock text-blue-400"></i>
+                </div>
+                <div class="text-2xl font-bold">$0.00</div>
+            </div>
+        </div>
+        
+        <!-- TradingView Chart -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2 crypto-card rounded-2xl overflow-hidden">
+                <div class="p-4 border-b border-slate-700">
+                    <h2 class="text-xl font-bold">Live Market Chart</h2>
+                </div>
+                <div class="tradingview-widget-container" style="height: 500px;">
+                    <div id="tradingview_chart_dashboard"></div>
+                </div>
+            </div>
+            
+            <!-- Quick Actions -->
+            <div class="space-y-4">
+                <div class="crypto-card p-6 rounded-xl">
+                    <h3 class="text-lg font-bold mb-4">Quick Actions</h3>
+                    <div class="space-y-3">
+                        <a href="{% url 'trading' %}" class="block p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition">
+                            <i class="fas fa-exchange-alt text-cyan-400 mr-3"></i>Start Trading
+                        </a>
+                        <a href="{% url 'trading_bot' %}" class="block p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition">
+                            <i class="fas fa-robot text-purple-400 mr-3"></i>Trading Bots
+                        </a>
+                        <a href="{% url 'copy_trading' %}" class="block p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition">
+                            <i class="fas fa-users text-green-400 mr-3"></i>Copy Trading
+                        </a>
+                        <a href="{% url 'portfolio' %}" class="block p-4 bg-slate-700/50 hover:bg-slate-700 rounded-lg transition">
+                            <i class="fas fa-briefcase text-yellow-400 mr-3"></i>My Portfolio
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- User Info -->
+                <div class="crypto-card p-6 rounded-xl">
+                    <h3 class="text-lg font-bold mb-4">Account Info</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">User ID:</span>
+                            <span class="font-mono">{{ user.id }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Email:</span>
+                            <span>{{ user.email }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Status:</span>
+                            <span class="text-green-400">
+                                <i class="fas fa-check-circle mr-1"></i>Active
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Transactions -->
+        <div class="crypto-card rounded-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-700">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-2xl font-bold">Recent Transactions</h2>
+                    <a href="{% url 'transactions' %}" class="text-cyan-400 hover:underline text-sm">View All →</a>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-800/50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Type</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Amount</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for transaction in recent_transactions %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    {% if transaction.transaction_type == 'DEPOSIT' %}
+                                    <i class="fas fa-arrow-down text-green-400 mr-3"></i>
+                                    {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                    <i class="fas fa-arrow-up text-red-400 mr-3"></i>
+                                    {% elif transaction.transaction_type == 'PROFIT' %}
+                                    <i class="fas fa-chart-line text-cyan-400 mr-3"></i>
+                                    {% else %}
+                                    <i class="fas fa-exchange-alt text-blue-400 mr-3"></i>
+                                    {% endif %}
+                                    <span>{{ transaction.transaction_type|title }}</span>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 font-semibold">${{ transaction.amount|floatformat:2 }}</td>
+                            <td class="px-6 py-4">
+                                {% if transaction.status == 'COMPLETED' or transaction.status == 'APPROVED' %}
+                                <span class="px-3 py-1 bg-green-900/30 text-green-400 rounded-full text-xs">{{ transaction.status }}</span>
+                                {% elif transaction.status == 'PENDING' %}
+                                <span class="px-3 py-1 bg-yellow-900/30 text-yellow-400 rounded-full text-xs">{{ transaction.status }}</span>
+                                {% else %}
+                                <span class="px-3 py-1 bg-red-900/30 text-red-400 rounded-full text-xs">{{ transaction.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-gray-400 text-sm">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-12 text-center text-gray-400">
+                                <i class="fas fa-inbox text-4xl mb-4 block"></i>
+                                No transactions yet. Start by making your first deposit!
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</section>
+
+<script src="https://s3.tradingview.com/tv.js"></script>
+<script>
+    // TradingView Chart for Dashboard
+    new TradingView.widget({
+        "width": "100%",
+        "height": 500,
+        "symbol": "BINANCE:BTCUSDT",
+        "interval": "15",
+        "timezone": "Etc/UTC",
+        "theme": "dark",
+        "style": "1",
+        "locale": "en",
+        "toolbar_bg": "#0f172a",
+        "enable_publishing": false,
+        "allow_symbol_change": true,
+        "container_id": "tradingview_chart_dashboard"
+    });
+</script>
+{% endblock %}

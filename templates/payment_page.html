@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+
+{% block title %}Payment - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="py-8">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <i class="fas fa-shield-alt text-6xl text-green-400 mb-4"></i>
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                <span class="gradient-text">Secure Payment</span>
+            </h1>
+            <p class="text-gray-400">Complete your transaction safely</p>
+        </div>
+        
+        <!-- Payment Amount -->
+        <div class="crypto-card p-8 rounded-2xl mb-6 text-center">
+            <div class="text-sm text-gray-400 mb-2">Amount to Pay</div>
+            <div class="text-5xl font-black gradient-text mb-2">${{ amount|floatformat:2 }}</div>
+            <div class="text-gray-400">{{ user.preferred_currency }}</div>
+        </div>
+        
+        <!-- Select Cryptocurrency -->
+        <div class="crypto-card p-8 rounded-2xl mb-6">
+            <h2 class="text-2xl font-bold mb-6">Select Payment Method</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                {% for wallet in wallet_addresses %}
+                <button onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})" 
+                        class="crypto-btn p-6 bg-slate-700 hover:bg-slate-600 rounded-xl transition border-2 border-transparent"
+                        data-crypto="{{ wallet.cryptocurrency }}">
+                    <div class="text-4xl mb-3">
+                        {% if wallet.cryptocurrency == 'BTC' %}₿
+                        {% elif wallet.cryptocurrency == 'ETH' %}Ξ
+                        {% elif wallet.cryptocurrency == 'SOL' %}◎
+                        {% elif wallet.cryptocurrency == 'USDT' %}₮
+                        {% elif wallet.cryptocurrency == 'BNB' %}
+                        <i class="fab fa-bitcoin"></i>
+                        {% else %}
+                        <i class="fas fa-coins"></i>
+                        {% endif %}
+                    </div>
+                    <div class="font-bold">{{ wallet.cryptocurrency }}</div>
+                    <div class="text-xs text-gray-400 mt-1" id="amount_{{ wallet.cryptocurrency }}">
+                        {{ crypto_amounts|get_item:wallet.cryptocurrency|floatformat:8 }}
+                    </div>
+                </button>
+                {% endfor %}
+            </div>
+            
+            <!-- Selected Wallet Details -->
+            <div id="walletDetails" class="hidden">
+                <div class="p-6 bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-xl border border-cyan-500/30">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-xl font-bold">Payment Details</h3>
+                        <span class="px-3 py-1 bg-cyan-900/30 text-cyan-400 rounded-full text-sm font-semibold" id="selected_crypto">BTC</span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="text-sm text-gray-400 mb-2">Send Exactly</div>
+                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+                            <span class="text-2xl font-bold" id="crypto_amount_display">0.00000000</span>
+                            <button onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="text-sm text-gray-400 mb-2">To This Address</div>
+                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg break-all">
+                            <span class="font-mono text-sm" id="wallet_address_display">Loading...</span>
+                            <button onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- QR Code Placeholder -->
+                    <div class="text-center p-6 bg-white rounded-lg mb-4">
+                        <div class="text-8xl text-gray-800">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                        <div class="text-sm text-gray-800 mt-2">Scan to Pay</div>
+                    </div>
+                    
+                    <!-- Important Notice -->
+                    <div class="p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
+                        <div class="flex items-start">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
+                            <div class="text-sm">
+                                <strong>Important:</strong> Send only <span id="notice_crypto">BTC</span> to this address. Sending any other cryptocurrency may result in permanent loss.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Proof Form -->
+        <form method="post" enctype="multipart/form-data" class="crypto-card p-8 rounded-2xl">
+            {% csrf_token %}
+            <h2 class="text-2xl font-bold mb-6">Submit Payment Proof</h2>
+            
+            <input type="hidden" name="cryptocurrency" id="selected_cryptocurrency">
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Upload Payment Screenshot</label>
+                <div class="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-cyan-500 transition">
+                    <input type="file" name="proof_image" accept="image/*" required
+                           class="hidden" id="proof_image_input" onchange="previewImage(event)">
+                    <label for="proof_image_input" class="cursor-pointer">
+                        <i class="fas fa-cloud-upload-alt text-6xl text-gray-500 mb-4 block"></i>
+                        <div class="text-gray-400 mb-2">Click to upload or drag and drop</div>
+                        <div class="text-sm text-gray-500">PNG, JPG up to 5MB</div>
+                    </label>
+                    <div id="image_preview" class="mt-4 hidden">
+                        <img id="preview_img" src="" alt="Preview" class="max-w-xs mx-auto rounded-lg">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Transaction ID (Optional)</label>
+                <input type="text" name="transaction_id"
+                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
+                       placeholder="Enter blockchain transaction ID">
+                <div class="text-xs text-gray-400 mt-1">This helps us verify your payment faster</div>
+            </div>
+            
+            <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
+                Submit Payment Proof <i class="fas fa-check ml-2"></i>
+            </button>
+            
+            <div class="mt-4 text-center text-sm text-gray-400">
+                <i class="fas fa-lock mr-1"></i>
+                Your payment will be verified within 10-30 minutes
+            </div>
+        </form>
+        
+    </div>
+</section>
+
+<script>
+    let selectedWalletAddress = '';
+    let selectedCryptoAmount = '';
+    let selectedCryptoSymbol = '';
+    
+    function selectCrypto(crypto, address, amount) {
+        selectedCryptoSymbol = crypto;
+        selectedWalletAddress = address;
+        selectedCryptoAmount = amount;
+        
+        // Update UI
+        document.querySelectorAll('.crypto-btn').forEach(btn => {
+            btn.classList.remove('border-cyan-500', 'bg-cyan-900/30');
+        });
+        document.querySelector(`[data-crypto="${crypto}"]`).classList.add('border-cyan-500', 'bg-cyan-900/30');
+        
+        document.getElementById('walletDetails').classList.remove('hidden');
+        document.getElementById('selected_crypto').textContent = crypto;
+        document.getElementById('crypto_amount_display').textContent = amount.toFixed(8);
+        document.getElementById('wallet_address_display').textContent = address;
+        document.getElementById('notice_crypto').textContent = crypto;
+        document.getElementById('selected_cryptocurrency').value = crypto;
+    }
+    
+    function copyAmount() {
+        navigator.clipboard.writeText(selectedCryptoAmount.toFixed(8));
+        showNotification('Amount copied to clipboard!');
+    }
+    
+    function copyAddress() {
+        navigator.clipboard.writeText(selectedWalletAddress);
+        showNotification('Address copied to clipboard!');
+    }
+    
+    function showNotification(message) {
+        const notification = document.createElement('div');
+        notification.className = 'fixed top-20 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+    
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('preview_img').src = e.target.result;
+                document.getElementById('image_preview').classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+{% endblock %}

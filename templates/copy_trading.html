@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+
+{% block title %}Copy Trading - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                <span class="gradient-text">Copy Professional Traders</span>
+            </h1>
+            <p class="text-xl text-gray-400">Follow and copy trades from top-performing experts</p>
+        </div>
+        
+        <!-- Traders Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for trader in traders %}
+            <div class="crypto-card rounded-2xl overflow-hidden hover:scale-105 transition-transform duration-300">
+                <!-- Trader Header -->
+                <div class="p-6 bg-gradient-to-br from-slate-800 to-slate-900">
+                    <div class="flex items-center mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-2xl font-bold mr-4">
+                            {{ trader.name|slice:":1" }}
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold">{{ trader.name }}</h3>
+                            <div class="flex items-center text-sm text-gray-400">
+                                <span class="mr-2">{{ trader.country_flag }}</span>
+                                <span>{{ trader.country }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Rating -->
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Rating</div>
+                            <div class="flex items-center">
+                                <span class="text-2xl font-bold text-yellow-400 mr-2">{{ trader.rating }}</span>
+                                <div class="flex">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= trader.rating|floatformat:0|add:"0" %}
+                                        <i class="fas fa-star text-yellow-400 text-sm"></i>
+                                        {% else %}
+                                        <i class="far fa-star text-yellow-400 text-sm"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm text-gray-400 mb-1">ROI</div>
+                            <div class="text-2xl font-bold text-green-400">{{ trader.roi }}%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Stats -->
+                <div class="p-6">
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-3 bg-slate-700/30 rounded-lg">
+                            <div class="text-2xl font-bold gradient-text">{{ trader.profit_percentage_per_day }}%</div>
+                            <div class="text-xs text-gray-400">Profit/Day</div>
+                        </div>
+                        <div class="text-center p-3 bg-slate-700/30 rounded-lg">
+                            <div class="text-2xl font-bold">{{ trader.total_trades }}</div>
+                            <div class="text-xs text-gray-400">Trades</div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Followers</div>
+                            <div class="font-bold"><i class="fas fa-users text-cyan-400 mr-2"></i>{{ trader.followers_count }}</div>
+                        </div>
+                        <div>
+                            <div class="text-sm text-gray-400 mb-1">Commission</div>
+                            <div class="font-bold text-yellow-400">{{ trader.commission_percentage }}%</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Copy Button -->
+                    <button onclick="openCopyModal({{ trader.id }}, '{{ trader.name }}', {{ trader.commission_percentage }}, {{ trader.profit_percentage_per_day }})" 
+                            class="w-full btn-primary py-3 rounded-lg font-bold">
+                        <i class="fas fa-copy mr-2"></i>Copy Trade
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+    </div>
+</section>
+
+<!-- Copy Trade Modal -->
+<div id="copyModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="crypto-card max-w-md w-full p-8 rounded-2xl">
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold">Copy Trade</h2>
+            <button onclick="closeCopyModal()" class="text-gray-400 hover:text-white text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <div class="mb-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-xl font-bold mr-3">
+                    <span id="modal_trader_initial">T</span>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg" id="modal_trader_name">Trader Name</h3>
+                    <div class="text-sm text-gray-400">Professional Trader</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <div class="p-3 bg-slate-700/30 rounded-lg">
+                    <div class="text-xs text-gray-400">Daily Profit</div>
+                    <div class="font-bold text-green-400" id="modal_profit">0%</div>
+                </div>
+                <div class="p-3 bg-slate-700/30 rounded-lg">
+                    <div class="text-xs text-gray-400">Commission</div>
+                    <div class="font-bold text-yellow-400" id="modal_commission">0%</div>
+                </div>
+            </div>
+        </div>
+        
+        <form method="post" id="copyTradeForm">
+            {% csrf_token %}
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Investment Amount</label>
+                <input type="number" name="amount" min="100" step="0.01" required
+                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
+                       placeholder="Minimum $100">
+                <div class="text-xs text-gray-400 mt-1">Your investment to copy this trader's strategy</div>
+            </div>
+            
+            <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
+                Proceed to Payment <i class="fas fa-arrow-right ml-2"></i>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    let currentTraderId = null;
+    
+    function openCopyModal(traderId, traderName, commission, profitPerDay) {
+        currentTraderId = traderId;
+        document.getElementById('modal_trader_name').textContent = traderName;
+        document.getElementById('modal_trader_initial').textContent = traderName.charAt(0);
+        document.getElementById('modal_profit').textContent = profitPerDay + '%/day';
+        document.getElementById('modal_commission').textContent = commission + '%';
+        document.getElementById('copyTradeForm').action = '/copy-trading/' + traderId + '/';
+        document.getElementById('copyModal').classList.remove('hidden');
+    }
+    
+    function closeCopyModal() {
+        document.getElementById('copyModal').classList.add('hidden');
+    }
+    
+    // Close modal on background click
+    document.getElementById('copyModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeCopyModal();
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block title %}My Portfolio - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">
+                <span class="gradient-text">My Portfolio</span>
+            </h1>
+            <p class="text-gray-400">Manage your cryptocurrency assets</p>
+        </div>
+        
+        <!-- Portfolio Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-sm text-gray-400 mb-2">Total Portfolio Value</div>
+                <div class="text-3xl font-bold gradient-text">${{ total_value|floatformat:2 }}</div>
+                <div class="text-sm text-green-400 mt-2">
+                    <i class="fas fa-arrow-up mr-1"></i>+12.5% (24h)
+                </div>
+            </div>
+            
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-sm text-gray-400 mb-2">Total Assets</div>
+                <div class="text-3xl font-bold">{{ portfolio_items|length }}</div>
+                <div class="text-sm text-gray-400 mt-2">Different cryptocurrencies</div>
+            </div>
+            
+            <div class="crypto-card p-6 rounded-xl">
+                <div class="text-sm text-gray-400 mb-2">Best Performer</div>
+                <div class="text-2xl font-bold text-green-400">BTC</div>
+                <div class="text-sm text-green-400 mt-2">+24.8% gain</div>
+            </div>
+        </div>
+        
+        <!-- Assets Table -->
+        <div class="crypto-card rounded-2xl overflow-hidden">
+            <div class="p-6 border-b border-slate-700">
+                <h2 class="text-2xl font-bold">Your Assets</h2>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-800/50">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Asset</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Amount</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Avg Buy Price</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Current Value</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Profit/Loss</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        {% for item in portfolio_items %}
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="px-6 py-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center mr-3 font-bold">
+                                        {{ item.cryptocurrency|slice:":1" }}
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">{{ item.cryptocurrency }}</div>
+                                        <div class="text-sm text-gray-400">Cryptocurrency</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-semibold">{{ item.amount|floatformat:8 }}</div>
+                                <div class="text-sm text-gray-400">{{ item.cryptocurrency }}</div>
+                            </td>
+                            <td class="px-6 py-4">${{ item.average_buy_price|floatformat:2 }}</td>
+                            <td class="px-6 py-4 font-bold">${{ item.current_value|floatformat:2 }}</td>
+                            <td class="px-6 py-4">
+                                {% if item.profit_loss >= 0 %}
+                                <div class="text-green-400 font-semibold">
+                                    +${{ item.profit_loss|floatformat:2 }}
+                                </div>
+                                {% else %}
+                                <div class="text-red-400 font-semibold">
+                                    ${{ item.profit_loss|floatformat:2 }}
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{% url 'trading' %}" class="text-cyan-400 hover:text-cyan-300 text-sm font-semibold">
+                                    Trade <i class="fas fa-arrow-right ml-1"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-6 py-12 text-center">
+                                <i class="fas fa-briefcase text-6xl text-gray-600 mb-4 block"></i>
+                                <p class="text-xl text-gray-400 mb-4">Your portfolio is empty</p>
+                                <a href="{% url 'trading' %}" class="btn-primary inline-block px-6 py-3 rounded-lg">
+                                    Start Trading
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+    </div>
+</section>
+{% endblock %}

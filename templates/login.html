@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Trade Simplified{% endblock %}
+
+{% block content %}
+<section class="min-h-screen py-20 flex items-center">
+    <div class="max-w-md mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="crypto-card p-8 md:p-12 rounded-3xl">
+            <div class="text-center mb-8">
+                <div class="inline-block p-4 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-2xl mb-4">
+                    <i class="fas fa-user-circle text-5xl gradient-text"></i>
+                </div>
+                <h1 class="text-4xl font-bold mb-2">
+                    Login to your account
+                </h1>
+                <p class="text-gray-400 italic">Welcome back! Let's continue trading</p>
+            </div>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Email -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" name="email" required
+                               class="w-full pl-12 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
+                               placeholder="Enter your email address">
+                    </div>
+                </div>
+                
+                <!-- Password -->
+                <div>
+                    <label class="block text-sm font-medium mb-2">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" name="password" id="password" required
+                               class="w-full pl-12 pr-12 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
+                               placeholder="(at least 8 characters)">
+                        <button type="button" onclick="togglePassword()" 
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-cyan-400">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Forgot Password -->
+                <div class="text-right">
+                    <a href="#" class="text-cyan-400 hover:underline text-sm">
+                        Forgot your password? →
+                    </a>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
+                    LOGIN
+                </button>
+                
+                <div class="text-center text-gray-400">
+                    Are you a new user? 
+                    <a href="{% url 'register' %}" class="text-cyan-400 hover:underline font-semibold">create an account</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script>
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+</script>
+{% endblock %}
