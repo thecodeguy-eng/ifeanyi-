@@ -1,18 +1,23 @@
 {
-  "builds": [
-    {
-      "src": "manage.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxLambdaSize": "15mb",
-        "runtime": "python3.12"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "manage.py"
-    }
-  ]
+    "builds": [
+        {
+            "src": "crypto_platform/wsgi.py",
+            "use": "@vercel/python",
+            "config" : {
+                "maxLambdaSize": "15mb",
+                "runtime": "python3.12",
+                "buildCommand" : "bash setup.sh"
+            }
+        }
+    ],
+    "routes":[
+        {
+            "src": "/(.*)",
+            "dest": "crypto_platform/wsgi.py"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
+        }
+    ]
 }
