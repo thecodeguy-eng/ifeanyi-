@@ -1,31 +1,23 @@
 {
-    "version": 2,
     "builds": [
         {
             "src": "crypto_platform/wsgi.py",
             "use": "@vercel/python",
-            "config": {
+            "config" : {
                 "maxLambdaSize": "15mb",
-                "runtime": "python3.9"
-            }
-        },
-        {
-            "src": "build_files.sh",
-            "use": "@vercel/static-build",
-            "config": {
-                "distDir": "staticfiles"
+                "runtime": "python3.12",
+                "buildCommand" : "bash setup.sh"
             }
         }
     ],
-    "routes": [
-        {
-            "src": "/static/(.*)",
-            "dest": "/static/$1"
-        },
+    "routes":[
         {
             "src": "/(.*)",
             "dest": "crypto_platform/wsgi.py"
+        },
+        {
+            "src": "/static/(.*)",
+            "dest": "/static/$1"
         }
-    ],
-    "outputDirectory": "staticfiles"
+    ]
 }
