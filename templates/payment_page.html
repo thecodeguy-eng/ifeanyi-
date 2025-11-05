@@ -30,7 +30,7 @@
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 {% for wallet in wallet_addresses %}
-                <button onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})" 
+                <button type="button" onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})" 
                         class="crypto-btn p-6 bg-slate-700 hover:bg-slate-600 rounded-xl transition border-2 border-transparent"
                         data-crypto="{{ wallet.cryptocurrency }}">
                     <div class="text-4xl mb-3">
@@ -52,6 +52,16 @@
                 {% endfor %}
             </div>
             
+            <!-- Selection Required Notice -->
+            <div id="selectionNotice" class="p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg mb-4">
+                <div class="flex items-center">
+                    <i class="fas fa-arrow-up text-yellow-400 mr-3"></i>
+                    <div class="text-sm text-yellow-400">
+                        Please select a payment method above to continue
+                    </div>
+                </div>
+            </div>
+            
             <!-- Selected Wallet Details -->
             <div id="walletDetails" class="hidden">
                 <div class="p-6 bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-xl border border-cyan-500/30">
@@ -64,7 +74,7 @@
                         <div class="text-sm text-gray-400 mb-2">Send Exactly</div>
                         <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
                             <span class="text-2xl font-bold" id="crypto_amount_display">0.00000000</span>
-                            <button onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300">
+                            <button type="button" onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -74,7 +84,7 @@
                         <div class="text-sm text-gray-400 mb-2">To This Address</div>
                         <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg break-all">
                             <span class="font-mono text-sm" id="wallet_address_display">Loading...</span>
-                            <button onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2">
+                            <button type="button" onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -102,14 +112,14 @@
         </div>
         
         <!-- Payment Proof Form -->
-        <form method="post" enctype="multipart/form-data" class="crypto-card p-8 rounded-2xl">
+        <form method="post" enctype="multipart/form-data" class="crypto-card p-8 rounded-2xl" id="paymentForm" onsubmit="return validateForm()">
             {% csrf_token %}
             <h2 class="text-2xl font-bold mb-6">Submit Payment Proof</h2>
             
-            <input type="hidden" name="cryptocurrency" id="selected_cryptocurrency">
+            <input type="hidden" name="cryptocurrency" id="selected_cryptocurrency" required>
             
             <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Upload Payment Screenshot</label>
+                <label class="block text-sm font-medium mb-2">Upload Payment Screenshot <span class="text-red-500">*</span></label>
                 <div class="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-cyan-500 transition">
                     <input type="file" name="proof_image" accept="image/*" required
                            class="hidden" id="proof_image_input" onchange="previewImage(event)">
@@ -162,6 +172,7 @@
         document.querySelector(`[data-crypto="${crypto}"]`).classList.add('border-cyan-500', 'bg-cyan-900/30');
         
         document.getElementById('walletDetails').classList.remove('hidden');
+        document.getElementById('selectionNotice').classList.add('hidden');
         document.getElementById('selected_crypto').textContent = crypto;
         document.getElementById('crypto_amount_display').textContent = amount.toFixed(8);
         document.getElementById('wallet_address_display').textContent = address;
@@ -169,20 +180,40 @@
         document.getElementById('selected_cryptocurrency').value = crypto;
     }
     
+    function validateForm() {
+        const cryptoSelected = document.getElementById('selected_cryptocurrency').value;
+        const imageSelected = document.getElementById('proof_image_input').files.length > 0;
+        
+        if (!cryptoSelected) {
+            showNotification('Please select a cryptocurrency first!', 'error');
+            return false;
+        }
+        
+        if (!imageSelected) {
+            showNotification('Please upload payment proof screenshot!', 'error');
+            return false;
+        }
+        
+        return true;
+    }
+    
     function copyAmount() {
         navigator.clipboard.writeText(selectedCryptoAmount.toFixed(8));
-        showNotification('Amount copied to clipboard!');
+        showNotification('Amount copied to clipboard!', 'success');
     }
     
     function copyAddress() {
         navigator.clipboard.writeText(selectedWalletAddress);
-        showNotification('Address copied to clipboard!');
+        showNotification('Address copied to clipboard!', 'success');
     }
     
-    function showNotification(message) {
+    function showNotification(message, type = 'success') {
+        const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
+        const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+        
         const notification = document.createElement('div');
-        notification.className = 'fixed top-20 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50';
-        notification.innerHTML = `<i class="fas fa-check-circle mr-2"></i>${message}`;
+        notification.className = `fixed top-20 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
+        notification.innerHTML = `<i class="fas ${icon} mr-2"></i>${message}`;
         document.body.appendChild(notification);
         
         setTimeout(() => {

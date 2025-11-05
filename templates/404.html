@@ -1,0 +1,70 @@
+<!-- 404.html - Page Not Found -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | Trade Simplified</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .pulse-slow {
+            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="min-h-screen flex items-center justify-center px-4">
+        <div class="text-center max-w-2xl">
+            <!-- Icon -->
+            <div class="mb-8 floating">
+                <i class="fas fa-search text-9xl text-cyan-400 opacity-50"></i>
+            </div>
+            
+            <!-- Error Code -->
+            <h1 class="text-9xl font-black mb-4">
+                <span class="gradient-text">404</span>
+            </h1>
+            
+            <!-- Message -->
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Page Not Found</h2>
+            <p class="text-gray-400 text-lg mb-8">
+                Oops! The page you're looking for seems to have vanished into the crypto void.
+            </p>
+            
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-lg font-semibold hover:from-blue-700 hover:to-cyan-700 transition">
+                    <i class="fas fa-home mr-2"></i>Go Home
+                </a>
+                <a href="javascript:history.back()" class="px-8 py-4 bg-slate-700 hover:bg-slate-600 rounded-lg font-semibold transition">
+                    <i class="fas fa-arrow-left mr-2"></i>Go Back
+                </a>
+            </div>
+            
+            <!-- Additional Info -->
+            <div class="mt-12 text-sm text-gray-500">
+                <p>Error Code: 404 | Page Not Found</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

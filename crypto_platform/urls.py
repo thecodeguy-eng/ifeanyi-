@@ -11,6 +11,11 @@ urlpatterns = [
     path('', include('platform_app.urls')),
 ]
 
+# Error handlers
+handler404 = 'platform_app.views.handler404'
+handler403 = 'platform_app.views.handler403'
+handler500 = 'platform_app.views.handler500'
+
 # Serve media files in development
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
