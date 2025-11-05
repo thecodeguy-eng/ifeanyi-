@@ -4,6 +4,8 @@ from django.core.validators import MinValueValidator
 from decimal import Decimal
 import uuid
 
+from cloudinary.models import CloudinaryField
+
 class User(AbstractUser):
     """Extended User model with additional fields"""
     CURRENCY_CHOICES = [
@@ -169,7 +171,8 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     currency = models.CharField(max_length=10, default='USD')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-    proof_image = models.ImageField(upload_to='payment_proofs/', null=True, blank=True)
+    proof_image = CloudinaryField('payment_proofs', null=True, blank=True)
+    # proof_image = models.ImageField(upload_to='payment_proofs/', null=True, blank=True)
     blockchain_transaction_id = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     crypto_currency = models.CharField(max_length=10, null=True, blank=True)
