@@ -14,7 +14,7 @@ SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here'
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED_HOSTS
-ALLOWED_HOSTS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1', '.com']
 
 # Application definition
 INSTALLED_APPS = [
