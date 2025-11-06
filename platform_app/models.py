@@ -250,3 +250,48 @@ class PlatformSettings(models.Model):
     
     def __str__(self):
         return f"Platform Settings - Updated: {self.updated_at}"
+    
+
+# Add these models to your existing models.py file
+
+class SupportChat(models.Model):
+    """Support chat sessions"""
+    STATUS_CHOICES = [
+        ('ACTIVE', 'Active'),
+        ('CLOSED', 'Closed'),
+    ]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='support_chats')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    closed_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        db_table = 'support_chats'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Chat #{self.id} - {self.user.username} - {self.status}"
+
+
+class SupportMessage(models.Model):
+    """Individual messages in support chats"""
+    SENDER_TYPES = [
+        ('USER', 'User'),
+        ('SUPPORT', 'Support'),
+    ]
+    
+    chat = models.ForeignKey(SupportChat, on_delete=models.CASCADE, related_name='messages')
+    sender_type = models.CharField(max_length=10, choices=SENDER_TYPES)
+    sender_name = models.CharField(max_length=100)  # Username or Support Agent name
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'support_messages'
+        ordering = ['created_at']
+    
+    def __str__(self):
+        return f"{self.sender_name}: {self.message[:50]}"

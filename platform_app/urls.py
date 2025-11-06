@@ -37,4 +37,10 @@ urlpatterns = [
     
     # API
     path('api/crypto-prices/', views.get_crypto_prices, name='get_crypto_prices'),
+
+    # Support Chat
+    path('chat/get-or-create/', views.get_or_create_active_chat, name='get_or_create_chat'),
+    path('chat/send-message/', views.send_support_message, name='send_support_message'),
+    path('chat/get-messages/', views.get_chat_messages, name='get_chat_messages'),
+    path('chat/clear/', views.clear_support_chat, name='clear_support_chat'),
 ]

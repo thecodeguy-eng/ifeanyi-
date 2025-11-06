@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings
+    Trade, PlatformSettings,SupportChat, SupportMessage
 )
 
 @admin.register(User)
@@ -145,3 +145,58 @@ class PlatformSettingsAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         # Prevent deletion of settings
         return False
+    
+class SupportMessageInline(admin.TabularInline):
+    model = SupportMessage
+    extra = 0
+    readonly_fields = ['sender_type', 'sender_name', 'message', 'created_at']
+    can_delete = False
+    
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(SupportChat)
+class SupportChatAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'status', 'message_count', 'created_at', 'updated_at']
+    list_filter = ['status', 'created_at']
+    search_fields = ['user__username', 'user__email']
+    readonly_fields = ['created_at', 'updated_at', 'closed_at']
+    raw_id_fields = ['user']
+    inlines = [SupportMessageInline]
+    
+    actions = ['close_chats', 'reopen_chats']
+    
+    def message_count(self, obj):
+        return obj.messages.count()
+    message_count.short_description = 'Messages'
+    
+    def close_chats(self, request, queryset):
+        from django.utils import timezone
+        count = queryset.update(status='CLOSED', closed_at=timezone.now())
+        self.message_user(request, f"{count} chat(s) closed successfully")
+    close_chats.short_description = "Close selected chats"
+    
+    def reopen_chats(self, request, queryset):
+        count = queryset.update(status='ACTIVE', closed_at=None)
+        self.message_user(request, f"{count} chat(s) reopened successfully")
+    reopen_chats.short_description = "Reopen selected chats"
+
+
+@admin.register(SupportMessage)
+class SupportMessageAdmin(admin.ModelAdmin):
+    list_display = ['id', 'chat', 'sender_type', 'sender_name', 'message_preview', 'is_read', 'created_at']
+    list_filter = ['sender_type', 'is_read', 'created_at']
+    search_fields = ['message', 'sender_name', 'chat__user__username']
+    readonly_fields = ['chat', 'sender_type', 'sender_name', 'message', 'created_at']
+    raw_id_fields = ['chat']
+    
+    def message_preview(self, obj):
+        return obj.message[:100] + '...' if len(obj.message) > 100 else obj.message
+    message_preview.short_description = 'Message'
+    
+    def has_add_permission(self, request):
+        return False
+    
+    def has_delete_permission(self, request, obj=None):
+        return True

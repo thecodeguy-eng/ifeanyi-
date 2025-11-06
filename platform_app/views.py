@@ -10,11 +10,12 @@ import json
 import requests
 from datetime import datetime
 import logging
+from django.utils import timezone
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings
+    Trade, PlatformSettings,SupportChat, SupportMessage
 )
 
 # Set up logging
@@ -597,3 +598,173 @@ def get_crypto_prices(request):
             prices[symbol] = 0
     
     return JsonResponse(prices)
+
+# Chat Support Views
+@login_required
+def get_or_create_active_chat(request):
+    """Get or create active chat session"""
+    chat, created = SupportChat.objects.get_or_create(
+        user=request.user,
+        status='ACTIVE',
+        defaults={'created_at': timezone.now()}
+    )
+    
+    messages = chat.messages.all().values(
+        'id', 'sender_type', 'sender_name', 'message', 'created_at'
+    )
+    
+    return JsonResponse({
+        'chat_id': chat.id,
+        'messages': list(messages),
+        'created': created
+    })
+
+
+@login_required
+def send_support_message(request):
+    """Send a message in support chat"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            message_text = data.get('message', '').strip()
+            
+            if not message_text:
+                return JsonResponse({'error': 'Message cannot be empty'}, status=400)
+            
+            # Get or create active chat
+            chat, created = SupportChat.objects.get_or_create(
+                user=request.user,
+                status='ACTIVE'
+            )
+            
+            # Create message
+            message = SupportMessage.objects.create(
+                chat=chat,
+                sender_type='USER',
+                sender_name=request.user.username,
+                message=message_text
+            )
+            
+            # Auto-reply from support (you can customize this)
+            auto_reply = get_auto_reply(message_text)
+            if auto_reply:
+                SupportMessage.objects.create(
+                    chat=chat,
+                    sender_type='SUPPORT',
+                    sender_name='Support Team',
+                    message=auto_reply
+                )
+            
+            # Get all messages
+            messages = chat.messages.all().values(
+                'id', 'sender_type', 'sender_name', 'message', 'created_at'
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'messages': list(messages)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error sending support message: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+@login_required
+def get_chat_messages(request):
+    """Get all messages from active chat"""
+    try:
+        chat = SupportChat.objects.filter(
+            user=request.user,
+            status='ACTIVE'
+        ).first()
+        
+        if not chat:
+            return JsonResponse({'messages': []})
+        
+        messages = chat.messages.all().values(
+            'id', 'sender_type', 'sender_name', 'message', 'created_at'
+        )
+        
+        return JsonResponse({
+            'chat_id': chat.id,
+            'messages': list(messages)
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting chat messages: {e}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def clear_support_chat(request):
+    """Close current chat and create a new one"""
+    if request.method == 'POST':
+        try:
+            # Close active chats
+            SupportChat.objects.filter(
+                user=request.user,
+                status='ACTIVE'
+            ).update(status='CLOSED', closed_at=timezone.now())
+            
+            # Create new chat
+            new_chat = SupportChat.objects.create(
+                user=request.user,
+                status='ACTIVE'
+            )
+            
+            # Welcome message
+            SupportMessage.objects.create(
+                chat=new_chat,
+                sender_type='SUPPORT',
+                sender_name='Support Team',
+                message='Hello! Welcome to InfinityinfluxTrading support. How can we help you today?'
+            )
+            
+            messages = new_chat.messages.all().values(
+                'id', 'sender_type', 'sender_name', 'message', 'created_at'
+            )
+            
+            return JsonResponse({
+                'success': True,
+                'chat_id': new_chat.id,
+                'messages': list(messages)
+            })
+            
+        except Exception as e:
+            logger.error(f"Error clearing chat: {e}")
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def get_auto_reply(message):
+    """Generate automatic replies based on keywords"""
+    message_lower = message.lower()
+    
+    # Keyword-based auto replies
+    if any(word in message_lower for word in ['deposit', 'payment', 'fund']):
+        return "To make a deposit, navigate to Dashboard > Deposit. We support Bitcoin, Ethereum, Solana, and other major cryptocurrencies. Deposits are processed within 10-30 minutes after confirmation."
+    
+    elif any(word in message_lower for word in ['withdrawal', 'withdraw', 'cashout']):
+        return "For withdrawals, go to Dashboard > Withdrawal. Please ensure your account is verified and withdrawal is approved by admin. Minimum withdrawal is $50. Processing time is 24-48 hours."
+    
+    elif any(word in message_lower for word in ['trading bot', 'bot', 'automated']):
+        return "Our Trading Bots offer automated trading with daily profits. Visit Trading Bot section to view available plans: Basic, Intermediate, Advanced, and Pro with different profit percentages."
+    
+    elif any(word in message_lower for word in ['copy trading', 'copy trade', 'follow trader']):
+        return "Copy Trading allows you to automatically copy trades from professional traders. Visit the Copy Trading section to browse top traders and their performance metrics."
+    
+    elif any(word in message_lower for word in ['verification', 'verify', 'kyc']):
+        return "Account verification is handled by our admin team. Your account will be reviewed within 24 hours. You will receive an email notification once approved."
+    
+    elif any(word in message_lower for word in ['help', 'support', 'assistance']):
+        return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, or any other features. Our support team will respond shortly if you need personalized assistance."
+    
+    elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
+        return "Hello! Thank you for contacting InfinityinfluxTrading support. How can I assist you today?"
+    
+    # Default response for first message or unrecognized queries
+    return "Thank you for your message. A support agent will respond to you shortly. In the meantime, you can ask about deposits, withdrawals, trading bots, or copy trading."
