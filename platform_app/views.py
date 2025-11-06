@@ -9,6 +9,7 @@ from decimal import Decimal
 import json
 import requests
 from datetime import datetime
+import logging
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
@@ -16,66 +17,33 @@ from .models import (
     Trade, PlatformSettings
 )
 
+# Set up logging
+logger = logging.getLogger(__name__)
 
 
 def handler404(request, exception):
     """Custom 404 error handler"""
     return render(request, '404.html', status=404)
 
+
 def handler403(request, exception):
     """Custom 403 error handler"""
     return render(request, '403.html', status=403)
+
 
 def handler500(request):
     """Custom 500 error handler"""
     return render(request, '500.html', status=500)
 
-def handler502(request):
-    """Custom 502 error handler"""
-    return render(request, '502.html', status=502)
 
-def handler503(request):
-    """Custom 503 error handler"""
-    return render(request, '503.html', status=503)
-
-# Crypto price API helper
-# def get_crypto_price(symbol):
-#     """Get real-time crypto price from CoinGecko API"""
-#     try:
-#         symbol_map = {
-#             'BTC': 'bitcoin',
-#             'ETH': 'ethereum',
-#             'SOL': 'solana',
-#             'USDT': 'tether',
-#             'BNB': 'binancecoin',
-#             'XRP': 'ripple',
-#             'ADA': 'cardano',
-#             'DOGE': 'dogecoin',
-#         }
-        
-#         coin_id = symbol_map.get(symbol.upper(), symbol.lower())
-#         url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
-#         response = requests.get(url, timeout=5)
-#         data = response.json()
-#         return Decimal(str(data[coin_id]['usd']))
-#     except:
-#         # Fallback prices if API fails
-#         fallback_prices = {
-#             'BTC': Decimal('45000'),
-#             'ETH': Decimal('2500'),
-#             'SOL': Decimal('100'),
-#             'USDT': Decimal('1'),
-#             'BNB': Decimal('300'),
-#             'XRP': Decimal('0.5'),
-#             'ADA': Decimal('0.4'),
-#             'DOGE': Decimal('0.08'),
-#         }
-#         return fallback_prices.get(symbol.upper(), Decimal('1'))
-
-# Improved Crypto price API helper with better error handling
 def get_crypto_price(symbol):
-    """Get real-time crypto price from CoinGecko API"""
+    """
+    Get real-time crypto price from CoinGecko API with improved error handling
+    Returns the price as a Decimal
+    Uses November 2025 prices as fallback
+    """
     try:
+        # Map symbols to CoinGecko IDs
         symbol_map = {
             'BTC': 'bitcoin',
             'ETH': 'ethereum',
@@ -87,60 +55,53 @@ def get_crypto_price(symbol):
             'DOGE': 'dogecoin',
         }
         
-        coin_id = symbol_map.get(symbol.upper(), symbol.lower())
+        coin_id = symbol_map.get(symbol.upper())
+        if not coin_id:
+            logger.warning(f"Unknown cryptocurrency symbol: {symbol}")
+            return Decimal('1')
+        
+        # Make API request
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
+        logger.info(f"Fetching price for {symbol} from CoinGecko API")
         
-        print(f"Fetching price for {symbol} ({coin_id})...")  # Debug
-        
-        response = requests.get(url, timeout=5)
-        response.raise_for_status()  # Raise exception for bad status codes
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
         
         data = response.json()
         
-        print(f"API Response: {data}")  # Debug
-        
+        # Extract price
         if coin_id in data and 'usd' in data[coin_id]:
             price = Decimal(str(data[coin_id]['usd']))
-            print(f"Price for {symbol}: ${price}")  # Debug
+            logger.info(f"Successfully fetched {symbol} price: ${price}")
             return price
         else:
-            print(f"Price not found in API response for {symbol}")  # Debug
+            logger.error(f"Price data not found in API response for {symbol}")
             raise ValueError(f"Price not found for {symbol}")
             
+    except requests.exceptions.Timeout:
+        logger.error(f"API request timeout for {symbol}")
     except requests.exceptions.RequestException as e:
-        print(f"API Request Error for {symbol}: {e}")  # Debug
-        # Use fallback prices
-        fallback_prices = {
-            'BTC': Decimal('45000'),
-            'ETH': Decimal('2500'),
-            'SOL': Decimal('100'),
-            'USDT': Decimal('1'),
-            'BNB': Decimal('300'),
-            'XRP': Decimal('0.5'),
-            'ADA': Decimal('0.4'),
-            'DOGE': Decimal('0.08'),
-        }
-        price = fallback_prices.get(symbol.upper(), Decimal('1'))
-        print(f"Using fallback price for {symbol}: ${price}")  # Debug
-        return price
-        
+        logger.error(f"API request error for {symbol}: {e}")
     except Exception as e:
-        print(f"Unexpected error getting price for {symbol}: {e}")  # Debug
-        # Use fallback prices
-        fallback_prices = {
-            'BTC': Decimal('45000'),
-            'ETH': Decimal('2500'),
-            'SOL': Decimal('100'),
-            'USDT': Decimal('1'),
-            'BNB': Decimal('300'),
-            'XRP': Decimal('0.5'),
-            'ADA': Decimal('0.4'),
-            'DOGE': Decimal('0.08'),
-        }
-        price = fallback_prices.get(symbol.upper(), Decimal('1'))
-        print(f"Using fallback price for {symbol}: ${price}")  # Debug
-        return price
+        logger.error(f"Unexpected error getting price for {symbol}: {e}")
     
+    # Fallback prices - November 2025 current market prices
+    fallback_prices = {
+        'BTC': Decimal('102000'),      # Bitcoin ~$102,000
+        'ETH': Decimal('3350'),        # Ethereum ~$3,350
+        'SOL': Decimal('158'),         # Solana ~$158
+        'USDT': Decimal('1.00'),       # Tether ~$1.00
+        'BNB': Decimal('943'),         # BNB ~$943
+        'XRP': Decimal('2.23'),        # Ripple ~$2.23
+        'ADA': Decimal('0.53'),        # Cardano ~$0.53
+        'DOGE': Decimal('0.163'),      # Dogecoin ~$0.163
+    }
+    
+    fallback_price = fallback_prices.get(symbol.upper(), Decimal('1'))
+    logger.warning(f"Using fallback price for {symbol}: ${fallback_price}")
+    return fallback_price
+
+
 # Home page
 def home(request):
     """Landing page"""
@@ -272,7 +233,7 @@ def trading(request):
         to_currency = request.POST.get('to_currency')
         from_amount = Decimal(request.POST.get('from_amount'))
         
-        # Get exchange rates
+        # Get exchange rates using real-time prices
         if from_currency == 'USD':
             to_price = get_crypto_price(to_currency)
             to_amount = from_amount / to_price
@@ -293,9 +254,12 @@ def trading(request):
         fee_percentage = settings.trading_fee_percentage if settings else Decimal('0.5')
         fee = (from_amount * fee_percentage) / 100
         
+        # Apply fee to output
+        to_amount = to_amount * (1 - (fee_percentage / 100))
+        
         # Check balance
         if from_currency == 'USD':
-            if request.user.account_balance < (from_amount + fee):
+            if request.user.account_balance < from_amount:
                 messages.error(request, 'Insufficient balance')
                 return redirect('trading')
         else:
@@ -321,33 +285,41 @@ def trading(request):
         
         # Update balances
         if from_currency == 'USD':
-            request.user.account_balance -= (from_amount + fee)
+            request.user.account_balance -= from_amount
             request.user.save()
         else:
             portfolio_item.amount -= from_amount
-            portfolio_item.save()
+            if portfolio_item.amount <= 0:
+                portfolio_item.delete()
+            else:
+                portfolio_item.save()
         
         if to_currency == 'USD':
             request.user.account_balance += to_amount
             request.user.save()
         else:
+            current_price = get_crypto_price(to_currency)
             portfolio_item, created = Portfolio.objects.get_or_create(
                 user=request.user,
                 cryptocurrency=to_currency,
                 defaults={
                     'amount': to_amount,
-                    'average_buy_price': get_crypto_price(to_currency),
-                    'current_value': to_amount * get_crypto_price(to_currency)
+                    'average_buy_price': current_price,
+                    'current_value': to_amount * current_price
                 }
             )
             if not created:
+                # Update average buy price
+                total_value = (portfolio_item.amount * portfolio_item.average_buy_price) + (to_amount * current_price)
                 portfolio_item.amount += to_amount
+                portfolio_item.average_buy_price = total_value / portfolio_item.amount
+                portfolio_item.current_value = portfolio_item.amount * current_price
                 portfolio_item.save()
         
         request.user.trading_count += 1
         request.user.save()
         
-        messages.success(request, 'Trade executed successfully!')
+        messages.success(request, f'Trade executed successfully! Received {to_amount:.8f} {to_currency}')
         return redirect('portfolio')
     
     # Get available currencies
@@ -409,12 +381,15 @@ def copy_trader_detail(request, trader_id):
     trader = get_object_or_404(CopyTrader, id=trader_id, is_active=True)
     
     if request.method == 'POST':
-        # Calculate commission and proceed to payment
-        commission = (trader.commission_percentage * trader.profit_percentage_per_day) / 100
+        amount = Decimal(request.POST.get('amount', '0'))
+        
+        if amount < 100:
+            messages.error(request, 'Minimum investment is $100')
+            return redirect('copy_trading')
         
         request.session['purchase_type'] = 'copy_trade'
         request.session['purchase_id'] = trader_id
-        request.session['commission_amount'] = str(commission)
+        request.session['purchase_amount'] = str(amount)
         return redirect('payment_page')
     
     context = {
@@ -432,7 +407,7 @@ def deposit(request):
         amount = Decimal(request.POST.get('amount'))
         
         settings = PlatformSettings.objects.first()
-        min_deposit = settings.minimum_deposit if settings else Decimal('50')
+        min_deposit = settings.minimum_deposit if settings else Decimal('500')
         
         if amount < min_deposit:
             messages.error(request, f'Minimum deposit is ${min_deposit}')
@@ -443,10 +418,11 @@ def deposit(request):
     
     return render(request, 'deposit.html')
 
-# Payment Page
+
+# Payment Page with Real-time Crypto Conversion
 @login_required
 def payment_page(request):
-    """Universal payment page for all transactions"""
+    """Universal payment page with real-time crypto prices"""
     wallet_addresses = WalletAddress.objects.filter(is_active=True)
     
     # Get amount from session
@@ -458,22 +434,25 @@ def payment_page(request):
         amount = Decimal(request.session['deposit_amount'])
     elif 'purchase_amount' in request.session:
         amount = Decimal(request.session['purchase_amount'])
-    elif 'commission_amount' in request.session:
-        amount = Decimal(request.session['commission_amount'])
     
     # If no amount found, redirect back
     if amount is None:
         messages.error(request, 'Invalid payment session. Please try again.')
         return redirect('dashboard')
     
-    # Calculate crypto amounts for each wallet
+    # Calculate crypto amounts using real-time prices
     crypto_amounts = {}
     for wallet in wallet_addresses:
         try:
             price = get_crypto_price(wallet.cryptocurrency)
-            crypto_amounts[wallet.cryptocurrency] = amount / price if amount and price > 0 else Decimal('0')
+            if price > 0:
+                crypto_amounts[wallet.cryptocurrency] = amount / price
+                logger.info(f"{wallet.cryptocurrency}: ${amount} = {crypto_amounts[wallet.cryptocurrency]:.8f} {wallet.cryptocurrency} @ ${price}")
+            else:
+                crypto_amounts[wallet.cryptocurrency] = Decimal('0')
+                logger.warning(f"Invalid price for {wallet.cryptocurrency}")
         except Exception as e:
-            print(f"Error calculating crypto amount for {wallet.cryptocurrency}: {e}")
+            logger.error(f"Error calculating crypto amount for {wallet.cryptocurrency}: {e}")
             crypto_amounts[wallet.cryptocurrency] = Decimal('0')
     
     if request.method == 'POST':
@@ -481,9 +460,9 @@ def payment_page(request):
         proof_image = request.FILES.get('proof_image')
         blockchain_tx_id = request.POST.get('transaction_id', '')
         
-        # Validate that a cryptocurrency was selected
+        # Validate cryptocurrency selection
         if not selected_crypto or selected_crypto not in crypto_amounts:
-            messages.error(request, 'Please select a cryptocurrency for payment')
+            messages.error(request, 'Please select a valid cryptocurrency')
             context = {
                 'wallet_addresses': wallet_addresses,
                 'amount': amount,
@@ -492,7 +471,7 @@ def payment_page(request):
             }
             return render(request, 'payment_page.html', context)
         
-        # Validate that proof image was uploaded
+        # Validate proof image
         if not proof_image:
             messages.error(request, 'Please upload payment proof screenshot')
             context = {
@@ -503,6 +482,10 @@ def payment_page(request):
             }
             return render(request, 'payment_page.html', context)
         
+        # Get actual crypto amount at time of submission
+        crypto_price = get_crypto_price(selected_crypto)
+        actual_crypto_amount = amount / crypto_price if crypto_price > 0 else Decimal('0')
+        
         # Create transaction
         transaction = Transaction.objects.create(
             user=request.user,
@@ -510,20 +493,21 @@ def payment_page(request):
             amount=amount,
             currency=request.user.preferred_currency,
             crypto_currency=selected_crypto,
-            crypto_amount=crypto_amounts[selected_crypto],
+            crypto_amount=actual_crypto_amount,
             proof_image=proof_image,
             blockchain_transaction_id=blockchain_tx_id,
             status='PENDING'
         )
+        
+        logger.info(f"Payment proof submitted: User {request.user.username}, Amount ${amount}, Crypto {actual_crypto_amount:.8f} {selected_crypto}")
         
         # Clear session
         request.session.pop('deposit_amount', None)
         request.session.pop('purchase_amount', None)
         request.session.pop('purchase_type', None)
         request.session.pop('purchase_id', None)
-        request.session.pop('commission_amount', None)
         
-        messages.success(request, 'Payment proof submitted! Awaiting admin approval.')
+        messages.success(request, 'Payment proof submitted successfully! Your transaction is being verified.')
         return redirect('dashboard')
     
     context = {
@@ -534,6 +518,7 @@ def payment_page(request):
     }
     
     return render(request, 'payment_page.html', context)
+
 
 # Withdrawal
 @login_required
@@ -559,9 +544,9 @@ def withdrawal(request):
             messages.error(request, 'Insufficient balance')
             return redirect('withdrawal')
         
-        # Calculate crypto amount
+        # Calculate crypto amount using real-time price
         crypto_price = get_crypto_price(crypto_currency)
-        crypto_amount = amount / crypto_price
+        crypto_amount = amount / crypto_price if crypto_price > 0 else Decimal('0')
         
         # Create withdrawal transaction
         transaction = Transaction.objects.create(
@@ -574,6 +559,8 @@ def withdrawal(request):
             description=f"Withdrawal to {wallet_address}",
             status='PENDING'
         )
+        
+        logger.info(f"Withdrawal requested: User {request.user.username}, Amount ${amount}, Crypto {crypto_amount:.8f} {crypto_currency}")
         
         messages.success(request, 'Withdrawal request submitted! Awaiting admin approval.')
         return redirect('dashboard')
@@ -602,6 +589,11 @@ def get_crypto_prices(request):
     prices = {}
     
     for symbol in symbols:
-        prices[symbol] = float(get_crypto_price(symbol))
+        try:
+            price = get_crypto_price(symbol)
+            prices[symbol] = float(price)
+        except Exception as e:
+            logger.error(f"Error getting price for {symbol}: {e}")
+            prices[symbol] = 0
     
     return JsonResponse(prices)

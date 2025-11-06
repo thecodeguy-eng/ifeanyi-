@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
 
-
 {% block title %}Payment - InfinityinfluxTrading{% endblock %}
 
 {% block content %}
@@ -14,7 +13,7 @@
             <h1 class="text-3xl md:text-4xl font-bold mb-2">
                 <span class="gradient-text">Secure Payment</span>
             </h1>
-            <p class="text-gray-400">Complete your transaction safely</p>
+            <p class="text-gray-400">Complete your transaction safely with real-time exchange rates</p>
         </div>
         
         <!-- Payment Amount -->
@@ -73,8 +72,8 @@
                     <div class="mb-4">
                         <div class="text-sm text-gray-400 mb-2">Send Exactly</div>
                         <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                            <span class="text-2xl font-bold" id="crypto_amount_display">0.00000000</span>
-                            <button type="button" onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300">
+                            <span class="text-2xl font-bold break-all" id="crypto_amount_display">0.00000000</span>
+                            <button type="button" onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300 ml-2 flex-shrink-0">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
@@ -84,18 +83,10 @@
                         <div class="text-sm text-gray-400 mb-2">To This Address</div>
                         <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg break-all">
                             <span class="font-mono text-sm" id="wallet_address_display">Loading...</span>
-                            <button type="button" onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2">
+                            <button type="button" onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2 flex-shrink-0">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
-                    </div>
-                    
-                    <!-- QR Code Placeholder -->
-                    <div class="text-center p-6 bg-white rounded-lg mb-4">
-                        <div class="text-8xl text-gray-800">
-                            <i class="fas fa-qrcode"></i>
-                        </div>
-                        <div class="text-sm text-gray-800 mt-2">Scan to Pay</div>
                     </div>
                     
                     <!-- Important Notice -->
@@ -103,7 +94,7 @@
                         <div class="flex items-start">
                             <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
                             <div class="text-sm">
-                                <strong>Important:</strong> Send only <span id="notice_crypto">BTC</span> to this address. Sending any other cryptocurrency may result in permanent loss.
+                                <strong>Important:</strong> Send only <span id="notice_crypto">BTC</span> to this address. Sending any other cryptocurrency may result in permanent loss. The exchange rate is calculated in real-time based on current market prices.
                             </div>
                         </div>
                     </div>
@@ -174,7 +165,7 @@
         document.getElementById('walletDetails').classList.remove('hidden');
         document.getElementById('selectionNotice').classList.add('hidden');
         document.getElementById('selected_crypto').textContent = crypto;
-        document.getElementById('crypto_amount_display').textContent = amount.toFixed(8);
+        document.getElementById('crypto_amount_display').textContent = parseFloat(amount).toFixed(8);
         document.getElementById('wallet_address_display').textContent = address;
         document.getElementById('notice_crypto').textContent = crypto;
         document.getElementById('selected_cryptocurrency').value = crypto;
@@ -198,7 +189,8 @@
     }
     
     function copyAmount() {
-        navigator.clipboard.writeText(selectedCryptoAmount.toFixed(8));
+        const amount = parseFloat(selectedCryptoAmount).toFixed(8);
+        navigator.clipboard.writeText(amount);
         showNotification('Amount copied to clipboard!', 'success');
     }
     
