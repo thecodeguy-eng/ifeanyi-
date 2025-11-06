@@ -72,91 +72,189 @@
             50% { opacity: 0.5; }
         }
 
-        /* Language Dropdown Styles */
-        .language-dropdown {
-            position: relative;
+        /* Hide Google Translate Banner Completely */
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
         }
 
-        .language-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            margin-top: 0.5rem;
-            background: rgba(15, 23, 42, 0.95);
+        body {
+            top: 0px !important;
+        }
+
+        .goog-te-balloon-frame {
+            display: none !important;
+        }
+
+        #goog-gt-tt {
+            display: none !important;
+        }
+
+        .goog-text-highlight {
+            background: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Premium Language Selector */
+        .language-selector-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .language-button {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 0.75rem;
-            padding: 0.5rem;
-            min-width: 280px;
-            max-height: 400px;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            color: #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
 
-        .language-menu::-webkit-scrollbar {
+        .language-button:hover {
+            background: rgba(30, 41, 59, 0.9);
+            border-color: rgba(59, 130, 246, 0.6);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .language-button i {
+            color: #06b6d4;
+            font-size: 1.125rem;
+        }
+
+        .language-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 1rem;
+            padding: 0.75rem;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .language-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .language-dropdown::-webkit-scrollbar {
             width: 6px;
         }
 
-        .language-menu::-webkit-scrollbar-track {
+        .language-dropdown::-webkit-scrollbar-track {
             background: rgba(30, 41, 59, 0.5);
             border-radius: 3px;
         }
 
-        .language-menu::-webkit-scrollbar-thumb {
+        .language-dropdown::-webkit-scrollbar-thumb {
             background: rgba(59, 130, 246, 0.5);
             border-radius: 3px;
         }
 
-        .language-menu::-webkit-scrollbar-thumb:hover {
-            background: rgba(59, 130, 246, 0.7);
-        }
-
-        .language-item {
+        .language-option {
             display: flex;
             align-items: center;
-            padding: 0.625rem 0.75rem;
+            gap: 0.75rem;
+            padding: 0.625rem;
             border-radius: 0.5rem;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            color: #e5e7eb;
+            font-size: 0.875rem;
         }
 
-        .language-item:hover {
-            background: rgba(59, 130, 246, 0.1);
+        .language-option:hover {
+            background: rgba(59, 130, 246, 0.15);
             transform: translateX(4px);
         }
 
-        .language-item.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-left: 3px solid #3b82f6;
+        .language-option.active {
+            background: rgba(59, 130, 246, 0.25);
+            border-left: 3px solid #06b6d4;
         }
 
         .language-flag {
-            font-size: 1.5rem;
-            margin-right: 0.75rem;
+            font-size: 1.25rem;
         }
 
-        .language-search {
+        /* Hide default Google Translate element */
+        #google_translate_element,
+        #google_translate_element_mobile {
+            display: none !important;
+        }
+
+        .goog-te-gadget {
+            display: none !important;
+        }
+
+        /* Nav link hover effect */
+        nav a {
+            position: relative;
+        }
+
+        nav a:not(.btn-primary)::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            transition: width 0.3s ease;
+        }
+
+        nav a:not(.btn-primary):hover::after {
             width: 100%;
-            padding: 0.625rem;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 0.5rem;
-            color: #fff;
-            margin-bottom: 0.5rem;
         }
 
-        .language-search:focus {
-            outline: none;
-            border-color: #3b82f6;
+        /* Message animation */
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
-        .language-search::placeholder {
-            color: rgba(156, 163, 175, 0.7);
+        .message-alert {
+            animation: slideIn 0.3s ease-out;
         }
 
-        #google_translate_element {
-            display: none;
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
         }
     </style>
     
@@ -165,53 +263,92 @@
 <body class="text-gray-100">
     
     <!-- Navigation -->
-    <nav class="bg-slate-900/90 backdrop-blur-lg border-b border-slate-800 sticky top-0 z-50">
+    <nav class="bg-slate-900/90 backdrop-blur-lg border-b border-slate-800 sticky top-0 z-50 shadow-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <a href="{% url 'home' %}" class="flex items-center space-x-2">
-                        <i class="fas fa-chart-line text-3xl gradient-text"></i>
+                    <a href="{% url 'home' %}" class="flex items-center space-x-2 group">
+                        <i class="fas fa-chart-line text-3xl gradient-text group-hover:scale-110 transition-transform duration-300"></i>
                         <span class="text-2xl font-bold gradient-text">InfinityinfluxTrading</span>
                     </a>
                 </div>
                 
-                <div class="hidden md:flex items-center space-x-8">
-                    <a href="{% url 'home' %}" class="text-gray-300 hover:text-cyan-400 transition">Home</a>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="{% url 'home' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Home</a>
                     {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-cyan-400 transition">Dashboard</a>
-                        <a href="{% url 'portfolio' %}" class="text-gray-300 hover:text-cyan-400 transition">Portfolio</a>
-                        <a href="{% url 'trading' %}" class="text-gray-300 hover:text-cyan-400 transition">Trading</a>
-                        <a href="{% url 'logout' %}" class="text-gray-300 hover:text-red-400 transition">Logout</a>
+                        <a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Dashboard</a>
+                        <a href="{% url 'portfolio' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Portfolio</a>
+                        <a href="{% url 'trading' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Trading</a>
+                        <a href="{% url 'logout' %}" class="text-gray-300 hover:text-red-400 transition-colors duration-300 px-2 py-1">Logout</a>
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-gray-300 hover:text-cyan-400 transition">Login</a>
-                        <a href="{% url 'register' %}" class="btn-primary px-6 py-2 rounded-lg text-white font-semibold">Get Started</a>
+                        <a href="{% url 'login' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Login</a>
+                        <a href="{% url 'register' %}" class="btn-primary px-6 py-2 rounded-lg text-white font-semibold shadow-lg">Get Started</a>
                     {% endif %}
                     
-                    <!-- Language Selector -->
-                    <div class="language-dropdown">
-                        <button onclick="toggleLanguageMenu()" class="flex items-center space-x-2 text-gray-300 hover:text-cyan-400 transition">
-                            <i class="fas fa-globe text-xl"></i>
-                            <span id="current-language-flag" class="text-xl">🌐</span>
+                    <!-- Premium Language Selector -->
+                    <div class="language-selector-wrapper">
+                        <button class="language-button" onclick="toggleLanguageDropdown()">
+                            <i class="fas fa-globe"></i>
+                            <span id="current-language">English</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                         
-                        <div id="language-menu" class="language-menu hidden">
-                            <input type="text" id="language-search" class="language-search" placeholder="Search languages..." onkeyup="filterLanguages()">
-                            <div id="language-list"></div>
+                        <div id="language-dropdown" class="language-dropdown">
+                            <div class="language-option active" onclick="changeLanguage('en', 'English')">
+                                <span class="language-flag">🇬🇧</span>
+                                <span>English</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('es', 'Español')">
+                                <span class="language-flag">🇪🇸</span>
+                                <span>Español</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('fr', 'Français')">
+                                <span class="language-flag">🇫🇷</span>
+                                <span>Français</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('de', 'Deutsch')">
+                                <span class="language-flag">🇩🇪</span>
+                                <span>Deutsch</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('it', 'Italiano')">
+                                <span class="language-flag">🇮🇹</span>
+                                <span>Italiano</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('pt', 'Português')">
+                                <span class="language-flag">🇵🇹</span>
+                                <span>Português</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('ru', 'Русский')">
+                                <span class="language-flag">🇷🇺</span>
+                                <span>Русский</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('zh-CN', '中文')">
+                                <span class="language-flag">🇨🇳</span>
+                                <span>中文</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('ja', '日本語')">
+                                <span class="language-flag">🇯🇵</span>
+                                <span>日本語</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('ko', '한국어')">
+                                <span class="language-flag">🇰🇷</span>
+                                <span>한국어</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('ar', 'العربية')">
+                                <span class="language-flag">🇸🇦</span>
+                                <span>العربية</span>
+                            </div>
+                            <div class="language-option" onclick="changeLanguage('hi', 'हिन्दी')">
+                                <span class="language-flag">🇮🇳</span>
+                                <span>हिन्दी</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center space-x-4">
-                    <!-- Mobile Language Selector -->
-                    <div class="language-dropdown">
-                        <button onclick="toggleLanguageMenu()" class="text-gray-300 hover:text-cyan-400">
-                            <i class="fas fa-globe text-2xl"></i>
-                        </button>
-                    </div>
-                    
-                    <button id="mobile-menu-button" class="text-gray-300 hover:text-cyan-400">
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 p-2">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
@@ -219,18 +356,56 @@
         </div>
         
         <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-800 border-t border-slate-700">
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-800/95 backdrop-blur-lg border-t border-slate-700">
             <div class="px-4 py-4 space-y-3">
-                <a href="{% url 'home' %}" class="block text-gray-300 hover:text-cyan-400 transition">Home</a>
+                <a href="{% url 'home' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Home</a>
                 {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="block text-gray-300 hover:text-cyan-400 transition">Dashboard</a>
-                    <a href="{% url 'portfolio' %}" class="block text-gray-300 hover:text-cyan-400 transition">Portfolio</a>
-                    <a href="{% url 'trading' %}" class="block text-gray-300 hover:text-cyan-400 transition">Trading</a>
-                    <a href="{% url 'logout' %}" class="block text-red-400 hover:text-red-300 transition">Logout</a>
+                    <a href="{% url 'dashboard' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Dashboard</a>
+                    <a href="{% url 'portfolio' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Portfolio</a>
+                    <a href="{% url 'trading' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Trading</a>
+                    <a href="{% url 'logout' %}" class="block text-red-400 hover:text-red-300 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Logout</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="block text-gray-300 hover:text-cyan-400 transition">Login</a>
-                    <a href="{% url 'register' %}" class="block btn-primary px-6 py-2 rounded-lg text-white font-semibold text-center">Get Started</a>
+                    <a href="{% url 'login' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Login</a>
+                    <a href="{% url 'register' %}" class="block btn-primary px-6 py-3 rounded-lg text-white font-semibold text-center shadow-lg">Get Started</a>
                 {% endif %}
+                
+                <!-- Mobile Language Selector -->
+                <div class="language-selector-wrapper mt-4">
+                    <button class="language-button w-full justify-between" onclick="toggleMobileLanguageDropdown()">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-globe"></i>
+                            <span id="current-language-mobile">English</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </button>
+                    
+                    <div id="language-dropdown-mobile" class="language-dropdown" style="position: relative; width: 100%; margin-top: 0.5rem;">
+                        <div class="language-option active" onclick="changeLanguageMobile('en', 'English')">
+                            <span class="language-flag">🇬🇧</span>
+                            <span>English</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguageMobile('es', 'Español')">
+                            <span class="language-flag">🇪🇸</span>
+                            <span>Español</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguageMobile('fr', 'Français')">
+                            <span class="language-flag">🇫🇷</span>
+                            <span>Français</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguageMobile('de', 'Deutsch')">
+                            <span class="language-flag">🇩🇪</span>
+                            <span>Deutsch</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguageMobile('zh-CN', '中文')">
+                            <span class="language-flag">🇨🇳</span>
+                            <span>中文</span>
+                        </div>
+                        <div class="language-option" onclick="changeLanguageMobile('ja', '日本語')">
+                            <span class="language-flag">🇯🇵</span>
+                            <span>日本語</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -239,10 +414,13 @@
     {% if messages %}
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
             {% for message in messages %}
-                <div class="rounded-lg p-4 mb-4 {% if message.tags == 'success' %}bg-green-900/50 border border-green-500 text-green-200{% elif message.tags == 'error' or message.tags == 'danger' %}bg-red-900/50 border border-red-500 text-red-200{% elif message.tags == 'warning' %}bg-yellow-900/50 border border-yellow-500 text-yellow-200{% else %}bg-blue-900/50 border border-blue-500 text-blue-200{% endif %}">
+                <div class="message-alert rounded-xl p-4 mb-4 {% if message.tags == 'success' %}bg-gradient-to-r from-green-900/50 to-emerald-900/50 border border-green-500/50 text-green-200{% elif message.tags == 'error' or message.tags == 'danger' %}bg-gradient-to-r from-red-900/50 to-rose-900/50 border border-red-500/50 text-red-200{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-900/50 to-amber-900/50 border border-yellow-500/50 text-yellow-200{% else %}bg-gradient-to-r from-blue-900/50 to-cyan-900/50 border border-blue-500/50 text-blue-200{% endif %} backdrop-blur-sm shadow-lg">
                     <div class="flex items-center justify-between">
-                        <span>{{ message }}</span>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-xl">&times;</button>
+                        <div class="flex items-center space-x-3">
+                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} text-xl"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-xl hover:text-white transition-colors duration-300 ml-4 hover:rotate-90 transform transition-transform">&times;</button>
                     </div>
                 </div>
             {% endfor %}
@@ -255,20 +433,23 @@
     </main>
     
     <!-- Footer -->
-    <footer class="bg-slate-900 border-t border-slate-800 mt-20">
+    <footer class="bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 mt-20 shadow-2xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-xl font-bold gradient-text mb-4">InfinityinfluxTrading</h3>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-chart-line text-2xl gradient-text"></i>
+                        <h3 class="text-xl font-bold gradient-text">InfinityinfluxTrading</h3>
+                    </div>
                     <p class="text-gray-400">Your trusted partner in cryptocurrency trading and investment.</p>
                 </div>
                 <div>
-                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <h4 class="font-semibold mb-4 text-gray-200">Connect</h4>
                     <div class="flex space-x-4">
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition"><i class="fab fa-x-twitter"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition"><i class="fab fa-discord"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition"><i class="fab fa-instagram"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition"><i class="fab fa-telegram"></i></a>
+                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-x-twitter"></i></a>
+                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-discord"></i></a>
+                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-instagram"></i></a>
+                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-telegram"></i></a>
                     </div>
                 </div>
             </div>
@@ -278,234 +459,165 @@
         </div>
     </footer>
 
-    <!-- Google Translate Element (Hidden) -->
+    <!-- Hidden Google Translate Elements -->
     <div id="google_translate_element"></div>
-    
+    <div id="google_translate_element_mobile"></div>
+
     <!-- Google Translate Script -->
     <script type="text/javascript">
+        var googleTranslateLoaded = false;
+        
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'af,sq,am,ar,hy,az,eu,be,bn,bs,bg,ca,ceb,ny,zh-CN,zh-TW,co,hr,cs,da,nl,en,eo,et,tl,fi,fr,fy,gl,ka,de,el,gu,ht,ha,haw,he,hi,hmn,hu,is,ig,id,ga,it,ja,jw,kn,kk,km,ko,ku,ky,lo,la,lv,lt,lb,mk,mg,ms,ml,mt,mi,mr,mn,my,ne,no,ps,fa,pl,pt,pa,ro,ru,sm,gd,sr,st,sn,sd,si,sk,sl,so,es,su,sw,sv,tg,ta,te,th,tr,uk,ur,uz,vi,cy,xh,yi,yo,zu',
+                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,vi,th,pl,nl',
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
+                autoDisplay: false,
+                multilanguagePage: true
             }, 'google_translate_element');
+            
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,vi,th,pl,nl',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false,
+                multilanguagePage: true
+            }, 'google_translate_element_mobile');
+            
+            googleTranslateLoaded = true;
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <script>
-        // Language data with flags and codes
-        const languages = [
-            { code: 'en', name: 'English', flag: '🇬🇧' },
-            { code: 'es', name: 'Spanish', flag: '🇪🇸' },
-            { code: 'fr', name: 'French', flag: '🇫🇷' },
-            { code: 'de', name: 'German', flag: '🇩🇪' },
-            { code: 'it', name: 'Italian', flag: '🇮🇹' },
-            { code: 'pt', name: 'Portuguese', flag: '🇵🇹' },
-            { code: 'ru', name: 'Russian', flag: '🇷🇺' },
-            { code: 'zh-CN', name: 'Chinese (Simplified)', flag: '🇨🇳' },
-            { code: 'zh-TW', name: 'Chinese (Traditional)', flag: '🇹🇼' },
-            { code: 'ja', name: 'Japanese', flag: '🇯🇵' },
-            { code: 'ko', name: 'Korean', flag: '🇰🇷' },
-            { code: 'ar', name: 'Arabic', flag: '🇸🇦' },
-            { code: 'hi', name: 'Hindi', flag: '🇮🇳' },
-            { code: 'bn', name: 'Bengali', flag: '🇧🇩' },
-            { code: 'pa', name: 'Punjabi', flag: '🇮🇳' },
-            { code: 'te', name: 'Telugu', flag: '🇮🇳' },
-            { code: 'mr', name: 'Marathi', flag: '🇮🇳' },
-            { code: 'ta', name: 'Tamil', flag: '🇮🇳' },
-            { code: 'ur', name: 'Urdu', flag: '🇵🇰' },
-            { code: 'tr', name: 'Turkish', flag: '🇹🇷' },
-            { code: 'vi', name: 'Vietnamese', flag: '🇻🇳' },
-            { code: 'th', name: 'Thai', flag: '🇹🇭' },
-            { code: 'pl', name: 'Polish', flag: '🇵🇱' },
-            { code: 'nl', name: 'Dutch', flag: '🇳🇱' },
-            { code: 'el', name: 'Greek', flag: '🇬🇷' },
-            { code: 'cs', name: 'Czech', flag: '🇨🇿' },
-            { code: 'sv', name: 'Swedish', flag: '🇸🇪' },
-            { code: 'ro', name: 'Romanian', flag: '🇷🇴' },
-            { code: 'hu', name: 'Hungarian', flag: '🇭🇺' },
-            { code: 'uk', name: 'Ukrainian', flag: '🇺🇦' },
-            { code: 'da', name: 'Danish', flag: '🇩🇰' },
-            { code: 'fi', name: 'Finnish', flag: '🇫🇮' },
-            { code: 'no', name: 'Norwegian', flag: '🇳🇴' },
-            { code: 'id', name: 'Indonesian', flag: '🇮🇩' },
-            { code: 'ms', name: 'Malay', flag: '🇲🇾' },
-            { code: 'tl', name: 'Filipino', flag: '🇵🇭' },
-            { code: 'he', name: 'Hebrew', flag: '🇮🇱' },
-            { code: 'fa', name: 'Persian', flag: '🇮🇷' },
-            { code: 'sw', name: 'Swahili', flag: '🇰🇪' },
-            { code: 'af', name: 'Afrikaans', flag: '🇿🇦' },
-            { code: 'sq', name: 'Albanian', flag: '🇦🇱' },
-            { code: 'am', name: 'Amharic', flag: '🇪🇹' },
-            { code: 'hy', name: 'Armenian', flag: '🇦🇲' },
-            { code: 'az', name: 'Azerbaijani', flag: '🇦🇿' },
-            { code: 'eu', name: 'Basque', flag: '🇪🇸' },
-            { code: 'be', name: 'Belarusian', flag: '🇧🇾' },
-            { code: 'bs', name: 'Bosnian', flag: '🇧🇦' },
-            { code: 'bg', name: 'Bulgarian', flag: '🇧🇬' },
-            { code: 'ca', name: 'Catalan', flag: '🇪🇸' },
-            { code: 'hr', name: 'Croatian', flag: '🇭🇷' },
-            { code: 'eo', name: 'Esperanto', flag: '🌍' },
-            { code: 'et', name: 'Estonian', flag: '🇪🇪' },
-            { code: 'ka', name: 'Georgian', flag: '🇬🇪' },
-            { code: 'gu', name: 'Gujarati', flag: '🇮🇳' },
-            { code: 'ht', name: 'Haitian Creole', flag: '🇭🇹' },
-            { code: 'ha', name: 'Hausa', flag: '🇳🇬' },
-            { code: 'is', name: 'Icelandic', flag: '🇮🇸' },
-            { code: 'ig', name: 'Igbo', flag: '🇳🇬' },
-            { code: 'ga', name: 'Irish', flag: '🇮🇪' },
-            { code: 'jw', name: 'Javanese', flag: '🇮🇩' },
-            { code: 'kn', name: 'Kannada', flag: '🇮🇳' },
-            { code: 'kk', name: 'Kazakh', flag: '🇰🇿' },
-            { code: 'km', name: 'Khmer', flag: '🇰🇭' },
-            { code: 'ku', name: 'Kurdish', flag: '🇮🇶' },
-            { code: 'ky', name: 'Kyrgyz', flag: '🇰🇬' },
-            { code: 'lo', name: 'Lao', flag: '🇱🇦' },
-            { code: 'la', name: 'Latin', flag: '🏛️' },
-            { code: 'lv', name: 'Latvian', flag: '🇱🇻' },
-            { code: 'lt', name: 'Lithuanian', flag: '🇱🇹' },
-            { code: 'lb', name: 'Luxembourgish', flag: '🇱🇺' },
-            { code: 'mk', name: 'Macedonian', flag: '🇲🇰' },
-            { code: 'mg', name: 'Malagasy', flag: '🇲🇬' },
-            { code: 'ml', name: 'Malayalam', flag: '🇮🇳' },
-            { code: 'mt', name: 'Maltese', flag: '🇲🇹' },
-            { code: 'mi', name: 'Maori', flag: '🇳🇿' },
-            { code: 'mn', name: 'Mongolian', flag: '🇲🇳' },
-            { code: 'my', name: 'Myanmar (Burmese)', flag: '🇲🇲' },
-            { code: 'ne', name: 'Nepali', flag: '🇳🇵' },
-            { code: 'ps', name: 'Pashto', flag: '🇦🇫' },
-            { code: 'sr', name: 'Serbian', flag: '🇷🇸' },
-            { code: 'si', name: 'Sinhala', flag: '🇱🇰' },
-            { code: 'sk', name: 'Slovak', flag: '🇸🇰' },
-            { code: 'sl', name: 'Slovenian', flag: '🇸🇮' },
-            { code: 'so', name: 'Somali', flag: '🇸🇴' },
-            { code: 'su', name: 'Sundanese', flag: '🇮🇩' },
-            { code: 'tg', name: 'Tajik', flag: '🇹🇯' },
-            { code: 'uz', name: 'Uzbek', flag: '🇺🇿' },
-            { code: 'cy', name: 'Welsh', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
-            { code: 'xh', name: 'Xhosa', flag: '🇿🇦' },
-            { code: 'yi', name: 'Yiddish', flag: '🕍' },
-            { code: 'yo', name: 'Yoruba', flag: '🇳🇬' },
-            { code: 'zu', name: 'Zulu', flag: '🇿🇦' },
-        ];
+        // Language Dropdown Toggle
+        function toggleLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown');
+            dropdown.classList.toggle('active');
+        }
 
-        let currentLanguage = 'en';
+        function toggleMobileLanguageDropdown() {
+            const dropdown = document.getElementById('language-dropdown-mobile');
+            dropdown.classList.toggle('active');
+        }
 
-        // Initialize language list
-        function initLanguageList() {
-            const languageList = document.getElementById('language-list');
-            languageList.innerHTML = '';
-
-            languages.forEach(lang => {
-                const item = document.createElement('div');
-                item.className = `language-item ${lang.code === currentLanguage ? 'active' : ''}`;
-                item.innerHTML = `
-                    <span class="language-flag">${lang.flag}</span>
-                    <span class="flex-1">${lang.name}</span>
-                    ${lang.code === currentLanguage ? '<i class="fas fa-check text-cyan-400"></i>' : ''}
-                `;
-                item.onclick = () => changeLanguage(lang.code, lang.flag);
-                languageList.appendChild(item);
+        // Change Language
+        function changeLanguage(langCode, langName) {
+            document.getElementById('current-language').textContent = langName;
+            
+            // Update active state
+            document.querySelectorAll('#language-dropdown .language-option').forEach(opt => {
+                opt.classList.remove('active');
             });
-        }
-
-        // Toggle language menu
-        function toggleLanguageMenu() {
-            const menu = document.getElementById('language-menu');
-            menu.classList.toggle('hidden');
-            if (!menu.classList.contains('hidden')) {
-                document.getElementById('language-search').value = '';
-                initLanguageList();
-            }
-        }
-
-        // Filter languages
-        function filterLanguages() {
-            const searchTerm = document.getElementById('language-search').value.toLowerCase();
-            const languageList = document.getElementById('language-list');
-            languageList.innerHTML = '';
-
-            const filtered = languages.filter(lang => 
-                lang.name.toLowerCase().includes(searchTerm) || 
-                lang.code.toLowerCase().includes(searchTerm)
-            );
-
-            filtered.forEach(lang => {
-                const item = document.createElement('div');
-                item.className = `language-item ${lang.code === currentLanguage ? 'active' : ''}`;
-                item.innerHTML = `
-                    <span class="language-flag">${lang.flag}</span>
-                    <span class="flex-1">${lang.name}</span>
-                    ${lang.code === currentLanguage ? '<i class="fas fa-check text-cyan-400"></i>' : ''}
-                `;
-                item.onclick = () => changeLanguage(lang.code, lang.flag);
-                languageList.appendChild(item);
-            });
-        }
-
-        // Change language
-        function changeLanguage(langCode, flag) {
-            currentLanguage = langCode;
-            document.getElementById('current-language-flag').textContent = flag;
+            event.target.closest('.language-option').classList.add('active');
             
             // Trigger Google Translate
-            const selectElement = document.querySelector('.goog-te-combo');
-            if (selectElement) {
-                selectElement.value = langCode;
-                selectElement.dispatchEvent(new Event('change'));
-            }
+            triggerGoogleTranslate(langCode);
             
-            // Save preference
-            localStorage.setItem('selectedLanguage', langCode);
-            localStorage.setItem('selectedLanguageFlag', flag);
-            
-            toggleLanguageMenu();
+            // Close dropdown
+            toggleLanguageDropdown();
         }
 
-        // Load saved language on page load
-        window.addEventListener('load', function() {
-            const savedLang = localStorage.getItem('selectedLanguage');
-            const savedFlag = localStorage.getItem('selectedLanguageFlag');
+        function changeLanguageMobile(langCode, langName) {
+            document.getElementById('current-language-mobile').textContent = langName;
             
-            if (savedLang && savedFlag) {
-                currentLanguage = savedLang;
-                document.getElementById('current-language-flag').textContent = savedFlag;
+            // Update active state
+            document.querySelectorAll('#language-dropdown-mobile .language-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            event.target.closest('.language-option').classList.add('active');
+            
+            // Trigger Google Translate
+            triggerGoogleTranslate(langCode);
+            
+            // Close dropdown
+            toggleMobileLanguageDropdown();
+        }
+
+        function triggerGoogleTranslate(langCode) {
+            // Try multiple times to ensure Google Translate is loaded
+            let attempts = 0;
+            const maxAttempts = 20;
+            
+            const attemptTranslation = setInterval(() => {
+                const selectElement = document.querySelector('.goog-te-combo');
                 
-                // Wait for Google Translate to load
-                setTimeout(() => {
-                    const selectElement = document.querySelector('.goog-te-combo');
-                    if (selectElement) {
-                        selectElement.value = savedLang;
-                        selectElement.dispatchEvent(new Event('change'));
+                if (selectElement) {
+                    selectElement.value = langCode;
+                    
+                    // Try multiple event types
+                    selectElement.dispatchEvent(new Event('change', { bubbles: true }));
+                    selectElement.dispatchEvent(new Event('click', { bubbles: true }));
+                    
+                    // Force the translation by simulating user interaction
+                    if (selectElement.value === langCode) {
+                        clearInterval(attemptTranslation);
+                        
+                        // Additional trigger to ensure translation happens
+                        setTimeout(() => {
+                            const frame = document.querySelector('.goog-te-menu-frame');
+                            if (frame) {
+                                console.log('Translation triggered successfully');
+                            }
+                        }, 500);
                     }
-                }, 1000);
-            }
-            
-            initLanguageList();
-        });
+                }
+                
+                attempts++;
+                if (attempts >= maxAttempts) {
+                    clearInterval(attemptTranslation);
+                    console.warn('Could not trigger translation. Trying page reload method...');
+                    
+                    // Last resort: Add language to URL
+                    if (langCode !== 'en') {
+                        const currentUrl = window.location.href;
+                        if (!currentUrl.includes('#googtrans')) {
+                            window.location.hash = 'googtrans(en|' + langCode + ')';
+                            window.location.reload();
+                        }
+                    }
+                }
+            }, 200);
+        }
 
-        // Close language menu when clicking outside
+        // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
-            const languageDropdown = document.querySelector('.language-dropdown');
-            const languageMenu = document.getElementById('language-menu');
+            const wrapper = document.querySelector('.language-selector-wrapper');
+            const dropdown = document.getElementById('language-dropdown');
             
-            if (languageDropdown && !languageDropdown.contains(event.target)) {
-                languageMenu.classList.add('hidden');
+            if (wrapper && !wrapper.contains(event.target) && dropdown) {
+                dropdown.classList.remove('active');
             }
         });
 
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        });
+        // Mobile menu toggle with animation
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                const icon = this.querySelector('i');
+                
+                if (mobileMenu) {
+                    mobileMenu.classList.toggle('hidden');
+                    
+                    // Toggle icon
+                    if (icon.classList.contains('fa-bars')) {
+                        icon.classList.remove('fa-bars');
+                        icon.classList.add('fa-times');
+                    } else {
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                }
+            });
+        }
         
-        // Auto-hide messages after 5 seconds
+        // Auto-hide messages after 5 seconds with fade out
         setTimeout(function() {
-            const messages = document.querySelectorAll('[class*="bg-green-900"], [class*="bg-red-900"], [class*="bg-yellow-900"], [class*="bg-blue-900"]');
+            const messages = document.querySelectorAll('.message-alert');
             messages.forEach(function(message) {
-                message.style.transition = 'opacity 0.5s';
+                message.style.transition = 'all 0.5s ease-out';
+                message.style.transform = 'translateX(100%)';
                 message.style.opacity = '0';
                 setTimeout(function() {
                     message.remove();
