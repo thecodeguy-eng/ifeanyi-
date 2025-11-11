@@ -43,7 +43,7 @@ class WalletAddress(models.Model):
         ('BTC', 'Bitcoin'),
         ('ETH', 'Ethereum'),
         ('SOL', 'Solana'),
-        ('USDT', 'Tether'),
+        ('USDT', 'Tether (Trc)'),
         ('BNB', 'Binance Coin'),
         ('XRP', 'Ripple'),
         ('ADA', 'Cardano'),
@@ -107,7 +107,7 @@ class UserBotSubscription(models.Model):
 class CopyTrader(models.Model):
     """Professional traders available for copy trading"""
     name = models.CharField(max_length=100)
-    profile_image = models.ImageField(upload_to='trader_profiles/', null=True, blank=True)
+    profile_image = CloudinaryField('trader_profiles', null=True, blank=True)
     country = models.CharField(max_length=100)
     country_flag = models.CharField(max_length=10)  # Country code for flag
     rating = models.DecimalField(max_digits=3, decimal_places=1, validators=[MinValueValidator(0)])
@@ -172,7 +172,6 @@ class Transaction(models.Model):
     currency = models.CharField(max_length=10, default='USD')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     proof_image = CloudinaryField('payment_proofs', null=True, blank=True)
-    # proof_image = models.ImageField(upload_to='payment_proofs/', null=True, blank=True)
     blockchain_transaction_id = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     crypto_currency = models.CharField(max_length=10, null=True, blank=True)

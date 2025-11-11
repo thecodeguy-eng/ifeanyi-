@@ -15,7 +15,7 @@ from django.utils import timezone
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings,SupportChat, SupportMessage
+    Trade, PlatformSettings, SupportChat, SupportMessage
 )
 
 # Set up logging
@@ -44,7 +44,6 @@ def get_crypto_price(symbol):
     Uses November 2025 prices as fallback
     """
     try:
-        # Map symbols to CoinGecko IDs
         symbol_map = {
             'BTC': 'bitcoin',
             'ETH': 'ethereum',
@@ -61,7 +60,6 @@ def get_crypto_price(symbol):
             logger.warning(f"Unknown cryptocurrency symbol: {symbol}")
             return Decimal('1')
         
-        # Make API request
         url = f"https://api.coingecko.com/api/v3/simple/price?ids={coin_id}&vs_currencies=usd"
         logger.info(f"Fetching price for {symbol} from CoinGecko API")
         
@@ -70,7 +68,6 @@ def get_crypto_price(symbol):
         
         data = response.json()
         
-        # Extract price
         if coin_id in data and 'usd' in data[coin_id]:
             price = Decimal(str(data[coin_id]['usd']))
             logger.info(f"Successfully fetched {symbol} price: ${price}")
@@ -86,16 +83,15 @@ def get_crypto_price(symbol):
     except Exception as e:
         logger.error(f"Unexpected error getting price for {symbol}: {e}")
     
-    # Fallback prices - November 2025 current market prices
     fallback_prices = {
-        'BTC': Decimal('102000'),      # Bitcoin ~$102,000
-        'ETH': Decimal('3350'),        # Ethereum ~$3,350
-        'SOL': Decimal('158'),         # Solana ~$158
-        'USDT': Decimal('1.00'),       # Tether ~$1.00
-        'BNB': Decimal('943'),         # BNB ~$943
-        'XRP': Decimal('2.23'),        # Ripple ~$2.23
-        'ADA': Decimal('0.53'),        # Cardano ~$0.53
-        'DOGE': Decimal('0.163'),      # Dogecoin ~$0.163
+        'BTC': Decimal('102000'),
+        'ETH': Decimal('3350'),
+        'SOL': Decimal('158'),
+        'USDT': Decimal('1.00'),
+        'BNB': Decimal('943'),
+        'XRP': Decimal('2.23'),
+        'ADA': Decimal('0.53'),
+        'DOGE': Decimal('0.163'),
     }
     
     fallback_price = fallback_prices.get(symbol.upper(), Decimal('1'))
@@ -121,7 +117,6 @@ def register(request):
         phone_number = request.POST.get('phone_number')
         preferred_currency = request.POST.get('preferred_currency', 'USD')
         
-        # Validation
         if User.objects.filter(username=username).exists():
             messages.error(request, 'Username already exists')
             return redirect('register')
@@ -130,7 +125,6 @@ def register(request):
             messages.error(request, 'Email already exists')
             return redirect('register')
         
-        # Create user
         user = User.objects.create_user(
             username=username,
             email=email,
@@ -153,7 +147,6 @@ def user_login(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         
-        # Find user by email
         try:
             user_obj = User.objects.get(email=email)
             user = authenticate(request, username=user_obj.username, password=password)
@@ -181,14 +174,8 @@ def user_logout(request):
 def dashboard(request):
     """Main dashboard"""
     user = request.user
-    
-    # Get recent transactions
     recent_transactions = Transaction.objects.filter(user=user)[:10]
-    
-    # Get active bot subscriptions
     active_bots = UserBotSubscription.objects.filter(user=user, is_active=True)
-    
-    # Get active copy trading subscriptions
     active_copy_trades = CopyTradingSubscription.objects.filter(user=user, is_active=True)
     
     context = {
@@ -209,7 +196,6 @@ def portfolio(request):
     user = request.user
     portfolio_items = Portfolio.objects.filter(user=user)
     
-    # Update current values
     for item in portfolio_items:
         current_price = get_crypto_price(item.cryptocurrency)
         item.current_value = item.amount * current_price
@@ -234,7 +220,6 @@ def trading(request):
         to_currency = request.POST.get('to_currency')
         from_amount = Decimal(request.POST.get('from_amount'))
         
-        # Get exchange rates using real-time prices
         if from_currency == 'USD':
             to_price = get_crypto_price(to_currency)
             to_amount = from_amount / to_price
@@ -250,15 +235,11 @@ def trading(request):
             to_amount = usd_value / to_price
             exchange_rate = from_price / to_price
         
-        # Calculate fee
         settings = PlatformSettings.objects.first()
         fee_percentage = settings.trading_fee_percentage if settings else Decimal('0.5')
         fee = (from_amount * fee_percentage) / 100
-        
-        # Apply fee to output
         to_amount = to_amount * (1 - (fee_percentage / 100))
         
-        # Check balance
         if from_currency == 'USD':
             if request.user.account_balance < from_amount:
                 messages.error(request, 'Insufficient balance')
@@ -271,7 +252,6 @@ def trading(request):
                 messages.error(request, 'Insufficient cryptocurrency balance')
                 return redirect('trading')
         
-        # Execute trade
         trade = Trade.objects.create(
             user=request.user,
             trade_type=trade_type.upper(),
@@ -284,7 +264,6 @@ def trading(request):
             status='COMPLETED'
         )
         
-        # Update balances
         if from_currency == 'USD':
             request.user.account_balance -= from_amount
             request.user.save()
@@ -310,7 +289,6 @@ def trading(request):
                 }
             )
             if not created:
-                # Update average buy price
                 total_value = (portfolio_item.amount * portfolio_item.average_buy_price) + (to_amount * current_price)
                 portfolio_item.amount += to_amount
                 portfolio_item.average_buy_price = total_value / portfolio_item.amount
@@ -323,13 +301,8 @@ def trading(request):
         messages.success(request, f'Trade executed successfully! Received {to_amount:.8f} {to_currency}')
         return redirect('portfolio')
     
-    # Get available currencies
     portfolio_items = Portfolio.objects.filter(user=request.user)
-    
-    context = {
-        'portfolio_items': portfolio_items,
-    }
-    
+    context = {'portfolio_items': portfolio_items}
     return render(request, 'trading.html', context)
 
 
@@ -354,7 +327,6 @@ def purchase_bot(request, plan_id):
     plan = get_object_or_404(TradingBotPlan, id=plan_id, is_active=True)
     
     if request.method == 'POST':
-        # Will redirect to payment page
         request.session['purchase_type'] = 'bot'
         request.session['purchase_id'] = plan_id
         request.session['purchase_amount'] = str(plan.price)
@@ -368,11 +340,7 @@ def purchase_bot(request, plan_id):
 def copy_trading(request):
     """Copy trading page"""
     traders = CopyTrader.objects.filter(is_active=True)
-    
-    context = {
-        'traders': traders,
-    }
-    
+    context = {'traders': traders}
     return render(request, 'copy_trading.html', context)
 
 
@@ -393,10 +361,7 @@ def copy_trader_detail(request, trader_id):
         request.session['purchase_amount'] = str(amount)
         return redirect('payment_page')
     
-    context = {
-        'trader': trader,
-    }
-    
+    context = {'trader': trader}
     return render(request, 'copy_trader_detail.html', context)
 
 
@@ -426,22 +391,18 @@ def payment_page(request):
     """Universal payment page with real-time crypto prices"""
     wallet_addresses = WalletAddress.objects.filter(is_active=True)
     
-    # Get amount from session
     amount = None
     purchase_type = request.session.get('purchase_type', 'deposit')
     
-    # Check all possible session keys for amount
     if 'deposit_amount' in request.session:
         amount = Decimal(request.session['deposit_amount'])
     elif 'purchase_amount' in request.session:
         amount = Decimal(request.session['purchase_amount'])
     
-    # If no amount found, redirect back
     if amount is None:
         messages.error(request, 'Invalid payment session. Please try again.')
         return redirect('dashboard')
     
-    # Calculate crypto amounts using real-time prices
     crypto_amounts = {}
     for wallet in wallet_addresses:
         try:
@@ -461,7 +422,6 @@ def payment_page(request):
         proof_image = request.FILES.get('proof_image')
         blockchain_tx_id = request.POST.get('transaction_id', '')
         
-        # Validate cryptocurrency selection
         if not selected_crypto or selected_crypto not in crypto_amounts:
             messages.error(request, 'Please select a valid cryptocurrency')
             context = {
@@ -472,7 +432,6 @@ def payment_page(request):
             }
             return render(request, 'payment_page.html', context)
         
-        # Validate proof image
         if not proof_image:
             messages.error(request, 'Please upload payment proof screenshot')
             context = {
@@ -483,11 +442,9 @@ def payment_page(request):
             }
             return render(request, 'payment_page.html', context)
         
-        # Get actual crypto amount at time of submission
         crypto_price = get_crypto_price(selected_crypto)
         actual_crypto_amount = amount / crypto_price if crypto_price > 0 else Decimal('0')
         
-        # Create transaction
         transaction = Transaction.objects.create(
             user=request.user,
             transaction_type='DEPOSIT' if purchase_type == 'deposit' else 'BOT_PURCHASE' if purchase_type == 'bot' else 'COPY_TRADE',
@@ -502,7 +459,6 @@ def payment_page(request):
         
         logger.info(f"Payment proof submitted: User {request.user.username}, Amount ${amount}, Crypto {actual_crypto_amount:.8f} {selected_crypto}")
         
-        # Clear session
         request.session.pop('deposit_amount', None)
         request.session.pop('purchase_amount', None)
         request.session.pop('purchase_type', None)
@@ -545,11 +501,9 @@ def withdrawal(request):
             messages.error(request, 'Insufficient balance')
             return redirect('withdrawal')
         
-        # Calculate crypto amount using real-time price
         crypto_price = get_crypto_price(crypto_currency)
         crypto_amount = amount / crypto_price if crypto_price > 0 else Decimal('0')
         
-        # Create withdrawal transaction
         transaction = Transaction.objects.create(
             user=request.user,
             transaction_type='WITHDRAWAL',
@@ -574,11 +528,7 @@ def withdrawal(request):
 def transactions(request):
     """Transaction history"""
     all_transactions = Transaction.objects.filter(user=request.user)
-    
-    context = {
-        'transactions': all_transactions,
-    }
-    
+    context = {'transactions': all_transactions}
     return render(request, 'transactions.html', context)
 
 
@@ -599,24 +549,34 @@ def get_crypto_prices(request):
     
     return JsonResponse(prices)
 
-# Chat Support Views
+
+# ============================================
+# ENHANCED CHAT SUPPORT VIEWS
+# ============================================
+
 @login_required
 def get_or_create_active_chat(request):
-    """Get or create active chat session"""
+    """Get or create active chat session - only one active chat per user"""
+    # Get or create the active chat
     chat, created = SupportChat.objects.get_or_create(
         user=request.user,
         status='ACTIVE',
         defaults={'created_at': timezone.now()}
     )
     
+    # Get all messages
     messages = chat.messages.all().values(
-        'id', 'sender_type', 'sender_name', 'message', 'created_at'
+        'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
     )
+    
+    # Mark user's messages as read
+    chat.messages.filter(sender_type='SUPPORT', is_read=False).update(is_read=True)
     
     return JsonResponse({
         'chat_id': chat.id,
         'messages': list(messages),
-        'created': created
+        'created': created,
+        'chat_status': chat.status
     })
 
 
@@ -637,27 +597,29 @@ def send_support_message(request):
                 status='ACTIVE'
             )
             
-            # Create message
+            # Create user message
             message = SupportMessage.objects.create(
                 chat=chat,
                 sender_type='USER',
                 sender_name=request.user.username,
-                message=message_text
+                message=message_text,
+                is_read=False  # Will be marked read when admin views
             )
             
-            # Auto-reply from support (you can customize this)
+            # Optional: Auto-reply for immediate response (you can remove this if not needed)
             auto_reply = get_auto_reply(message_text)
             if auto_reply:
                 SupportMessage.objects.create(
                     chat=chat,
                     sender_type='SUPPORT',
-                    sender_name='Support Team',
-                    message=auto_reply
+                    sender_name='Support Bot',
+                    message=auto_reply,
+                    is_read=False
                 )
             
             # Get all messages
             messages = chat.messages.all().values(
-                'id', 'sender_type', 'sender_name', 'message', 'created_at'
+                'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
             )
             
             return JsonResponse({
@@ -674,7 +636,7 @@ def send_support_message(request):
 
 @login_required
 def get_chat_messages(request):
-    """Get all messages from active chat"""
+    """Get all messages from active chat - used for polling"""
     try:
         chat = SupportChat.objects.filter(
             user=request.user,
@@ -682,15 +644,19 @@ def get_chat_messages(request):
         ).first()
         
         if not chat:
-            return JsonResponse({'messages': []})
+            return JsonResponse({'messages': [], 'chat_status': 'NO_ACTIVE_CHAT'})
+        
+        # Mark support messages as read
+        chat.messages.filter(sender_type='SUPPORT', is_read=False).update(is_read=True)
         
         messages = chat.messages.all().values(
-            'id', 'sender_type', 'sender_name', 'message', 'created_at'
+            'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
         )
         
         return JsonResponse({
             'chat_id': chat.id,
-            'messages': list(messages)
+            'messages': list(messages),
+            'chat_status': chat.status
         })
         
     except Exception as e:
@@ -700,16 +666,16 @@ def get_chat_messages(request):
 
 @login_required
 def clear_support_chat(request):
-    """Close current chat and create a new one"""
+    """User closes current chat - admin can still see closed chats"""
     if request.method == 'POST':
         try:
-            # Close active chats
+            # Close active chat (don't delete)
             SupportChat.objects.filter(
                 user=request.user,
                 status='ACTIVE'
             ).update(status='CLOSED', closed_at=timezone.now())
             
-            # Create new chat
+            # Create new active chat
             new_chat = SupportChat.objects.create(
                 user=request.user,
                 status='ACTIVE'
@@ -720,11 +686,12 @@ def clear_support_chat(request):
                 chat=new_chat,
                 sender_type='SUPPORT',
                 sender_name='Support Team',
-                message='Hello! Welcome to InfinityinfluxTrading support. How can we help you today?'
+                message='Hello! Welcome to InfinityinfluxTrading support. How can we help you today?',
+                is_read=False
             )
             
             messages = new_chat.messages.all().values(
-                'id', 'sender_type', 'sender_name', 'message', 'created_at'
+                'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
             )
             
             return JsonResponse({
@@ -741,10 +708,9 @@ def clear_support_chat(request):
 
 
 def get_auto_reply(message):
-    """Generate automatic replies based on keywords"""
+    """Generate automatic replies based on keywords (optional)"""
     message_lower = message.lower()
     
-    # Keyword-based auto replies
     if any(word in message_lower for word in ['deposit', 'payment', 'fund']):
         return "To make a deposit, navigate to Dashboard > Deposit. We support Bitcoin, Ethereum, Solana, and other major cryptocurrencies. Deposits are processed within 10-30 minutes after confirmation."
     
@@ -766,5 +732,5 @@ def get_auto_reply(message):
     elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
         return "Hello! Thank you for contacting InfinityinfluxTrading support. How can I assist you today?"
     
-    # Default response for first message or unrecognized queries
-    return "Thank you for your message. A support agent will respond to you shortly. In the meantime, you can ask about deposits, withdrawals, trading bots, or copy trading."
+    # Return None if no auto-reply needed - admin will respond manually
+    return None
