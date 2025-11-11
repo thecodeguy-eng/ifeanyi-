@@ -65,9 +65,33 @@ class UserBotSubscriptionAdmin(admin.ModelAdmin):
 @admin.register(CopyTrader)
 class CopyTraderAdmin(admin.ModelAdmin):
     list_display = ['name', 'country', 'rating', 'profit_percentage_per_day', 
-                    'total_trades', 'followers_count', 'roi', 'is_active']
+                    'total_trades', 'followers_count', 'roi', 'has_image', 'is_active']
     list_filter = ['country', 'is_active', 'created_at']
     search_fields = ['name', 'country']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'profile_image', 'country', 'country_flag')
+        }),
+        ('Performance Metrics', {
+            'fields': ('rating', 'profit_percentage_per_day', 'roi', 'total_trades', 'followers_count')
+        }),
+        ('Commission & Status', {
+            'fields': ('commission_percentage', 'is_active')
+        }),
+    )
+    
+    def has_image(self, obj):
+        if obj.profile_image:
+            return format_html('<span style="color: green;">✓ Yes</span>')
+        return format_html('<span style="color: red;">✗ No</span>')
+    has_image.short_description = 'Profile Image'
+    
+    def save_model(self, request, obj, form, change):
+        """Custom save to handle image uploads"""
+        super().save_model(request, obj, form, change)
+        self.message_user(request, f'Trader {obj.name} saved successfully!')
+        
 
 
 @admin.register(CopyTradingSubscription)

@@ -353,17 +353,48 @@ def copy_trader_detail(request, trader_id):
         amount = Decimal(request.POST.get('amount', '0'))
         
         if amount < 100:
-            messages.error(request, 'Minimum investment is $100')
-            return redirect('copy_trading')
+            return JsonResponse({'success': False, 'message': 'Minimum investment is $100'})
         
-        request.session['purchase_type'] = 'copy_trade'
-        request.session['purchase_id'] = trader_id
-        request.session['purchase_amount'] = str(amount)
-        return redirect('payment_page')
+        # Check if user has sufficient balance
+        if request.user.account_balance < amount:
+            return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
+        
+        # Deduct amount from user balance
+        request.user.account_balance -= amount
+        request.user.save()
+        
+        # Calculate commission
+        commission = (amount * trader.commission_percentage) / 100
+        
+        # Create copy trading subscription
+        subscription = CopyTradingSubscription.objects.create(
+            user=request.user,
+            trader=trader,
+            amount_invested=amount,
+            commission_paid=commission,
+            is_active=True,
+            total_earned=Decimal('0')
+        )
+        
+        # Update trader followers count
+        trader.followers_count += 1
+        trader.save()
+        
+        # Create transaction record
+        Transaction.objects.create(
+            user=request.user,
+            transaction_type='COPY_TRADE',
+            amount=amount,
+            currency=request.user.preferred_currency,
+            status='COMPLETED',
+            description=f'Copy trading investment with {trader.name}'
+        )
+        
+        messages.success(request, f'Successfully copying {trader.name}\'s trades!')
+        return JsonResponse({'success': True, 'message': f'Successfully copying {trader.name}\'s trades! Investment: ${amount}'})
     
     context = {'trader': trader}
     return render(request, 'copy_trader_detail.html', context)
-
 
 # Deposit
 @login_required
