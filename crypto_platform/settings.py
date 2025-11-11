@@ -169,6 +169,7 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
+
 # hosting email vercel: ibchukwugirim@gmail.com
 
 # database (supabase): ibeawuchinzechukwu@gmail.com
