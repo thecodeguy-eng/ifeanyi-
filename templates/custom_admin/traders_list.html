@@ -1,0 +1,71 @@
+<!-- traders_list.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Copy Traders Management{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8 flex items-center justify-between">
+    <div>
+        <h2 class="text-3xl font-bold gradient-text mb-2">Copy Traders Management</h2>
+        <p class="text-gray-400">Manage professional traders</p>
+    </div>
+    <a href="{% url 'admin_trader_create' %}" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add New Trader
+    </a>
+</div>
+
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Trader</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Country</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Rating</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Daily Profit</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">ROI</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Commission</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for trader in traders %}
+                <tr class="hover:bg-slate-800/50">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                <i class="fas fa-user-tie text-blue-400"></i>
+                            </div>
+                            <span class="text-white font-medium">{{ trader.name }}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-300">{{ trader.country }}</td>
+                    <td class="px-6 py-4 text-yellow-400">{{ trader.rating }} ⭐</td>
+                    <td class="px-6 py-4 text-green-400">{{ trader.profit_percentage_per_day }}%</td>
+                    <td class="px-6 py-4 text-cyan-400">{{ trader.roi }}%</td>
+                    <td class="px-6 py-4 text-purple-400">{{ trader.commission_percentage }}%</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center space-x-2">
+                            <a href="{% url 'admin_trader_edit' trader.id %}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{% url 'admin_trader_delete' trader.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm"
+                                        onclick="return confirm('Delete this trader?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-400">No traders found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

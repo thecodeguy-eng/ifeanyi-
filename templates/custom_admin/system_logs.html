@@ -1,0 +1,57 @@
+<!-- ===================================== -->
+<!-- system_logs.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}System Logs{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">System Logs</h2>
+    <p class="text-gray-400">Monitor system activities</p>
+</div>
+
+<div class="admin-card p-6 rounded-xl mb-6">
+    <form method="GET" class="flex gap-4">
+        <select name="level" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            <option value="all">All Levels</option>
+            <option value="info" {% if level == 'info' %}selected{% endif %}>Info</option>
+            <option value="warning" {% if level == 'warning' %}selected{% endif %}>Warning</option>
+            <option value="error" {% if level == 'error' %}selected{% endif %}>Error</option>
+            <option value="critical" {% if level == 'critical' %}selected{% endif %}>Critical</option>
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white">
+            <i class="fas fa-filter mr-2"></i> Filter
+        </button>
+    </form>
+</div>
+
+<div class="admin-card rounded-xl p-6">
+    <div class="space-y-3 max-h-[600px] overflow-y-auto">
+        {% for log in logs %}
+        <div class="p-4 bg-slate-800/50 rounded-lg border-l-4
+            {% if log.level == 'INFO' %}border-blue-500
+            {% elif log.level == 'WARNING' %}border-yellow-500
+            {% elif log.level == 'ERROR' %}border-red-500
+            {% else %}border-purple-500{% endif %}">
+            <div class="flex items-start justify-between mb-2">
+                <span class="px-2 py-1 rounded text-xs
+                    {% if log.level == 'INFO' %}bg-blue-500/20 text-blue-400
+                    {% elif log.level == 'WARNING' %}bg-yellow-500/20 text-yellow-400
+                    {% elif log.level == 'ERROR' %}bg-red-500/20 text-red-400
+                    {% else %}bg-purple-500/20 text-purple-400{% endif %}">
+                    {{ log.level }}
+                </span>
+                <span class="text-gray-500 text-xs">{{ log.timestamp|date:"M d, Y H:i:s" }}</span>
+            </div>
+            <p class="text-white font-semibold mb-1">{{ log.action }}</p>
+            <p class="text-gray-400 text-sm">{{ log.description }}</p>
+            {% if log.user %}
+            <p class="text-gray-500 text-xs mt-2">User: {{ log.user.username }}</p>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p class="text-gray-400 text-center py-8">No logs found</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}User Detail - {{ user_obj.username }}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-bold gradient-text mb-2">User Details</h2>
+            <p class="text-gray-400">Manage user account and activities</p>
+        </div>
+        <a href="{% url 'admin_users_list' %}" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Users
+        </a>
+    </div>
+</div>
+
+<!-- User Info Card -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+    <div class="lg:col-span-2 admin-card p-6 rounded-xl">
+        <div class="flex items-start space-x-6">
+            <div class="bg-blue-500/20 w-20 h-20 rounded-full flex items-center justify-center text-3xl text-blue-400 font-bold">
+                {{ user_obj.username.0|upper }}
+            </div>
+            <div class="flex-1">
+                <h3 class="text-2xl font-bold text-white mb-2">{{ user_obj.legal_first_name }} {{ user_obj.legal_last_name }}</h3>
+                <p class="text-gray-400 mb-1"><i class="fas fa-user mr-2"></i>@{{ user_obj.username }}</p>
+                <p class="text-gray-400 mb-1"><i class="fas fa-envelope mr-2"></i>{{ user_obj.email }}</p>
+                <p class="text-gray-400 mb-3"><i class="fas fa-phone mr-2"></i>{{ user_obj.phone_number }}</p>
+                
+                <div class="flex flex-wrap gap-2">
+                    {% if user_obj.is_active %}
+                    <span class="px-3 py-1 bg-green-500/20 text-green-400 text-sm rounded-full">Active</span>
+                    {% else %}
+                    <span class="px-3 py-1 bg-red-500/20 text-red-400 text-sm rounded-full">Inactive</span>
+                    {% endif %}
+                    
+                    {% if user_obj.withdrawal_approved %}
+                    <span class="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full">Withdrawal Approved</span>
+                    {% endif %}
+                    
+                    {% if user_obj.is_staff %}
+                    <span class="px-3 py-1 bg-purple-500/20 text-purple-400 text-sm rounded-full">Staff</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="admin-card p-6 rounded-xl">
+        <h4 class="text-lg font-bold text-white mb-4">Quick Actions</h4>
+        <form method="POST" class="space-y-3">
+            {% csrf_token %}
+            <button type="submit" name="action" value="toggle_active" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white">
+                <i class="fas fa-power-off mr-2"></i> {% if user_obj.is_active %}Deactivate{% else %}Activate{% endif %} Account
+            </button>
+            <button type="submit" name="action" value="toggle_withdrawal" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white">
+                <i class="fas fa-check-circle mr-2"></i> {% if user_obj.withdrawal_approved %}Disapprove{% else %}Approve{% endif %} Withdrawal
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Account Balance</p>
+        <p class="text-2xl font-bold text-green-400">${{ user_obj.account_balance|floatformat:2 }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Deposits</p>
+        <p class="text-2xl font-bold text-blue-400">${{ user_obj.total_deposit|floatformat:2 }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Withdrawals</p>
+        <p class="text-2xl font-bold text-orange-400">${{ user_obj.total_withdrawal|floatformat:2 }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Profit</p>
+        <p class="text-2xl font-bold text-cyan-400">${{ user_obj.total_profit|floatformat:2 }}</p>
+    </div>
+</div>
+
+<!-- Update Balance -->
+<div class="admin-card p-6 rounded-xl mb-6">
+    <h4 class="text-lg font-bold text-white mb-4">Update Balance</h4>
+    <form method="POST" class="flex gap-4">
+        {% csrf_token %}
+        <input type="number" name="amount" step="0.01" value="{{ user_obj.account_balance }}" 
+               class="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white" required>
+        <button type="submit" name="action" value="update_balance" 
+                class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-save mr-2"></i> Update Balance
+        </button>
+    </form>
+</div>
+
+<!-- Tabs -->
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="border-b border-slate-700">
+        <div class="flex space-x-1 p-2" role="tablist">
+            <button class="tab-btn active px-6 py-3 text-white rounded-t-lg" onclick="showTab('transactions')">
+                Transactions
+            </button>
+            <button class="tab-btn px-6 py-3 text-gray-400 rounded-t-lg" onclick="showTab('trades')">
+                Trades
+            </button>
+            <button class="tab-btn px-6 py-3 text-gray-400 rounded-t-lg" onclick="showTab('activities')">
+                Activities
+            </button>
+        </div>
+    </div>
+    
+    <!-- Transactions Tab -->
+    <div id="transactions-tab" class="tab-content p-6">
+        <h4 class="text-lg font-bold text-white mb-4">Recent Transactions</h4>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-800">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">ID</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Type</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    {% for transaction in user_transactions %}
+                    <tr class="hover:bg-slate-800/50">
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ transaction.transaction_id|slice:":8" }}...</td>
+                        <td class="px-4 py-3 text-sm text-white">{{ transaction.transaction_type }}</td>
+                        <td class="px-4 py-3 text-sm text-green-400">${{ transaction.amount|floatformat:2 }}</td>
+                        <td class="px-4 py-3">
+                            <span class="px-2 py-1 text-xs rounded-full
+                                {% if transaction.status == 'PENDING' %}bg-yellow-500/20 text-yellow-400
+                                {% elif transaction.status == 'APPROVED' %}bg-green-500/20 text-green-400
+                                {% else %}bg-red-500/20 text-red-400{% endif %}">
+                                {{ transaction.status }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-400">No transactions found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Trades Tab -->
+    <div id="trades-tab" class="tab-content p-6 hidden">
+        <h4 class="text-lg font-bold text-white mb-4">Recent Trades</h4>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-800">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Type</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">From</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">To</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Amount</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    {% for trade in user_trades %}
+                    <tr class="hover:bg-slate-800/50">
+                        <td class="px-4 py-3 text-sm text-white">{{ trade.trade_type }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ trade.from_amount }} {{ trade.from_currency }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ trade.to_amount }} {{ trade.to_currency }}</td>
+                        <td class="px-4 py-3 text-sm text-green-400">${{ trade.fee|floatformat:2 }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ trade.created_at|date:"M d, Y H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-gray-400">No trades found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Activities Tab -->
+    <div id="activities-tab" class="tab-content p-6 hidden">
+        <h4 class="text-lg font-bold text-white mb-4">Recent Activities</h4>
+        <div class="space-y-3 max-h-96 overflow-y-auto">
+            {% for activity in user_activities %}
+            <div class="flex items-center space-x-3 p-3 bg-slate-800/50 rounded-lg">
+                <div class="bg-blue-500/20 p-2 rounded-lg">
+                    <i class="fas fa-eye text-blue-400"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="text-white text-sm">{{ activity.page_title }} - {{ activity.action_type }}</p>
+                    <p class="text-gray-400 text-xs">{{ activity.page_url }}</p>
+                    <p class="text-gray-500 text-xs">{{ activity.timestamp|date:"M d, Y H:i:s" }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-400 text-center py-4">No activities found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+    });
+    
+    // Remove active class from all buttons
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-slate-800', 'text-white');
+        btn.classList.add('text-gray-400');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + '-tab').classList.remove('hidden');
+    
+    // Add active class to clicked button
+    event.target.classList.add('active', 'bg-slate-800', 'text-white');
+    event.target.classList.remove('text-gray-400');
+}
+</script>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from . import admin_views
 
 urlpatterns = [
     # Home
@@ -43,4 +44,41 @@ urlpatterns = [
     path('chat/send-message/', views.send_support_message, name='send_support_message'),
     path('chat/get-messages/', views.get_chat_messages, name='get_chat_messages'),
     path('chat/clear/', views.clear_support_chat, name='clear_support_chat'),
+
+
+
+    # ADMIN_URL
+    
+    # Dashboard
+    path('custom-admin/', admin_views.admin_dashboard, name='admin_dashboard'),
+    
+    # Users Management
+    path('custom-admin/users/', admin_views.admin_users_list, name='admin_users_list'),
+    path('custom-admin/users/<int:user_id>/', admin_views.admin_user_detail, name='admin_user_detail'),
+    
+    # Transactions Management
+    path('custom-admin/transactions/', admin_views.admin_transactions_list, name='admin_transactions_list'),
+    path('custom-admin/transactions/<int:transaction_id>/action/', admin_views.admin_transaction_action, name='admin_transaction_action'),
+    
+    # Copy Traders Management
+    path('custom-admin/traders/', admin_views.admin_traders_list, name='admin_traders_list'),
+    path('custom-admin/traders/create/', admin_views.admin_trader_create, name='admin_trader_create'),
+    path('custom-admin/traders/<int:trader_id>/edit/', admin_views.admin_trader_edit, name='admin_trader_edit'),
+    path('custom-admin/traders/<int:trader_id>/delete/', admin_views.admin_trader_delete, name='admin_trader_delete'),
+    
+    # Bot Plans Management
+    path('custom-admin/bot-plans/', admin_views.admin_bot_plans_list, name='admin_bot_plans_list'),
+    
+    # Support Chats
+    path('custom-admin/support/', admin_views.admin_support_chats, name='admin_support_chats'),
+    path('custom-admin/support/<int:chat_id>/', admin_views.admin_chat_detail, name='admin_chat_detail'),
+    
+    # User Activities
+    path('custom-admin/activities/', admin_views.admin_activities_list, name='admin_activities_list'),
+    
+    # Settings
+    path('custom-admin/settings/', admin_views.admin_settings, name='admin_settings'),
+    
+    # System Logs
+    path('custom-admin/logs/', admin_views.admin_system_logs, name='admin_system_logs'),
 ]

@@ -294,3 +294,72 @@ class SupportMessage(models.Model):
     
     def __str__(self):
         return f"{self.sender_name}: {self.message[:50]}"
+
+class UserActivity(models.Model):
+    """Track all user activities and page visits"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities', null=True, blank=True)
+    session_id = models.CharField(max_length=255, null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+    page_url = models.CharField(max_length=500)
+    page_title = models.CharField(max_length=200, null=True, blank=True)
+    action_type = models.CharField(max_length=50, default='PAGE_VIEW')  # PAGE_VIEW, LOGIN, LOGOUT, DEPOSIT, etc.
+    timestamp = models.DateTimeField(auto_now_add=True)
+    duration = models.IntegerField(null=True, blank=True)  # Time spent on page in seconds
+    
+    class Meta:
+        db_table = 'user_activities'
+        ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['-timestamp']),
+            models.Index(fields=['user', '-timestamp']),
+        ]
+    
+    def __str__(self):
+        username = self.user.username if self.user else 'Anonymous'
+        return f"{username} - {self.page_url} - {self.timestamp}"
+
+
+class AdminUser(models.Model):
+    """Custom admin users separate from regular users"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='admin_profile')
+    role = models.CharField(max_length=50, choices=[
+        ('SUPER_ADMIN', 'Super Admin'),
+        ('ADMIN', 'Admin'),
+        ('MODERATOR', 'Moderator'),
+    ], default='ADMIN')
+    permissions = models.JSONField(default=dict)  # Custom permissions
+    last_login = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'admin_users'
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
+
+
+class SystemLog(models.Model):
+    """System-wide logs for admin monitoring"""
+    LOG_LEVELS = [
+        ('INFO', 'Info'),
+        ('WARNING', 'Warning'),
+        ('ERROR', 'Error'),
+        ('CRITICAL', 'Critical'),
+    ]
+    
+    level = models.CharField(max_length=20, choices=LOG_LEVELS, default='INFO')
+    action = models.CharField(max_length=100)
+    description = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    data = models.JSONField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'system_logs'
+        ordering = ['-timestamp']
+    
+    def __str__(self):
+        return f"{self.level} - {self.action} - {self.timestamp}"

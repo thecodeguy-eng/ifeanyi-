@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %} - InfinityinfluxTrading</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; }
+        
+        .admin-sidebar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(59, 130, 246, 0.2);
+            transition: transform 0.3s ease;
+        }
+        
+        .admin-card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .admin-card:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        
+        /* Mobile Sidebar Styles */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+        }
+        
+        .sidebar-overlay.show {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                z-index: 50;
+                transform: translateX(-100%);
+            }
+            
+            .admin-sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+                padding-top: 72px !important;
+            }
+            
+            .mobile-header {
+                display: flex !important;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-header {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 16rem;
+            }
+        }
+        
+        {% block extra_css %}{% endblock %}
+    </style>
+</head>
+<body class="text-gray-100">
+    
+    <!-- Mobile Header -->
+    <div class="mobile-header hidden fixed top-0 left-0 right-0 bg-slate-900 border-b border-slate-700 p-4 z-30">
+        <div class="flex items-center justify-between">
+            <button id="menuToggle" class="text-white text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-shield-alt text-xl gradient-text"></i>
+                <span class="text-lg font-bold gradient-text">Admin Panel</span>
+            </div>
+            <div class="w-8"></div>
+        </div>
+    </div>
+    
+    <!-- Sidebar Overlay -->
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
+    
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <div id="adminSidebar" class="admin-sidebar w-64 fixed h-full overflow-y-auto">
+            <div class="p-6">
+                <!-- Close button for mobile -->
+                <button id="closeSidebar" class="md:hidden absolute top-4 right-4 text-white text-2xl z-10">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="flex items-center space-x-2 mb-8">
+                    <i class="fas fa-shield-alt text-3xl gradient-text"></i>
+                    <div>
+                        <h1 class="text-xl font-bold gradient-text">Admin Panel</h1>
+                        <p class="text-xs text-gray-400">InfinityinfluxTrading</p>
+                    </div>
+                </div>
+                
+                <!-- Admin Info -->
+                <div class="bg-slate-800/50 rounded-lg p-4 mb-6">
+                    <p class="text-gray-400 text-xs mb-1">Logged in as</p>
+                    <p class="text-white font-semibold">{{ request.user.username }}</p>
+                    <span class="text-xs px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full inline-block mt-2">
+                        {% if request.user.is_superuser %}Super Admin{% else %}Staff{% endif %}
+                    </span>
+                </div>
+                
+                <nav class="space-y-1">
+                    <a href="{% url 'admin_dashboard' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_users_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'users' in request.path %}active{% endif %}">
+                        <i class="fas fa-users w-5"></i>
+                        <span>Users</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_transactions_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'transactions' in request.path %}active{% endif %}">
+                        <i class="fas fa-exchange-alt w-5"></i>
+                        <span>Transactions</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_traders_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'traders' in request.path %}active{% endif %}">
+                        <i class="fas fa-user-tie w-5"></i>
+                        <span>Copy Traders</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_bot_plans_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'bot-plans' in request.path %}active{% endif %}">
+                        <i class="fas fa-robot w-5"></i>
+                        <span>Bot Plans</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_support_chats' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'support' in request.path %}active{% endif %}">
+                        <i class="fas fa-comments w-5"></i>
+                        <span>Support Chats</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_activities_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'activities' in request.path %}active{% endif %}">
+                        <i class="fas fa-history w-5"></i>
+                        <span>User Activities</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_settings' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'settings' in request.path %}active{% endif %}">
+                        <i class="fas fa-cog w-5"></i>
+                        <span>Settings</span>
+                    </a>
+                    
+                    <a href="{% url 'admin_system_logs' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'logs' in request.path %}active{% endif %}">
+                        <i class="fas fa-file-alt w-5"></i>
+                        <span>System Logs</span>
+                    </a>
+                    
+                    <div class="border-t border-gray-700 my-4"></div>
+                    
+                    <a href="{% url 'home' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300">
+                        <i class="fas fa-home w-5"></i>
+                        <span>Go to Site</span>
+                    </a>
+                    
+                    <a href="{% url 'logout' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-red-400">
+                        <i class="fas fa-sign-out-alt w-5"></i>
+                        <span>Logout</span>
+                    </a>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content flex-1 p-4 md:p-8">
+            <!-- Messages -->
+            {% if messages %}
+            <div class="mb-6 space-y-3">
+                {% for message in messages %}
+                <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-500/20 border border-green-500/50 text-green-300{% elif message.tags == 'error' %}bg-red-500/20 border border-red-500/50 text-red-300{% elif message.tags == 'warning' %}bg-yellow-500/20 border border-yellow-500/50 text-yellow-300{% else %}bg-blue-500/20 border border-blue-500/50 text-blue-300{% endif %}">
+                    <div class="flex items-center justify-between">
+                        <span><i class="fas fa-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}exclamation-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %} mr-2"></i>{{ message }}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-xl hover:opacity-70">&times;</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% block admin_content %}{% endblock %}
+        </div>
+    </div>
+    
+    {% block extra_js %}{% endblock %}
+    
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const closeSidebar = document.getElementById('closeSidebar');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        
+        function openSidebar() {
+            adminSidebar.classList.add('open');
+            sidebarOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSidebarFunc() {
+            adminSidebar.classList.remove('open');
+            sidebarOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', openSidebar);
+        }
+        
+        if (closeSidebar) {
+            closeSidebar.addEventListener('click', closeSidebarFunc);
+        }
+        
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebarFunc);
+        }
+        
+        // Close sidebar when clicking a link on mobile
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 769) {
+                    closeSidebarFunc();
+                }
+            });
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 769) {
+                closeSidebarFunc();
+            }
+        });
+        
+        // Auto-hide messages after 5 seconds
+        setTimeout(() => {
+            document.querySelectorAll('[class*="bg-green-500"], [class*="bg-red-500"], [class*="bg-yellow-500"], [class*="bg-blue-500"]').forEach(msg => {
+                if (msg.closest('.mb-6')) {
+                    msg.style.transition = 'all 0.5s';
+                    msg.style.opacity = '0';
+                    msg.style.transform = 'translateX(100%)';
+                    setTimeout(() => msg.remove(), 500);
+                }
+            });
+        }, 5000);
+    </script>
+</body>
+</html>

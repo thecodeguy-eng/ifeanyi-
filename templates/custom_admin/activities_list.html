@@ -1,0 +1,213 @@
+{% extends 'custom_admin/admin_base.html' %}
+{% load custom_filters %}
+
+{% block title %}User Activities - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">User Activities Tracking</h2>
+    <p class="text-gray-400">Monitor every page visit and user action in real-time</p>
+</div>
+
+<!-- Real-time Stats -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-blue-500/20 p-3 rounded-lg">
+                <i class="fas fa-eye text-2xl text-blue-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Page Views</p>
+                <p class="text-2xl font-bold text-white">{{ activities|length }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-green-500/20 p-3 rounded-lg">
+                <i class="fas fa-users text-2xl text-green-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Unique Users</p>
+                <p class="text-2xl font-bold text-white">{{ unique_users }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-purple-500/20 p-3 rounded-lg">
+                <i class="fas fa-clock text-2xl text-purple-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Last 5 Minutes</p>
+                <p class="text-2xl font-bold text-white">{{ recent_count }}</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-cyan-500/20 p-3 rounded-lg">
+                <i class="fas fa-chart-line text-2xl text-cyan-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Today's Activities</p>
+                <p class="text-2xl font-bold text-white">{{ today_count }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="admin-card p-6 rounded-xl mb-6">
+    <form method="GET" class="flex flex-wrap gap-4">
+        <div class="flex-1 min-w-[200px]">
+            <input 
+                type="text" 
+                name="user" 
+                value="{{ user_filter }}"
+                placeholder="Filter by username..."
+                class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white"
+            >
+        </div>
+        <div>
+            <select name="action" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                <option value="all" {% if action_type == 'all' %}selected{% endif %}>All Actions</option>
+                <option value="page_view" {% if action_type == 'page_view' %}selected{% endif %}>Page Views</option>
+                <option value="login" {% if action_type == 'login' %}selected{% endif %}>Logins</option>
+                <option value="logout" {% if action_type == 'logout' %}selected{% endif %}>Logouts</option>
+                <option value="deposit_page" {% if action_type == 'deposit_page' %}selected{% endif %}>Deposit Pages</option>
+                <option value="withdrawal_page" {% if action_type == 'withdrawal_page' %}selected{% endif %}>Withdrawal Pages</option>
+                <option value="trading_page" {% if action_type == 'trading_page' %}selected{% endif %}>Trading Pages</option>
+                <option value="dashboard" {% if action_type == 'dashboard' %}selected{% endif %}>Dashboard</option>
+            </select>
+        </div>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-filter mr-2"></i> Apply Filter
+        </button>
+        <a href="{% url 'admin_activities_list' %}" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-redo mr-2"></i> Reset
+        </a>
+    </form>
+</div>
+
+<!-- Activities Timeline -->
+<div class="admin-card rounded-xl p-6">
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-white">Activity Timeline</h3>
+        <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-white text-sm">
+            <i class="fas fa-sync-alt mr-2"></i> Refresh
+        </button>
+    </div>
+    
+    <div class="space-y-4 max-h-[800px] overflow-y-auto">
+        {% for activity in activities %}
+        <div class="flex items-start space-x-4 p-4 bg-slate-800/50 rounded-lg hover:bg-slate-800 transition-colors border-l-4
+            {% if activity.action_type == 'LOGIN' %}border-green-500
+            {% elif activity.action_type == 'LOGOUT' %}border-red-500
+            {% elif activity.action_type == 'DEPOSIT_PAGE' %}border-yellow-500
+            {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}border-orange-500
+            {% elif activity.action_type == 'TRADING_PAGE' %}border-purple-500
+            {% elif activity.action_type == 'DASHBOARD' %}border-blue-500
+            {% else %}border-gray-500{% endif %}">
+            
+            <!-- Icon -->
+            <div class="flex-shrink-0 mt-1">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center
+                    {% if activity.action_type == 'LOGIN' %}bg-green-500/20
+                    {% elif activity.action_type == 'LOGOUT' %}bg-red-500/20
+                    {% elif activity.action_type == 'DEPOSIT_PAGE' %}bg-yellow-500/20
+                    {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}bg-orange-500/20
+                    {% elif activity.action_type == 'TRADING_PAGE' %}bg-purple-500/20
+                    {% elif activity.action_type == 'DASHBOARD' %}bg-blue-500/20
+                    {% else %}bg-gray-500/20{% endif %}">
+                    <i class="fas 
+                        {% if activity.action_type == 'LOGIN' %}fa-sign-in-alt text-green-400
+                        {% elif activity.action_type == 'LOGOUT' %}fa-sign-out-alt text-red-400
+                        {% elif activity.action_type == 'DEPOSIT_PAGE' %}fa-dollar-sign text-yellow-400
+                        {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}fa-money-bill-wave text-orange-400
+                        {% elif activity.action_type == 'TRADING_PAGE' %}fa-chart-line text-purple-400
+                        {% elif activity.action_type == 'DASHBOARD' %}fa-tachometer-alt text-blue-400
+                        {% else %}fa-eye text-gray-400{% endif %}">
+                    </i>
+                </div>
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 min-w-0">
+                <div class="flex items-start justify-between">
+                    <div>
+                        <p class="text-white font-semibold">
+                            {% if activity.user %}
+                                <a href="{% url 'admin_user_detail' activity.user.id %}" class="text-cyan-400 hover:underline">
+                                    {{ activity.user.username }}
+                                </a>
+                            {% else %}
+                                <span class="text-gray-400">Anonymous User</span>
+                            {% endif %}
+                        </p>
+                        <p class="text-gray-400 text-sm mt-1">
+                            <span class="font-medium text-white">{{ activity.action_type|format_action }}</span>
+                            • {{ activity.page_title }}
+                        </p>
+                        <p class="text-cyan-400 text-sm mt-1 break-all">
+                            <i class="fas fa-link text-xs mr-1"></i>
+                            <code class="bg-slate-900 px-2 py-1 rounded text-xs">{{ activity.page_url }}</code>
+                        </p>
+                    </div>
+                    <span class="text-gray-500 text-xs whitespace-nowrap ml-4">
+                        {{ activity.timestamp|timesince }} ago
+                    </span>
+                </div>
+                
+                <!-- Additional Info -->
+                <div class="mt-3 flex flex-wrap gap-3 text-xs">
+                    <span class="bg-slate-900 px-3 py-1 rounded-full text-gray-400">
+                        <i class="fas fa-network-wired mr-1"></i> {{ activity.ip_address }}
+                    </span>
+                    {% if activity.session_id %}
+                    <span class="bg-slate-900 px-3 py-1 rounded-full text-gray-400">
+                        <i class="fas fa-fingerprint mr-1"></i> Session: {{ activity.session_id|slice:":8" }}...
+                    </span>
+                    {% endif %}
+                    <span class="bg-slate-900 px-3 py-1 rounded-full text-gray-400">
+                        <i class="fas fa-clock mr-1"></i> {{ activity.timestamp|date:"M d, Y H:i:s" }}
+                    </span>
+                </div>
+                
+                <!-- User Agent (collapsed by default) -->
+                {% if activity.user_agent %}
+                <details class="mt-2">
+                    <summary class="text-xs text-gray-500 cursor-pointer hover:text-gray-400">
+                        <i class="fas fa-desktop mr-1"></i> View Browser Info
+                    </summary>
+                    <p class="text-xs text-gray-500 mt-2 bg-slate-900 p-2 rounded break-all">
+                        {{ activity.user_agent }}
+                    </p>
+                </details>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-12">
+            <i class="fas fa-inbox text-6xl text-gray-600 mb-4"></i>
+            <p class="text-gray-400 text-lg">No activities found</p>
+            <p class="text-gray-500 text-sm mt-2">User activities will appear here as they browse the site</p>
+            <button onclick="location.reload()" class="mt-4 bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white">
+                <i class="fas fa-sync-alt mr-2"></i> Refresh Page
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Info notification -->
+<div class="mt-6 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+    <p class="text-blue-400 text-sm">
+        <i class="fas fa-info-circle mr-2"></i>
+        Activities are tracked automatically. Click refresh to see the latest activities.
+    </p>
+</div>
+{% endblock %}

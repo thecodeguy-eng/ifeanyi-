@@ -1,0 +1,75 @@
+<!-- ===================================== -->
+<!-- support_chats.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Support Chats{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">Support Chats</h2>
+    <p class="text-gray-400">Manage customer support conversations</p>
+</div>
+
+<div class="admin-card p-6 rounded-xl mb-6">
+    <form method="GET" class="flex gap-4">
+        <select name="status" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            <option value="all">All Status</option>
+            <option value="active" {% if status == 'active' %}selected{% endif %}>Active</option>
+            <option value="closed" {% if status == 'closed' %}selected{% endif %}>Closed</option>
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white">
+            <i class="fas fa-filter mr-2"></i> Filter
+        </button>
+    </form>
+</div>
+
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Chat ID</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">User</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Messages</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Last Updated</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for chat in chats %}
+                <tr class="hover:bg-slate-800/50">
+                    <td class="px-6 py-4 text-gray-400">#{{ chat.id }}</td>
+                    <td class="px-6 py-4 text-white">{{ chat.user.username }}</td>
+                    <td class="px-6 py-4 text-gray-400">
+                        {{ chat.message_count }} messages
+                        {% if chat.unread_count > 0 %}
+                        <span class="ml-2 px-2 py-1 bg-red-500/20 text-red-400 text-xs rounded-full">
+                            {{ chat.unread_count }} unread
+                        </span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs {% if chat.status == 'ACTIVE' %}bg-green-500/20 text-green-400{% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                            {{ chat.status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400">{{ chat.updated_at|timesince }} ago</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center">
+                            <a href="{% url 'admin_chat_detail' chat.id %}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm">
+                                <i class="fas fa-eye"></i> View
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-400">No chats found</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

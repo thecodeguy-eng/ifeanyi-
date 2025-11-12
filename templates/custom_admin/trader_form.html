@@ -1,0 +1,89 @@
+<!-- trader_form.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}{% if action == 'create' %}Add New Trader{% else %}Edit Trader{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">
+        {% if action == 'create' %}Add New Trader{% else %}Edit Trader{% endif %}
+    </h2>
+    <p class="text-gray-400">Configure copy trader details</p>
+</div>
+
+<div class="admin-card p-6 rounded-xl max-w-2xl">
+    <form method="POST" enctype="multipart/form-data" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+            <label class="block text-gray-400 mb-2">Trader Name</label>
+            <input type="text" name="name" value="{% if trader %}{{ trader.name }}{% endif %}" required
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-400 mb-2">Country</label>
+                <input type="text" name="country" value="{% if trader %}{{ trader.country }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2">Country Flag (emoji)</label>
+                <input type="text" name="country_flag" value="{% if trader %}{{ trader.country_flag }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-400 mb-2">Rating (0-5)</label>
+                <input type="number" name="rating" step="0.1" min="0" max="5" 
+                       value="{% if trader %}{{ trader.rating }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2">Daily Profit (%)</label>
+                <input type="number" name="profit_percentage" step="0.01" 
+                       value="{% if trader %}{{ trader.profit_percentage_per_day }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-400 mb-2">ROI (%)</label>
+                <input type="number" name="roi" step="0.01" 
+                       value="{% if trader %}{{ trader.roi }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            
+            <div>
+                <label class="block text-gray-400 mb-2">Commission (%)</label>
+                <input type="number" name="commission" step="0.01" 
+                       value="{% if trader %}{{ trader.commission_percentage }}{% endif %}" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+        </div>
+        
+        <div>
+            <label class="block text-gray-400 mb-2">Profile Image</label>
+            {% if trader and trader.profile_image %}
+            <p class="text-sm text-gray-500 mb-2">Current image uploaded</p>
+            {% endif %}
+            <input type="file" name="profile_image" accept="image/*"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        
+        <div class="flex space-x-4">
+            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+                <i class="fas fa-save mr-2"></i> {% if action == 'create' %}Create Trader{% else %}Update Trader{% endif %}
+            </button>
+            <a href="{% url 'admin_traders_list' %}" class="flex-1 bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg text-white font-semibold text-center">
+                <i class="fas fa-times mr-2"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}
