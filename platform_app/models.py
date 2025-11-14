@@ -12,7 +12,6 @@ class User(AbstractUser):
         ('USD', 'US Dollar'),
         ('EUR', 'Euro'),
         ('GBP', 'British Pound'),
-        ('NGN', 'Nigerian Naira'),
     ]
     
     legal_first_name = models.CharField(max_length=100)
