@@ -46,3 +46,11 @@ def replace(value, args):
     
     old, new = args.split(',', 1)
     return str(value).replace(old, new)
+
+
+@register.filter
+def sum_attr(queryset, attr):
+    total = 0
+    for obj in queryset:
+        total += getattr(obj, attr, 0) or 0
+    return total
