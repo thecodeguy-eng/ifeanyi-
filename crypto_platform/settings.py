@@ -205,3 +205,5 @@ LOGGING = {
 # database (supabase): ibeawuchinzechukwu@gmail.com
 
 # cloudinary: ibchukwugirim@gmail.com (shared)
+
+# zohomail: arpartehousing@gmail.com
