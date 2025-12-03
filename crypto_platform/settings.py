@@ -206,4 +206,7 @@ LOGGING = {
 
 # cloudinary: ibchukwugirim@gmail.com (shared)
 
-# zohomail: arpartehousing@gmail.com
+# zohomail: 
+#   mail: nchukwugozirim@gmail.com
+#   password: @InfinityinfluxTrading1
+#   name: InfinityinfluxTrading
