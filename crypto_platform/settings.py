@@ -170,6 +170,13 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 
+# ============================================
+# BREVO (SENDINBLUE) EMAIL CONFIGURATION
+# ============================================
+BREVO_API_KEY = config('BREVO_API_KEY', default='')
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@infinityinfluxtrading.com')
+BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='InfinityinfluxTrading')
+
 # Logging Configuration
 LOGGING = {
     'version': 1,
@@ -210,3 +217,6 @@ LOGGING = {
 #   mail: nchukwugozirim@gmail.com
 #   password: @InfinityinfluxTrading1
 #   name: InfinityinfluxTrading
+
+# brevo:
+#   email:ibeawuchinzechukwu@gmail.com

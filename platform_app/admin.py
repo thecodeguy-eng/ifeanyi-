@@ -5,8 +5,28 @@ from django import forms
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage
+    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode
 )
+
+
+@admin.register(PasswordResetCode)
+class PasswordResetCodeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'email', 'code', 'is_used', 'is_valid_status', 'created_at', 'expires_at']
+    list_filter = ['is_used', 'created_at']
+    search_fields = ['user__username', 'email', 'code']
+    readonly_fields = ['user', 'email', 'code', 'created_at', 'expires_at']
+    
+    def is_valid_status(self, obj):
+        if obj.is_valid():
+            return format_html('<span style="color: green; font-weight: bold;">✓ Valid</span>')
+        elif obj.is_used:
+            return format_html('<span style="color: gray;">✗ Used</span>')
+        else:
+            return format_html('<span style="color: red;">✗ Expired</span>')
+    is_valid_status.short_description = 'Status'
+    
+    def has_add_permission(self, request):
+        return False  # Codes are created programmatically
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):

@@ -3,6 +3,9 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 import uuid
+from django.utils import timezone
+from datetime import timedelta
+import random
 
 from cloudinary.models import CloudinaryField
 
@@ -362,3 +365,37 @@ class SystemLog(models.Model):
     
     def __str__(self):
         return f"{self.level} - {self.action} - {self.timestamp}"
+    
+
+class PasswordResetCode(models.Model):
+    """Password reset codes for users"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_codes')
+    code = models.CharField(max_length=6)  # 6-digit code
+    email = models.EmailField()
+    is_used = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    
+    class Meta:
+        db_table = 'password_reset_codes'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.email} - {self.code} - {'Used' if self.is_used else 'Active'}"
+    
+    def is_valid(self):
+        """Check if code is still valid"""
+        return not self.is_used and timezone.now() < self.expires_at
+    
+    @staticmethod
+    def generate_code():
+        """Generate a random 6-digit code"""
+        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:  # Only on creation
+            if not self.code:
+                self.code = self.generate_code()
+            if not self.expires_at:
+                self.expires_at = timezone.now() + timedelta(minutes=15)  # Code valid for 15 minutes
+        super().save(*args, **kwargs)

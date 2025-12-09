@@ -11,16 +11,218 @@ import requests
 from datetime import datetime
 import logging
 from django.utils import timezone
+from .email_service import send_password_reset_code
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage
+    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode
 )
 
 # Set up logging
 logger = logging.getLogger(__name__)
 
+
+def forgot_password(request):
+    """Step 1: Request password reset - send code to email"""
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            user = User.objects.get(email=email)
+            
+            # Invalidate any existing unused codes for this user
+            PasswordResetCode.objects.filter(
+                user=user,
+                is_used=False
+            ).update(is_used=True)
+            
+            # Create new reset code
+            reset_code = PasswordResetCode.objects.create(
+                user=user,
+                email=email
+            )
+            
+            # Send email with reset code
+            user_name = f"{user.legal_first_name} {user.legal_last_name}"
+            result = send_password_reset_code(email, user_name, reset_code.code)
+            
+            if result.get('success'):
+                # Store email in session for next step
+                request.session['reset_email'] = email
+                messages.success(
+                    request, 
+                    f'A 6-digit reset code has been sent to {email}. Please check your inbox.'
+                )
+                return redirect('verify_reset_code')
+            else:
+                logger.error(f"Failed to send reset email: {result.get('error')}")
+                messages.error(
+                    request, 
+                    'Failed to send reset code. Please try again later.'
+                )
+                
+        except User.DoesNotExist:
+            # Don't reveal that email doesn't exist (security best practice)
+            messages.info(
+                request, 
+                'If an account exists with that email, a reset code has been sent.'
+            )
+            # Still redirect to give impression code was sent
+            request.session['reset_email'] = email
+            return redirect('verify_reset_code')
+    
+    return render(request, 'forgot_password.html')
+
+
+def verify_reset_code(request):
+    """Step 2: Verify the reset code sent to email"""
+    # Check if email is in session
+    email = request.session.get('reset_email')
+    if not email:
+        messages.error(request, 'Please start the password reset process again.')
+        return redirect('forgot_password')
+    
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        
+        try:
+            # Find the reset code
+            reset_code = PasswordResetCode.objects.filter(
+                email=email,
+                code=code,
+                is_used=False
+            ).latest('created_at')
+            
+            # Check if code is valid
+            if reset_code.is_valid():
+                # Store code in session for next step
+                request.session['reset_code_id'] = reset_code.id
+                messages.success(request, 'Code verified! Please enter your new password.')
+                return redirect('reset_password')
+            else:
+                messages.error(request, 'This code has expired. Please request a new one.')
+                return redirect('forgot_password')
+                
+        except PasswordResetCode.DoesNotExist:
+            messages.error(request, 'Invalid reset code. Please try again.')
+    
+    context = {
+        'email': email,
+        'masked_email': mask_email(email)
+    }
+    return render(request, 'verify_reset_code.html', context)
+
+
+def reset_password(request):
+    """Step 3: Set new password"""
+    # Check if code_id is in session
+    code_id = request.session.get('reset_code_id')
+    if not code_id:
+        messages.error(request, 'Please complete the verification step first.')
+        return redirect('forgot_password')
+    
+    try:
+        reset_code = PasswordResetCode.objects.get(id=code_id, is_used=False)
+        
+        # Double-check code is still valid
+        if not reset_code.is_valid():
+            messages.error(request, 'Reset code has expired. Please start again.')
+            # Clean up session
+            request.session.pop('reset_email', None)
+            request.session.pop('reset_code_id', None)
+            return redirect('forgot_password')
+        
+    except PasswordResetCode.DoesNotExist:
+        messages.error(request, 'Invalid reset session. Please start again.')
+        return redirect('forgot_password')
+    
+    if request.method == 'POST':
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+        
+        # Validate passwords match
+        if password1 != password2:
+            messages.error(request, 'Passwords do not match.')
+            return render(request, 'reset_password.html')
+        
+        # Validate password length
+        if len(password1) < 8:
+            messages.error(request, 'Password must be at least 8 characters long.')
+            return render(request, 'reset_password.html')
+        
+        # Update user password
+        user = reset_code.user
+        user.set_password(password1)
+        user.save()
+        
+        # Mark code as used
+        reset_code.is_used = True
+        reset_code.save()
+        
+        # Clean up session
+        request.session.pop('reset_email', None)
+        request.session.pop('reset_code_id', None)
+        
+        # Log the password reset
+        logger.info(f"Password reset successful for user: {user.username}")
+        
+        messages.success(
+            request, 
+            'Password reset successful! You can now login with your new password.'
+        )
+        return redirect('login')
+    
+    return render(request, 'reset_password.html', {'email': reset_code.email})
+
+
+def resend_reset_code(request):
+    """Resend reset code to email"""
+    email = request.session.get('reset_email')
+    if not email:
+        return redirect('forgot_password')
+    
+    try:
+        user = User.objects.get(email=email)
+        
+        # Invalidate old codes
+        PasswordResetCode.objects.filter(
+            user=user,
+            is_used=False
+        ).update(is_used=True)
+        
+        # Create new code
+        reset_code = PasswordResetCode.objects.create(
+            user=user,
+            email=email
+        )
+        
+        # Send email
+        user_name = f"{user.legal_first_name} {user.legal_last_name}"
+        result = send_password_reset_code(email, user_name, reset_code.code)
+        
+        if result.get('success'):
+            messages.success(request, 'A new reset code has been sent to your email.')
+        else:
+            messages.error(request, 'Failed to send reset code. Please try again.')
+            
+    except User.DoesNotExist:
+        messages.info(request, 'If an account exists, a new code has been sent.')
+    
+    return redirect('verify_reset_code')
+
+
+def mask_email(email):
+    """Mask email for privacy: user@example.com -> u***@example.com"""
+    try:
+        username, domain = email.split('@')
+        if len(username) <= 2:
+            masked_username = username[0] + '***'
+        else:
+            masked_username = username[0] + '***' + username[-1]
+        return f"{masked_username}@{domain}"
+    except:
+        return email
 
 def handler404(request, exception):
     """Custom 404 error handler"""

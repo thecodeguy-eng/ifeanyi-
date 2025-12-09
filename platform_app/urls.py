@@ -3,6 +3,14 @@ from . import views
 from . import admin_views
 
 urlpatterns = [
+
+    # PASSWORD RESET - ADD THESE NEW PATHS
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-reset-code/', views.verify_reset_code, name='verify_reset_code'),
+    path('reset-password/', views.reset_password, name='reset_password'),
+    path('resend-reset-code/', views.resend_reset_code, name='resend_reset_code'),
+
+
     # Home
     path('', views.home, name='home'),
     
