@@ -3,13 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}InfinityinfluxTrading{% endblock %}</title>
+    <title>{% block title %}Influxfinancetrading{% endblock %}</title>
 
-
-    <!-- Favicon links -->
-    <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcz4cR8PevniPhF9NO_wee5x09MMeoJwtWRnHPAf6z1Lbc9KpBaPYpcT0hP8UfkYsjnTBezLH0n6qU2HNMB1WDpKHuaJQ0xPl13EgsOjeOLYl_N1OeGGagwWyQsGWEs1MvMTXZdKpRr1bKwhchJIJFsHB04TUhJZYNm1Sz2RXLS812Nlu7oqbw7JYhUM0/s320/Image_fx%20(12).png">
-    <link rel="shortcut icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcz4cR8PevniPhF9NO_wee5x09MMeoJwtWRnHPAf6z1Lbc9KpBaPYpcT0hP8UfkYsjnTBezLH0n6qU2HNMB1WDpKHuaJQ0xPl13EgsOjeOLYl_N1OeGGagwWyQsGWEs1MvMTXZdKpRr1bKwhchJIJFsHB04TUhJZYNm1Sz2RXLS812Nlu7oqbw7JYhUM0/s320/Image_fx%20(12).png">
-    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzlrIBXP5-dkiWjh0bcjIWNhHaz5bheGWhxECQ6K63zf-QpqEUH-eJ4dAv_bMPbZXmMFVJ4Nt34fXPU7Q3U-2_LrrQ7v2ZDzaO_zy37L0-EwV1doIhDV4UwlNZrn6ypAYSn2oOdP2uJPwJJDEv-4WfEhBBj9JcFPz8Q4XQSWyPMCDcTshEyaTU0417BzE/s320/Image_fx%20(35).png">
     
     <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,218 +15,423 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --neon-green: #00ff88;
+            --neon-pink: #ff0066;
+            --neon-blue: #00d4ff;
+            --cyber-yellow: #ffff00;
+            --dark-bg: #0a0a0a;
+            --card-bg: #141414;
+            --border: #2a2a2a;
+        }
+        
         * {
-            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            top: 0px !important;
-        }
-        
-        .gradient-text {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .crypto-card {
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .crypto-card:hover {
-            border-color: rgba(59, 130, 246, 0.5);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            transition: all 0.3s ease;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-        
-        .crypto-ticker {
-            animation: scroll 30s linear infinite;
-        }
-        
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        .pulse-glow {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-        
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+            font-family: 'Syne', sans-serif;
+            background: var(--dark-bg);
+            color: #ffffff;
+            overflow-x: hidden;
+            position: relative;
+            top: 0 !important;
         }
 
-        /* Hide Google Translate Banner Completely */
-        .goog-te-banner-frame.skiptranslate {
-            display: none !important;
+        /* Animated Grid Background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 30s linear infinite;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .goog-te-balloon-frame {
-            display: none !important;
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
         }
 
-        #goog-gt-tt {
-            display: none !important;
+        /* Glowing Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(150px);
+            opacity: 0.2;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .goog-text-highlight {
-            background: none !important;
-            box-shadow: none !important;
+        .orb-1 {
+            width: 700px;
+            height: 700px;
+            background: var(--neon-green);
+            top: -300px;
+            right: -200px;
+            animation: orbFloat1 20s ease-in-out infinite;
         }
 
-        /* Premium Language Selector */
-        .language-selector-wrapper {
+        .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: var(--neon-pink);
+            bottom: -250px;
+            left: -150px;
+            animation: orbFloat2 25s ease-in-out infinite;
+        }
+
+        .orb-3 {
+            width: 500px;
+            height: 500px;
+            background: var(--neon-blue);
+            top: 50%;
+            left: 50%;
+            animation: orbFloat3 30s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-150px, 150px) scale(1.3); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(150px, -150px) scale(1.2); }
+        }
+
+        @keyframes orbFloat3 {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        /* Content Layer */
+        .content-layer {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Typography */
+        .title-font {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .mono-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Neo-Brutal Card */
+        .brutal-card {
+            background: var(--card-bg);
+            border: 4px solid var(--neon-green);
+            box-shadow: 10px 10px 0 rgba(0, 255, 136, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+
+        .brutal-card:hover {
+            transform: translate(-5px, -5px);
+            box-shadow: 15px 15px 0 rgba(0, 255, 136, 0.4);
+        }
+
+        .brutal-card-pink {
+            border-color: var(--neon-pink);
+            box-shadow: 10px 10px 0 rgba(255, 0, 102, 0.3);
+        }
+
+        .brutal-card-pink:hover {
+            box-shadow: 15px 15px 0 rgba(255, 0, 102, 0.4);
+        }
+
+        .brutal-card-blue {
+            border-color: var(--neon-blue);
+            box-shadow: 10px 10px 0 rgba(0, 212, 255, 0.3);
+        }
+
+        .brutal-card-blue:hover {
+            box-shadow: 15px 15px 0 rgba(0, 212, 255, 0.4);
+        }
+
+        /* Glitch Effect */
+        .glitch {
             position: relative;
             display: inline-block;
         }
 
-        .language-button {
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            animation: glitch-1 2.5s infinite;
+            color: var(--neon-blue);
+            z-index: -1;
+            clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+        }
+
+        .glitch::after {
+            animation: glitch-2 3s infinite;
+            color: var(--neon-pink);
+            z-index: -2;
+            clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+        }
+
+        @keyframes glitch-1 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+        }
+
+        @keyframes glitch-2 {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(3px, -3px); }
+            40% { transform: translate(3px, 3px); }
+            60% { transform: translate(-3px, -3px); }
+            80% { transform: translate(-3px, 3px); }
+        }
+
+        /* Neon Button */
+        .neon-btn {
+            background: transparent;
+            border: 3px solid var(--neon-green);
+            color: var(--neon-green);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .neon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--neon-green);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .neon-btn:hover {
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+        }
+
+        .neon-btn:hover::before {
+            left: 0;
+        }
+
+        .neon-btn-pink {
+            border-color: var(--neon-pink);
+            color: var(--neon-pink);
+        }
+
+        .neon-btn-pink::before {
+            background: var(--neon-pink);
+        }
+
+        .neon-btn-pink:hover {
+            box-shadow: 0 0 20px var(--neon-pink), 0 0 40px var(--neon-pink);
+        }
+
+        /* Navigation */
+        .nav-link {
+            position: relative;
+            color: #fff;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--neon-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--neon-green);
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* Language Selector */
+        .lang-selector {
+            position: relative;
+        }
+
+        .lang-btn {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 0.75rem;
-            color: #e5e7eb;
+            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            border: 2px solid var(--neon-green);
+            color: var(--neon-green);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .language-button:hover {
-            background: rgba(30, 41, 59, 0.9);
-            border-color: rgba(59, 130, 246, 0.6);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        .lang-btn:hover {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            box-shadow: 0 0 20px var(--neon-green);
         }
 
-        .language-button i {
-            color: #06b6d4;
-            font-size: 1.125rem;
-        }
-
-        .language-dropdown {
+        .lang-dropdown {
             position: absolute;
-            top: calc(100% + 0.5rem);
+            top: calc(100% + 1rem);
             right: 0;
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 1rem;
-            padding: 0.75rem;
-            min-width: 200px;
-            max-height: 300px;
+            background: var(--card-bg);
+            border: 3px solid var(--neon-green);
+            padding: 1rem;
+            min-width: 280px;
+            max-height: 400px;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            box-shadow: 10px 10px 0 rgba(0, 255, 136, 0.3);
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
+            transform: translateY(-20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .language-dropdown.active {
+        .lang-dropdown.active {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
         }
 
-        .language-dropdown::-webkit-scrollbar {
-            width: 6px;
+        .lang-dropdown::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .language-dropdown::-webkit-scrollbar-track {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 3px;
+        .lang-dropdown::-webkit-scrollbar-track {
+            background: var(--border);
         }
 
-        .language-dropdown::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 3px;
+        .lang-dropdown::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
+            border-radius: 4px;
         }
 
-        .language-option {
+        .lang-option {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 0.625rem;
-            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #e5e7eb;
-            font-size: 0.875rem;
+            color: #fff;
+            font-size: 0.9rem;
+            border-left: 3px solid transparent;
         }
 
-        .language-option:hover {
-            background: rgba(59, 130, 246, 0.15);
-            transform: translateX(4px);
+        .lang-option:hover {
+            background: rgba(0, 255, 136, 0.1);
+            border-left-color: var(--neon-green);
+            padding-left: 1.5rem;
         }
 
-        .language-option.active {
-            background: rgba(59, 130, 246, 0.25);
-            border-left: 3px solid #06b6d4;
+        .lang-option.active {
+            background: rgba(0, 255, 136, 0.2);
+            border-left-color: var(--neon-green);
+            color: var(--neon-green);
+            font-weight: 700;
         }
 
-        .language-flag {
-            font-size: 1.25rem;
+        .lang-flag {
+            font-size: 1.5rem;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.3));
         }
 
-        /* Hide default Google Translate element */
-        #google_translate_element,
-        #google_translate_element_mobile {
+        /* Hide Google Translate Widget */
+        .goog-te-banner-frame,
+        .goog-te-balloon-frame,
+        #goog-gt-tt,
+        #google_translate_element {
             display: none !important;
         }
 
-        .goog-te-gadget {
-            display: none !important;
+        /* Message Alerts */
+        .alert-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
-        /* Nav link hover effect */
-        nav a {
-            position: relative;
+        .alert {
+            background: var(--card-bg);
+            border: 3px solid;
+            padding: 1rem 1.5rem;
+            min-width: 300px;
+            box-shadow: 8px 8px 0;
+            animation: slideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        nav a:not(.btn-primary)::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            transition: width 0.3s ease;
+        .alert-success {
+            border-color: var(--neon-green);
+            box-shadow: 8px 8px 0 rgba(0, 255, 136, 0.3);
         }
 
-        nav a:not(.btn-primary):hover::after {
-            width: 100%;
+        .alert-error {
+            border-color: var(--neon-pink);
+            box-shadow: 8px 8px 0 rgba(255, 0, 102, 0.3);
         }
 
-        /* Message animation */
+        .alert-info {
+            border-color: var(--neon-blue);
+            box-shadow: 8px 8px 0 rgba(0, 212, 255, 0.3);
+        }
+
+        .alert-warning {
+            border-color: var(--cyber-yellow);
+            box-shadow: 8px 8px 0 rgba(255, 255, 0, 0.3);
+        }
+
         @keyframes slideIn {
             from {
-                transform: translateX(100%);
+                transform: translateX(400px);
                 opacity: 0;
             }
             to {
@@ -238,888 +440,774 @@
             }
         }
 
-        .message-alert {
-            animation: slideIn 0.3s ease-out;
+        /* Mobile Menu */
+        #mobile-menu {
+            background: var(--card-bg);
+            border-top: 3px solid var(--neon-green);
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            border-radius: 5px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-        }
-
-        /* ============================================ */
-        /* CHAT SUPPORT STYLES */
-        /* ============================================ */
-        .chat-modal {
-            display: none;
+        /* Chat Support */
+        #chat-fab {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 400px;
-            max-width: calc(100vw - 40px);
-            height: 600px;
-            max-height: calc(100vh - 100px);
-            background: rgba(15, 23, 42, 0.98);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 1rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            z-index: 9999;
-            flex-direction: column;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .chat-modal.active {
+            bottom: 2rem;
+            right: 2rem;
+            width: 70px;
+            height: 70px;
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            border-radius: 50%;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 30px var(--neon-green);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            animation: pulse 2s infinite;
         }
-        
-        .chat-modal.minimized {
-            height: 60px;
+
+        #chat-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px var(--neon-green);
         }
-        
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 30px var(--neon-green); }
+            50% { box-shadow: 0 0 50px var(--neon-green), 0 0 70px var(--neon-green); }
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 400px;
+            height: 600px;
+            background: var(--card-bg);
+            border: 4px solid var(--neon-green);
+            box-shadow: 15px 15px 0 rgba(0, 255, 136, 0.3);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(50px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #chat-window.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
         .chat-header {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            padding: 1rem;
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            padding: 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-radius: 1rem 1rem 0 0;
-            cursor: pointer;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        
-        .chat-header-title {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            color: white;
-        }
-        
-        .chat-header-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .chat-header-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-        }
-        
-        .chat-header-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1);
-        }
-        
-        .chat-messages {
+
+        #chat-body {
             flex: 1;
             overflow-y: auto;
-            padding: 1rem;
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 1rem;
         }
-        
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
+
+        #chat-body::-webkit-scrollbar {
+            width: 8px;
         }
-        
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(30, 41, 59, 0.5);
-            border-radius: 3px;
+
+        #chat-body::-webkit-scrollbar-track {
+            background: var(--border);
         }
-        
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 3px;
+
+        #chat-body::-webkit-scrollbar-thumb {
+            background: var(--neon-green);
         }
-        
+
         .chat-message {
             display: flex;
             flex-direction: column;
-            max-width: 80%;
-            animation: slideUp 0.3s ease;
+            gap: 0.25rem;
         }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
+
         .chat-message.user {
-            align-self: flex-end;
+            align-items: flex-end;
         }
-        
-        .chat-message.support {
-            align-self: flex-start;
-        }
-        
-        .chat-message-content {
-            padding: 0.75rem;
-            border-radius: 0.75rem;
+
+        .message-bubble {
+            padding: 0.75rem 1rem;
+            max-width: 80%;
             word-wrap: break-word;
         }
-        
-        .chat-message.user .chat-message-content {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            color: white;
-            border-radius: 0.75rem 0.75rem 0 0.75rem;
+
+        .chat-message.user .message-bubble {
+            background: var(--neon-green);
+            color: var(--dark-bg);
+            border-radius: 15px 15px 0 15px;
+            font-weight: 600;
         }
-        
-        .chat-message.support .chat-message-content {
-            background: rgba(30, 41, 59, 0.8);
-            color: #e5e7eb;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 0.75rem 0.75rem 0.75rem 0;
+
+        .chat-message.support .message-bubble {
+            background: var(--border);
+            color: #fff;
+            border-radius: 15px 15px 15px 0;
         }
-        
-        .chat-message-sender {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            margin-bottom: 0.25rem;
-            font-weight: 500;
-        }
-        
-        .chat-message-time {
-            font-size: 0.7rem;
-            color: #64748b;
-            margin-top: 0.25rem;
-        }
-        
-        .chat-input-container {
+
+        .chat-footer {
             padding: 1rem;
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-            background: rgba(30, 41, 59, 0.5);
-        }
-        
-        .chat-input-wrapper {
+            border-top: 2px solid var(--border);
             display: flex;
             gap: 0.5rem;
         }
-        
-        .chat-input {
+
+        #chat-input {
             flex: 1;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 0.75rem;
-            padding: 0.75rem;
-            color: white;
-            font-size: 0.875rem;
+            background: var(--border);
+            border: 2px solid var(--border);
+            color: #fff;
+            padding: 0.75rem 1rem;
             outline: none;
             transition: all 0.3s ease;
         }
-        
-        .chat-input:focus {
-            border-color: rgba(59, 130, 246, 0.6);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+
+        #chat-input:focus {
+            border-color: var(--neon-green);
         }
-        
-        .chat-send-btn {
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            border: none;
-            color: white;
-            width: 48px;
-            height: 48px;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            font-size: 1.125rem;
-        }
-        
-        .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-        
-        .chat-send-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .chat-fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
-            z-index: 9998;
-            transition: all 0.3s ease;
-        }
-        
-        .chat-fab:hover {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.6);
-        }
-        
-        .chat-fab i {
-            color: white;
-            font-size: 1.5rem;
-        }
-        
-        .chat-fab.hidden {
-            display: none;
-        }
-        
-        .chat-empty-state {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #64748b;
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .chat-empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #3b82f6;
-        }
-        
-        .chat-typing {
-            display: none;
-            align-items: center;
-            gap: 0.5rem;
-            color: #64748b;
-            font-size: 0.875rem;
-            padding: 0.5rem 1rem;
-        }
-        
-        .chat-typing.active {
-            display: flex;
-        }
-        
-        .chat-typing-dots {
-            display: flex;
-            gap: 0.25rem;
-        }
-        
-        .chat-typing-dot {
-            width: 6px;
-            height: 6px;
-            background: #64748b;
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        
-        .chat-typing-dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        
-        .chat-typing-dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-        
-        @keyframes typing {
-            0%, 60%, 100% {
-                transform: translateY(0);
-                opacity: 0.7;
-            }
-            30% {
-                transform: translateY(-8px);
-                opacity: 1;
-            }
-        }
-        
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .chat-modal {
-                width: calc(100vw - 20px);
-                right: 10px;
-                bottom: 10px;
-                height: calc(100vh - 80px);
+            #chat-window {
+                width: calc(100% - 2rem);
+                height: calc(100vh - 4rem);
+                right: 1rem;
+                bottom: 1rem;
             }
-            
-            .chat-fab {
-                right: 10px;
-                bottom: 10px;
+
+            .lang-dropdown {
+                min-width: 250px;
+            }
+
+            .alert {
+                min-width: 250px;
+            }
+
+            .alert-container {
+                right: 1rem;
+                left: 1rem;
             }
         }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
-<body class="text-gray-100">
-    
-    <!-- Navigation -->
-    <nav class="bg-slate-900/90 backdrop-blur-lg border-b border-slate-800 sticky top-0 z-50 shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="{% url 'home' %}" class="flex items-center space-x-2 group">
-                        <i class="fas fa-chart-line text-3xl gradient-text group-hover:scale-110 transition-transform duration-300"></i>
-                        <span class="text-2xl font-bold gradient-text">InfinityinfluxTrading</span>
-                    </a>
-                </div>
-                
-                <div class="hidden md:flex items-center space-x-6">
-                    <a href="{% url 'home' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Home</a>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'dashboard' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Dashboard</a>
-                        <a href="{% url 'portfolio' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Portfolio</a>
-                        <a href="{% url 'trading' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Trading</a>
-                        <a href="{% url 'logout' %}" class="text-gray-300 hover:text-red-400 transition-colors duration-300 px-2 py-1">Logout</a>
-                    {% else %}
-                        <a href="{% url 'login' %}" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 px-2 py-1">Login</a>
-                        <a href="{% url 'register' %}" class="btn-primary px-6 py-2 rounded-lg text-white font-semibold shadow-lg">Get Started</a>
-                    {% endif %}
-                    
-                    <!-- Premium Language Selector -->
-                    <div class="language-selector-wrapper">
-                        <button class="language-button" onclick="toggleLanguageDropdown()">
-                            <i class="fas fa-globe"></i>
-                            <span id="current-language">English</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
-                        </button>
+<body>
+    <!-- Background Effects -->
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Content Layer -->
+    <div class="content-layer">
+        <!-- Navigation -->
+        <nav class="border-b border-gray-800 backdrop-blur-md bg-black/50 sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-20">
+                    <!-- Logo -->
+                    <div class="flex items-center">
+                        <a href="/" class="flex items-center gap-3">
+                            <span class="title-font text-2xl text-white hidden sm:block">Influxfinancetrading</span>
+                        </a>
+                    </div>
+
+                    <!-- Desktop Menu -->
+                    <div class="hidden md:flex items-center space-x-8">
+                        <a href="/" class="nav-link text-sm">Home</a>
+                        <a href="#" class="nav-link text-sm">About</a>
+                        <a href="#" class="nav-link text-sm">Contact</a>
                         
-                        <div id="language-dropdown" class="language-dropdown">
-                            <div class="language-option active" onclick="changeLanguage('en', 'English')">
-                                <span class="language-flag">🇬🇧</span>
-                                <span>English</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('es', 'Español')">
-                                <span class="language-flag">🇪🇸</span>
-                                <span>Español</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('fr', 'Français')">
-                                <span class="language-flag">🇫🇷</span>
-                                <span>Français</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('de', 'Deutsch')">
-                                <span class="language-flag">🇩🇪</span>
-                                <span>Deutsch</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('it', 'Italiano')">
-                                <span class="language-flag">🇮🇹</span>
-                                <span>Italiano</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('pt', 'Português')">
-                                <span class="language-flag">🇵🇹</span>
-                                <span>Português</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('ru', 'Русский')">
-                                <span class="language-flag">🇷🇺</span>
-                                <span>Русский</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('zh-CN', '中文')">
-                                <span class="language-flag">🇨🇳</span>
-                                <span>中文</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('ja', '日本語')">
-                                <span class="language-flag">🇯🇵</span>
-                                <span>日本語</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('ko', '한국어')">
-                                <span class="language-flag">🇰🇷</span>
-                                <span>한국어</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('ar', 'العربية')">
-                                <span class="language-flag">🇸🇦</span>
-                                <span>العربية</span>
-                            </div>
-                            <div class="language-option" onclick="changeLanguage('hi', 'हिन्दी')">
-                                <span class="language-flag">🇮🇳</span>
-                                <span>हिन्दी</span>
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'dashboard' %}" class="nav-link text-sm">Dashboard</a>
+                            <a href="{% url 'logout' %}" class="neon-btn px-6 py-2 text-sm">Logout</a>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="nav-link text-sm">Login</a>
+                            <a href="{% url 'register' %}" class="neon-btn px-6 py-2 text-sm">Sign Up</a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Language Selector & Mobile Menu -->
+                    <div class="flex items-center gap-4">
+                        <!-- Language Selector -->
+                        <div class="lang-selector">
+                            <button class="lang-btn text-xs" onclick="toggleLangDropdown()">
+                                <span class="lang-flag">🌐</span>
+                                <span id="current-lang">English</span>
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </button>
+                            <div id="lang-dropdown" class="lang-dropdown">
+                                <div class="lang-option active" onclick="changeLang('en', 'English')">
+                                    <span class="lang-flag">🇬🇧</span>
+                                    <span>English</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('es', 'Español')">
+                                    <span class="lang-flag">🇪🇸</span>
+                                    <span>Español</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('fr', 'Français')">
+                                    <span class="lang-flag">🇫🇷</span>
+                                    <span>Français</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('de', 'Deutsch')">
+                                    <span class="lang-flag">🇩🇪</span>
+                                    <span>Deutsch</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('it', 'Italiano')">
+                                    <span class="lang-flag">🇮🇹</span>
+                                    <span>Italiano</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('pt', 'Português')">
+                                    <span class="lang-flag">🇵🇹</span>
+                                    <span>Português</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ru', 'Русский')">
+                                    <span class="lang-flag">🇷🇺</span>
+                                    <span>Русский</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('zh-CN', '中文')">
+                                    <span class="lang-flag">🇨🇳</span>
+                                    <span>中文 (简体)</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('zh-TW', '中文')">
+                                    <span class="lang-flag">🇹🇼</span>
+                                    <span>中文 (繁體)</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ja', '日本語')">
+                                    <span class="lang-flag">🇯🇵</span>
+                                    <span>日本語</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ko', '한국어')">
+                                    <span class="lang-flag">🇰🇷</span>
+                                    <span>한국어</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ar', 'العربية')">
+                                    <span class="lang-flag">🇸🇦</span>
+                                    <span>العربية</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('hi', 'हिन्दी')">
+                                    <span class="lang-flag">🇮🇳</span>
+                                    <span>हिन्दी</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('bn', 'বাংলা')">
+                                    <span class="lang-flag">🇧🇩</span>
+                                    <span>বাংলা</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('tr', 'Türkçe')">
+                                    <span class="lang-flag">🇹🇷</span>
+                                    <span>Türkçe</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('nl', 'Nederlands')">
+                                    <span class="lang-flag">🇳🇱</span>
+                                    <span>Nederlands</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('pl', 'Polski')">
+                                    <span class="lang-flag">🇵🇱</span>
+                                    <span>Polski</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('uk', 'Українська')">
+                                    <span class="lang-flag">🇺🇦</span>
+                                    <span>Українська</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sv', 'Svenska')">
+                                    <span class="lang-flag">🇸🇪</span>
+                                    <span>Svenska</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('da', 'Dansk')">
+                                    <span class="lang-flag">🇩🇰</span>
+                                    <span>Dansk</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('no', 'Norsk')">
+                                    <span class="lang-flag">🇳🇴</span>
+                                    <span>Norsk</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('fi', 'Suomi')">
+                                    <span class="lang-flag">🇫🇮</span>
+                                    <span>Suomi</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('cs', 'Čeština')">
+                                    <span class="lang-flag">🇨🇿</span>
+                                    <span>Čeština</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ro', 'Română')">
+                                    <span class="lang-flag">🇷🇴</span>
+                                    <span>Română</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('el', 'Ελληνικά')">
+                                    <span class="lang-flag">🇬🇷</span>
+                                    <span>Ελληνικά</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('th', 'ไทย')">
+                                    <span class="lang-flag">🇹🇭</span>
+                                    <span>ไทย</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('vi', 'Tiếng Việt')">
+                                    <span class="lang-flag">🇻🇳</span>
+                                    <span>Tiếng Việt</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('id', 'Bahasa Indonesia')">
+                                    <span class="lang-flag">🇮🇩</span>
+                                    <span>Bahasa Indonesia</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ms', 'Bahasa Melayu')">
+                                    <span class="lang-flag">🇲🇾</span>
+                                    <span>Bahasa Melayu</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('fil', 'Filipino')">
+                                    <span class="lang-flag">🇵🇭</span>
+                                    <span>Filipino</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('he', 'עברית')">
+                                    <span class="lang-flag">🇮🇱</span>
+                                    <span>עברית</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('fa', 'فارسی')">
+                                    <span class="lang-flag">🇮🇷</span>
+                                    <span>فارسی</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ur', 'اردو')">
+                                    <span class="lang-flag">🇵🇰</span>
+                                    <span>اردو</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sw', 'Kiswahili')">
+                                    <span class="lang-flag">🇰🇪</span>
+                                    <span>Kiswahili</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('hu', 'Magyar')">
+                                    <span class="lang-flag">🇭🇺</span>
+                                    <span>Magyar</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('af', 'Afrikaans')">
+                                    <span class="lang-flag">🇿🇦</span>
+                                    <span>Afrikaans</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sq', 'Shqip')">
+                                    <span class="lang-flag">🇦🇱</span>
+                                    <span>Shqip</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('az', 'Azərbaycan')">
+                                    <span class="lang-flag">🇦🇿</span>
+                                    <span>Azərbaycan</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ka', 'ქართული')">
+                                    <span class="lang-flag">🇬🇪</span>
+                                    <span>ქართული</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('et', 'Eesti')">
+                                    <span class="lang-flag">🇪🇪</span>
+                                    <span>Eesti</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('lv', 'Latviešu')">
+                                    <span class="lang-flag">🇱🇻</span>
+                                    <span>Latviešu</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('lt', 'Lietuvių')">
+                                    <span class="lang-flag">🇱🇹</span>
+                                    <span>Lietuvių</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sk', 'Slovenčina')">
+                                    <span class="lang-flag">🇸🇰</span>
+                                    <span>Slovenčina</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sl', 'Slovenščina')">
+                                    <span class="lang-flag">🇸🇮</span>
+                                    <span>Slovenščina</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('bg', 'Български')">
+                                    <span class="lang-flag">🇧🇬</span>
+                                    <span>Български</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('hr', 'Hrvatski')">
+                                    <span class="lang-flag">🇭🇷</span>
+                                    <span>Hrvatski</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('sr', 'Српски')">
+                                    <span class="lang-flag">🇷🇸</span>
+                                    <span>Српски</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('is', 'Íslenska')">
+                                    <span class="lang-flag">🇮🇸</span>
+                                    <span>Íslenska</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('kk', 'Қазақ')">
+                                    <span class="lang-flag">🇰🇿</span>
+                                    <span>Қазақ</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('hy', 'Հայերեն')">
+                                    <span class="lang-flag">🇦🇲</span>
+                                    <span>Հայերեն</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('mk', 'Македонски')">
+                                    <span class="lang-flag">🇲🇰</span>
+                                    <span>Македонски</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ne', 'नेपाली')">
+                                    <span class="lang-flag">🇳🇵</span>
+                                    <span>नेपाली</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('si', 'සිංහල')">
+                                    <span class="lang-flag">🇱🇰</span>
+                                    <span>සිංහල</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('my', 'မြန်မာ')">
+                                    <span class="lang-flag">🇲🇲</span>
+                                    <span>မြန်မာ</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('km', 'ខ្មែរ')">
+                                    <span class="lang-flag">🇰🇭</span>
+                                    <span>ខ្មែរ</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('lo', 'ລາວ')">
+                                    <span class="lang-flag">🇱🇦</span>
+                                    <span>ລາວ</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('am', 'አማርኛ')">
+                                    <span class="lang-flag">🇪🇹</span>
+                                    <span>አማርኛ</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('zu', 'isiZulu')">
+                                    <span class="lang-flag">🇿🇦</span>
+                                    <span>isiZulu</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ha', 'Hausa')">
+                                    <span class="lang-flag">🇳🇬</span>
+                                    <span>Hausa</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('ig', 'Igbo')">
+                                    <span class="lang-flag">🇳🇬</span>
+                                    <span>Igbo</span>
+                                </div>
+                                <div class="lang-option" onclick="changeLang('yo', 'Yorùbá')">
+                                    <span class="lang-flag">🇳🇬</span>
+                                    <span>Yorùbá</span>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Mobile Menu Button -->
+                        <button id="mobile-menu-btn" class="md:hidden text-white text-2xl">
+                            <i class="fas fa-bars"></i>
+                        </button>
                     </div>
                 </div>
-                
-                <!-- Mobile menu button -->
-                <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-button" class="text-gray-300 hover:text-cyan-400 transition-colors duration-300 p-2">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
-                </div>
             </div>
-        </div>
-        
-        <!-- Mobile menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-800/95 backdrop-blur-lg border-t border-slate-700">
-            <div class="px-4 py-4 space-y-3">
-                <a href="{% url 'home' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Home</a>
-                {% if user.is_authenticated %}
-                    <a href="{% url 'dashboard' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Dashboard</a>
-                    <a href="{% url 'portfolio' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Portfolio</a>
-                    <a href="{% url 'trading' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Trading</a>
-                    <a href="{% url 'logout' %}" class="block text-red-400 hover:text-red-300 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Logout</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="block text-gray-300 hover:text-cyan-400 transition-colors duration-300 py-2 px-3 rounded-lg hover:bg-slate-700/50">Login</a>
-                    <a href="{% url 'register' %}" class="block btn-primary px-6 py-3 rounded-lg text-white font-semibold text-center shadow-lg">Get Started</a>
-                {% endif %}
-                
-                <!-- Mobile Language Selector -->
-                <div class="language-selector-wrapper mt-4">
-                    <button class="language-button w-full justify-between" onclick="toggleMobileLanguageDropdown()">
-                        <div class="flex items-center gap-2">
-                            <i class="fas fa-globe"></i>
-                            <span id="current-language-mobile">English</span>
-                        </div>
-                        <i class="fas fa-chevron-down text-xs"></i>
-                    </button>
+
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden">
+                <div class="px-4 pt-2 pb-4 space-y-2">
+                    <a href="/" class="block py-3 px-4 hover:bg-gray-800 transition-colors">Home</a>
+                    <a href="#" class="block py-3 px-4 hover:bg-gray-800 transition-colors">About</a>
+                    <a href="#" class="block py-3 px-4 hover:bg-gray-800 transition-colors">Contact</a>
                     
-                    <div id="language-dropdown-mobile" class="language-dropdown" style="position: relative; width: 100%; margin-top: 0.5rem;">
-                        <div class="language-option active" onclick="changeLanguageMobile('en', 'English')">
-                            <span class="language-flag">🇬🇧</span>
-                            <span>English</span>
-                        </div>
-                        <div class="language-option" onclick="changeLanguageMobile('es', 'Español')">
-                            <span class="language-flag">🇪🇸</span>
-                            <span>Español</span>
-                        </div>
-                        <div class="language-option" onclick="changeLanguageMobile('fr', 'Français')">
-                            <span class="language-flag">🇫🇷</span>
-                            <span>Français</span>
-                        </div>
-                        <div class="language-option" onclick="changeLanguageMobile('de', 'Deutsch')">
-                            <span class="language-flag">🇩🇪</span>
-                            <span>Deutsch</span>
-                        </div>
-                        <div class="language-option" onclick="changeLanguageMobile('zh-CN', '中文')">
-                            <span class="language-flag">🇨🇳</span>
-                            <span>中文</span>
-                        </div>
-                        <div class="language-option" onclick="changeLanguageMobile('ja', '日本語')">
-                            <span class="language-flag">🇯🇵</span>
-                            <span>日本語</span>
-                        </div>
-                    </div>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard' %}" class="block py-3 px-4 hover:bg-gray-800 transition-colors">Dashboard</a>
+                        <a href="{% url 'logout' %}" class="block py-3 px-4 bg-red-600 hover:bg-red-700 text-center">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="block py-3 px-4 hover:bg-gray-800 transition-colors">Login</a>
+                        <a href="{% url 'register' %}" class="block py-3 px-4 bg-green-600 hover:bg-green-700 text-center">Sign Up</a>
+                    {% endif %}
                 </div>
             </div>
-        </div>
-    </nav>
-    
-    <!-- Messages -->
-    {% if messages %}
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+        </nav>
+
+        <!-- Messages -->
+        {% if messages %}
+        <div class="alert-container">
             {% for message in messages %}
-                <div class="message-alert rounded-xl p-4 mb-4 {% if message.tags == 'success' %}bg-gradient-to-r from-green-900/50 to-emerald-900/50 border border-green-500/50 text-green-200{% elif message.tags == 'error' or message.tags == 'danger' %}bg-gradient-to-r from-red-900/50 to-rose-900/50 border border-red-500/50 text-red-200{% elif message.tags == 'warning' %}bg-gradient-to-r from-yellow-900/50 to-amber-900/50 border border-yellow-500/50 text-yellow-200{% else %}bg-gradient-to-r from-blue-900/50 to-cyan-900/50 border border-blue-500/50 text-blue-200{% endif %} backdrop-blur-sm shadow-lg">
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3">
-                            <i class="fas {% if message.tags == 'success' %}fa-check-circle{% elif message.tags == 'error' or message.tags == 'danger' %}fa-exclamation-circle{% elif message.tags == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} text-xl"></i>
-                            <span class="font-medium">{{ message }}</span>
-                        </div>
-                        <button onclick="this.parentElement.parentElement.remove()" class="text-xl hover:text-white transition-colors duration-300 ml-4 hover:rotate-90 transform transition-transform">&times;</button>
+            <div class="alert alert-{{ message.tags }}">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle text-2xl" style="color: var(--neon-green);"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle text-2xl" style="color: var(--neon-pink);"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="fas fa-exclamation-triangle text-2xl" style="color: var(--cyber-yellow);"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle text-2xl" style="color: var(--neon-blue);"></i>
+                        {% endif %}
+                        <p class="font-semibold">{{ message }}</p>
                     </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="text-2xl hover:opacity-70">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
+            </div>
             {% endfor %}
         </div>
-    {% endif %}
-    
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
-    
-    <!-- Footer -->
-    <footer class="bg-slate-900/95 backdrop-blur-lg border-t border-slate-800 mt-20 shadow-2xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                    <div class="flex items-center space-x-2 mb-4">
-                        <i class="fas fa-chart-line text-2xl gradient-text"></i>
-                        <h3 class="text-xl font-bold gradient-text">InfinityinfluxTrading</h3>
+        {% endif %}
+
+        <!-- Main Content -->
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-t border-gray-800 py-16 mt-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                    <!-- Company -->
+                    <div>
+                        <h3 class="title-font text-xl mb-6" style="color: var(--neon-green);">Influxfinancetrading</h3>
+                        <p class="text-gray-400 leading-relaxed mb-4">
+                            Professional trading platform for . Trade with confidence.
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#" class="w-10 h-10 border-2 border-gray-700 hover:border-green-400 flex items-center justify-center transition-all">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 border-2 border-gray-700 hover:border-green-400 flex items-center justify-center transition-all">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 border-2 border-gray-700 hover:border-green-400 flex items-center justify-center transition-all">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p class="text-gray-400">Your trusted partner in cryptocurrency trading and investment.</p>
+
+                    <!-- Products -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-6 text-white">Products</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Stocks</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Crypto</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Forex</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Options</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Company -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-6 text-white">Company</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">About Us</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Contact</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Careers</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Press</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Legal -->
+                    <div>
+                        <h4 class="font-bold text-lg mb-6 text-white">Legal</h4>
+                        <ul class="space-y-3">
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Privacy Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Terms of Service</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Cookie Policy</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-green-400 transition-colors">Disclaimer</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div>
-                    <h4 class="font-semibold mb-4 text-gray-200">Connect</h4>
-                    <div class="flex space-x-4">
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-x-twitter"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-discord"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-instagram"></i></a>
-                        <a class="text-2xl text-gray-400 hover:text-cyan-400 transition-all duration-300 hover:scale-110 transform"><i class="fab fa-telegram"></i></a>
+
+                <div class="border-t border-gray-800 pt-8">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <p class="text-gray-500 text-sm mono-font">
+                            © 2024 Influxfinancetrading . All rights reserved.
+                        </p>
+                        <p class="text-gray-500 text-sm">
+                            <i class="fas fa-shield-alt" style="color: var(--neon-green);"></i>
+                            Bank-Level Security | Licensed & Regulated
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="border-t border-slate-800 mt-8 pt-8 text-center text-gray-400">
-                <p>&copy; InfinityinfluxTrading. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
+        </footer>
 
-    <!-- Hidden Google Translate Elements -->
-    <div id="google_translate_element"></div>
-    <div id="google_translate_element_mobile"></div>
+        <!-- Chat Support (Only for authenticated users) -->
+        {% if user.is_authenticated %}
+        <!-- Chat FAB -->
+        <div id="chat-fab" onclick="toggleChat()">
+            <i class="fas fa-comments text-3xl"></i>
+        </div>
 
-    <!-- ============================================ -->
-    <!-- CHAT SUPPORT SECTION (Authenticated Users Only) -->
-    <!-- ============================================ -->
-    {% if user.is_authenticated %}
-    <!-- Chat Support FAB (Floating Action Button) -->
-    <div class="chat-fab" id="chat-fab" onclick="toggleChat()">
-        <i class="fas fa-comments"></i>
-    </div>
-
-    <!-- Chat Support Modal -->
-    <div class="chat-modal" id="chat-modal">
-        <!-- Chat Header -->
-        <div class="chat-header" onclick="toggleMinimize()">
-            <div class="chat-header-title">
-                <i class="fas fa-headset"></i>
-                <span>Live Support</span>
+        <!-- Chat Window -->
+        <div id="chat-window">
+            <div class="chat-header">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-headset text-lg"></i>
+                        <span>Support Chat</span>
+                    </div>
+                    <div class="text-xs mt-1 opacity-80">We typically reply in minutes</div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="clearChat()" class="hover:opacity-70 transition-opacity" title="New Chat">
+                        <i class="fas fa-redo text-lg"></i>
+                    </button>
+                    <button onclick="closeChat()" class="hover:opacity-70 transition-opacity">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
             </div>
-            <div class="chat-header-actions" onclick="event.stopPropagation()">
-                <button class="chat-header-btn" onclick="clearChat()" title="Clear Chat">
-                    <i class="fas fa-trash"></i>
-                </button>
-                <button class="chat-header-btn" onclick="toggleMinimize()" title="Minimize">
-                    <i class="fas fa-minus" id="minimize-icon"></i>
-                </button>
-                <button class="chat-header-btn" onclick="closeChat()" title="Close">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-        </div>
-        
-        <!-- Chat Messages -->
-        <div class="chat-messages" id="chat-messages">
-            <div class="chat-empty-state">
-                <i class="fas fa-comments"></i>
-                <p>Start a conversation with our support team</p>
-            </div>
-        </div>
-        
-        <!-- Typing Indicator -->
-        <div class="chat-typing" id="chat-typing">
-            <span>Support is typing</span>
-            <div class="chat-typing-dots">
-                <div class="chat-typing-dot"></div>
-                <div class="chat-typing-dot"></div>
-                <div class="chat-typing-dot"></div>
-            </div>
-        </div>
-        
-        <!-- Chat Input -->
-        <div class="chat-input-container">
-            <div class="chat-input-wrapper">
+            
+            <div id="chat-body"></div>
+            
+            <div class="chat-footer">
                 <input 
                     type="text" 
-                    class="chat-input" 
                     id="chat-input" 
                     placeholder="Type your message..."
-                    onkeypress="handleKeyPress(event)"
+                    onkeypress="if(event.key === 'Enter') sendMessage()"
+                    autocomplete="off"
                 >
-                <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">
+                <button onclick="sendMessage()" class="px-6 py-3 font-bold transition-all" style="background: var(--neon-green); color: var(--dark-bg);">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
         </div>
+        {% endif %}
     </div>
-    {% endif %}
-    <!-- END CHAT SUPPORT SECTION -->
 
-    <!-- ============================================ -->
-    <!-- JAVASCRIPT SECTION -->
-    <!-- ============================================ -->
+    <!-- Google Translate Element (Hidden) -->
+    <div id="google_translate_element" style="display: none;"></div>
     
     <!-- Google Translate Script -->
     <script type="text/javascript">
-        var googleTranslateLoaded = false;
-        
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,vi,th,pl,nl',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false,
-                multilanguagePage: true
+                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,nl,pl,uk,sv,da,no,fi,cs,ro,el,th,vi,id,ms,fil,he,fa,ur,sw,hu,af,sq,az,ka,et,lv,lt,sk,sl,bg,hr,sr,is,kk,hy,mk,ne,si,my,km,lo,am,zu,ha,ig,yo',
+                autoDisplay: false
             }, 'google_translate_element');
-            
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,vi,th,pl,nl',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false,
-                multilanguagePage: true
-            }, 'google_translate_element_mobile');
-            
-            googleTranslateLoaded = true;
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <!-- Main JavaScript -->
     <script>
-        // ==========================================
-        // LANGUAGE SELECTOR FUNCTIONS
-        // ==========================================
-        
-        // Toggle Language Dropdown
-        function toggleLanguageDropdown() {
-            const dropdown = document.getElementById('language-dropdown');
-            dropdown.classList.toggle('active');
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn')?.addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            const icon = this.querySelector('i');
+            menu.classList.toggle('hidden');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+
+        // Language Dropdown
+        function toggleLangDropdown() {
+            document.getElementById('lang-dropdown').classList.toggle('active');
         }
 
-        function toggleMobileLanguageDropdown() {
-            const dropdown = document.getElementById('language-dropdown-mobile');
-            dropdown.classList.toggle('active');
-        }
-
-        // Change Language
-        function changeLanguage(langCode, langName) {
-            document.getElementById('current-language').textContent = langName;
+        function changeLang(code, name) {
+            document.getElementById('current-lang').textContent = name;
+            document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('active'));
+            event.target.closest('.lang-option').classList.add('active');
             
-            // Update active state
-            document.querySelectorAll('#language-dropdown .language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.closest('.language-option').classList.add('active');
-            
-            // Trigger Google Translate
-            triggerGoogleTranslate(langCode);
-            
-            // Close dropdown
-            toggleLanguageDropdown();
-        }
-
-        function changeLanguageMobile(langCode, langName) {
-            document.getElementById('current-language-mobile').textContent = langName;
-            
-            // Update active state
-            document.querySelectorAll('#language-dropdown-mobile .language-option').forEach(opt => {
-                opt.classList.remove('active');
-            });
-            event.target.closest('.language-option').classList.add('active');
-            
-            // Trigger Google Translate
-            triggerGoogleTranslate(langCode);
-            
-            // Close dropdown
-            toggleMobileLanguageDropdown();
-        }
-
-        function triggerGoogleTranslate(langCode) {
-            let attempts = 0;
-            const maxAttempts = 20;
-            
-            const attemptTranslation = setInterval(() => {
-                const selectElement = document.querySelector('.goog-te-combo');
-                
-                if (selectElement) {
-                    selectElement.value = langCode;
-                    selectElement.dispatchEvent(new Event('change', { bubbles: true }));
-                    selectElement.dispatchEvent(new Event('click', { bubbles: true }));
-                    
-                    if (selectElement.value === langCode) {
-                        clearInterval(attemptTranslation);
-                        
-                        setTimeout(() => {
-                            const frame = document.querySelector('.goog-te-menu-frame');
-                            if (frame) {
-                                console.log('Translation triggered successfully');
-                            }
-                        }, 500);
-                    }
-                }
-                
-                attempts++;
-                if (attempts >= maxAttempts) {
-                    clearInterval(attemptTranslation);
-                    console.warn('Could not trigger translation. Trying page reload method...');
-                    
-                    if (langCode !== 'en') {
-                        const currentUrl = window.location.href;
-                        if (!currentUrl.includes('#googtrans')) {
-                            window.location.hash = 'googtrans(en|' + langCode + ')';
-                            window.location.reload();
-                        }
-                    }
-                }
-            }, 200);
+            const select = document.querySelector('.goog-te-combo');
+            if (select) {
+                select.value = code;
+                select.dispatchEvent(new Event('change'));
+            }
+            toggleLangDropdown();
         }
 
         // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const wrapper = document.querySelector('.language-selector-wrapper');
-            const dropdown = document.getElementById('language-dropdown');
-            
-            if (wrapper && !wrapper.contains(event.target) && dropdown) {
-                dropdown.classList.remove('active');
+        document.addEventListener('click', function(e) {
+            const selector = document.querySelector('.lang-selector');
+            const dropdown = document.getElementById('lang-dropdown');
+            if (selector && !selector.contains(e.target)) {
+                dropdown?.classList.remove('active');
             }
         });
 
-        // ==========================================
-        // MOBILE MENU FUNCTIONS
-        // ==========================================
-        
-        const mobileMenuButton = document.getElementById('mobile-menu-button');
-        if (mobileMenuButton) {
-            mobileMenuButton.addEventListener('click', function() {
-                const mobileMenu = document.getElementById('mobile-menu');
-                const icon = this.querySelector('i');
-                
-                if (mobileMenu) {
-                    mobileMenu.classList.toggle('hidden');
-                    
-                    // Toggle icon
-                    if (icon.classList.contains('fa-bars')) {
-                        icon.classList.remove('fa-bars');
-                        icon.classList.add('fa-times');
-                    } else {
-                        icon.classList.remove('fa-times');
-                        icon.classList.add('fa-bars');
-                    }
-                }
-            });
-        }
-        
-        // ==========================================
-        // MESSAGE AUTO-HIDE
-        // ==========================================
-        
+        // Auto-hide messages after 5 seconds
         setTimeout(function() {
-            const messages = document.querySelectorAll('.message-alert');
-            messages.forEach(function(message) {
-                message.style.transition = 'all 0.5s ease-out';
-                message.style.transform = 'translateX(100%)';
-                message.style.opacity = '0';
-                setTimeout(function() {
-                    message.remove();
-                }, 500);
+            document.querySelectorAll('.alert').forEach(function(alert) {
+                alert.style.transition = 'all 0.5s ease';
+                alert.style.transform = 'translateX(500px)';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 500);
             });
         }, 5000);
 
-        // ==========================================
-        // CHAT SUPPORT FUNCTIONS (Authenticated Users Only)
-        // ==========================================
-        
         {% if user.is_authenticated %}
-        let chatActive = false;
-        let chatMinimized = false;
+        // Chat Support Functions
+        let chatOpen = false;
         let currentChatId = null;
-        let messagePollingInterval = null;
+        let messageInterval = null;
         
         function toggleChat() {
-            const modal = document.getElementById('chat-modal');
+            chatOpen = !chatOpen;
+            const window = document.getElementById('chat-window');
             const fab = document.getElementById('chat-fab');
             
-            chatActive = !chatActive;
-            
-            if (chatActive) {
-                modal.classList.add('active');
-                fab.classList.add('hidden');
+            if (chatOpen) {
+                window.classList.add('active');
+                fab.style.display = 'none';
                 loadChat();
-                startMessagePolling();
+                startPolling();
             } else {
-                modal.classList.remove('active');
-                fab.classList.remove('hidden');
-                stopMessagePolling();
+                window.classList.remove('active');
+                fab.style.display = 'flex';
+                stopPolling();
             }
         }
         
         function closeChat() {
-            const modal = document.getElementById('chat-modal');
-            const fab = document.getElementById('chat-fab');
-            
-            modal.classList.remove('active');
-            fab.classList.remove('hidden');
-            chatActive = false;
-            stopMessagePolling();
-        }
-        
-        function toggleMinimize() {
-            const modal = document.getElementById('chat-modal');
-            const icon = document.getElementById('minimize-icon');
-            
-            chatMinimized = !chatMinimized;
-            
-            if (chatMinimized) {
-                modal.classList.add('minimized');
-                icon.classList.remove('fa-minus');
-                icon.classList.add('fa-plus');
-            } else {
-                modal.classList.remove('minimized');
-                icon.classList.remove('fa-plus');
-                icon.classList.add('fa-minus');
-            }
+            chatOpen = false;
+            document.getElementById('chat-window').classList.remove('active');
+            document.getElementById('chat-fab').style.display = 'flex';
+            stopPolling();
         }
         
         async function loadChat() {
             try {
                 const response = await fetch('{% url "get_or_create_chat" %}');
                 const data = await response.json();
-                
                 currentChatId = data.chat_id;
                 displayMessages(data.messages);
-                
-                if (data.created) {
-                    setTimeout(() => {
-                        loadChatMessages();
-                    }, 1000);
-                }
             } catch (error) {
                 console.error('Error loading chat:', error);
             }
         }
         
         function displayMessages(messages) {
-            const container = document.getElementById('chat-messages');
+            const body = document.getElementById('chat-body');
             
             if (messages.length === 0) {
-                container.innerHTML = `
-                    <div class="chat-empty-state">
-                        <i class="fas fa-comments"></i>
-                        <p>Start a conversation with our support team</p>
+                body.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-full text-gray-400 text-center">
+                        <i class="fas fa-comments text-6xl mb-4" style="color: var(--neon-green);"></i>
+                        <p class="text-lg font-semibold">Start a conversation</p>
+                        <p class="text-sm mt-2">Our support team is here to help</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = messages.map(msg => {
+            body.innerHTML = messages.map(msg => {
                 const time = new Date(msg.created_at).toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit'
                 });
-                
                 const isUser = msg.sender_type === 'USER';
                 
                 return `
                     <div class="chat-message ${isUser ? 'user' : 'support'}">
-                        ${!isUser ? `<div class="chat-message-sender">${msg.sender_name}</div>` : ''}
-                        <div class="chat-message-content">
+                        ${!isUser ? `<div class="text-xs text-gray-400 mb-1 font-semibold">${msg.sender_name}</div>` : ''}
+                        <div class="message-bubble">
                             ${msg.message}
                         </div>
-                        <div class="chat-message-time">${time}</div>
+                        <div class="text-xs text-gray-500 mt-1 mono-font">${time}</div>
                     </div>
                 `;
             }).join('');
@@ -1133,12 +1221,7 @@
             
             if (!message) return;
             
-            const sendBtn = document.getElementById('chat-send-btn');
-            sendBtn.disabled = true;
-            
             try {
-                showTyping();
-                
                 const response = await fetch('{% url "send_support_message" %}', {
                     method: 'POST',
                     headers: {
@@ -1154,27 +1237,13 @@
                     input.value = '';
                     displayMessages(data.messages);
                 }
-                
-                hideTyping();
             } catch (error) {
                 console.error('Error sending message:', error);
-                hideTyping();
-            } finally {
-                sendBtn.disabled = false;
-                input.focus();
-            }
-        }
-        
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
             }
         }
         
         async function clearChat() {
-            if (!confirm('Are you sure you want to clear this chat and start a new conversation?')) {
-                return;
-            }
+            if (!confirm('Clear this chat and start a new conversation?')) return;
             
             try {
                 const response = await fetch('{% url "clear_support_chat" %}', {
@@ -1200,7 +1269,6 @@
             try {
                 const response = await fetch('{% url "get_chat_messages" %}');
                 const data = await response.json();
-                
                 if (data.messages) {
                     displayMessages(data.messages);
                 }
@@ -1209,34 +1277,23 @@
             }
         }
         
-        function startMessagePolling() {
-            messagePollingInterval = setInterval(() => {
-                if (chatActive && !chatMinimized) {
-                    loadChatMessages();
-                }
+        function startPolling() {
+            messageInterval = setInterval(() => {
+                if (chatOpen) loadChatMessages();
             }, 5000);
         }
         
-        function stopMessagePolling() {
-            if (messagePollingInterval) {
-                clearInterval(messagePollingInterval);
-                messagePollingInterval = null;
+        function stopPolling() {
+            if (messageInterval) {
+                clearInterval(messageInterval);
+                messageInterval = null;
             }
         }
         
-        function showTyping() {
-            document.getElementById('chat-typing').classList.add('active');
-            scrollToBottom();
-        }
-        
-        function hideTyping() {
-            document.getElementById('chat-typing').classList.remove('active');
-        }
-        
         function scrollToBottom() {
-            const container = document.getElementById('chat-messages');
+            const body = document.getElementById('chat-body');
             setTimeout(() => {
-                container.scrollTop = container.scrollHeight;
+                body.scrollTop = body.scrollHeight;
             }, 100);
         }
         

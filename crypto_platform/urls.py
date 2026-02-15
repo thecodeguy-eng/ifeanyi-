@@ -23,6 +23,6 @@ if settings.DEBUG:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # Admin site customization
-admin.site.site_header = "InfinityinfluxTrading Admin"
-admin.site.site_title = "InfinityinfluxTrading Admin Portal"
-admin.site.index_title = "Welcome to InfinityinfluxTrading Administration"
+admin.site.site_header = "Influxfinancetrading Admin"
+admin.site.site_title = "Influxfinancetrading Admin Portal"
+admin.site.index_title = "Welcome to Influxfinancetrading Administration"

@@ -10,8 +10,9 @@ import dj_database_url
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-your-secret-key-here')
-
-DEBUG = config('DEBUG', default=False, cast=bool)
+ 
+DEBUG = True
+# DEBUG = config('DEBUG', default=False, cast=bool)
 
 # ALLOWED_HOSTS
 ALLOWED_HOSTS = ['.vercel.app', '.now.sh', 'localhost', '127.0.0.1', '.com']
@@ -38,7 +39,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'platform_app.middleware.UserActivityMiddleware',  # ADD THIS LINE - Activity tracking
+    'platform_app.middleware.UserActivityMiddleware',
 ]
 
 ROOT_URLCONF = 'crypto_platform.urls'
@@ -174,8 +175,8 @@ MESSAGE_TAGS = {
 # BREVO (SENDINBLUE) EMAIL CONFIGURATION
 # ============================================
 BREVO_API_KEY = config('BREVO_API_KEY', default='')
-BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@infinityinfluxtrading.com')
-BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='InfinityinfluxTrading')
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@Influxfinancetrading.com')
+BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='Influxfinancetrading')
 
 # Logging Configuration
 LOGGING = {
@@ -215,8 +216,8 @@ LOGGING = {
 
 # zohomail: 
 #   mail: nchukwugozirim@gmail.com
-#   password: @InfinityinfluxTrading1
-#   name: InfinityinfluxTrading
+#   password: @Influxfinancetrading1
+#   name: Influxfinancetrading
 
 # brevo:
 #   email:ibeawuchinzechukwu@gmail.com

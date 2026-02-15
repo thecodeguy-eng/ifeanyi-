@@ -1,968 +1,373 @@
 {% extends 'base.html' %}
 
-{% block title %}InfinityinfluxTrading - Trading for Everyone, Everywhere, Anytime{% endblock %}
+{% block title %}Influxfinancetrading  - Trade the Future{% endblock %}
 
 {% block content %}
 
-<!-- Crypto Ticker -->
-<div class="bg-slate-900/50 border-y border-slate-800 overflow-hidden py-3">
-    <div class="flex space-x-8 crypto-ticker" id="crypto-ticker">
-        <!-- Will be populated by JavaScript -->
+<!-- Live Ticker -->
+<div class="border-b border-gray-800 bg-black/80 backdrop-blur-md sticky top-20 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+        <div class="flex items-center justify-between overflow-x-auto">
+            <div class="flex space-x-8 ticker-scroll" id="price-ticker">
+                <!-- Populated by JS -->
+            </div>
+            <div class="flex items-center gap-2 text-sm mono-font">
+                <span class="w-2 h-2 rounded-full animate-pulse" style="background: var(--neon-green);"></span>
+                <span class="text-gray-400">LIVE</span>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Hero Section with Video Carousel -->
-<section class="relative min-h-screen flex items-center justify-center overflow-hidden">
-    <!-- Background Video/Animation -->
-    <div class="absolute inset-0 z-0">
-        <div class="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-cyan-900/20 to-purple-900/20"></div>
-        <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%233b82f6&quot; fill-opacity=&quot;0.05&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-    </div>
-    
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="mb-8">
-            <div class="inline-flex items-center px-4 py-2 rounded-full bg-blue-900/30 border border-blue-500/30 mb-6">
-                <span class="w-2 h-2 bg-green-400 rounded-full mr-2 pulse-glow"></span>
-                <span class="text-sm text-gray-300">24/7 Trading • Global Markets • Live Support</span>
-            </div>
-        </div>
-        
-        <h1 class="text-5xl md:text-7xl font-black mb-6">
-            <span class="gradient-text">Trading for anyone.</span><br>
-            <span class="text-white">Anywhere. Anytime.</span>
-        </h1>
-        
-        <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
-            Trade Stocks, Options, Crypto and More on global financial markets, all in one place with 24/7 trading and worldwide support.
-        </p>
-        
-        <a href="{% url 'register' %}" class="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
-            Get Started <i class="fas fa-arrow-right ml-2"></i>
-        </a>
-        
-        <!-- Stats -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-            <div class="crypto-card p-6 rounded-xl">
-                <div class="text-3xl font-bold gradient-text mb-2">$2.5B+</div>
-                <div class="text-gray-400">Trading Volume</div>
-            </div>
-            <div class="crypto-card p-6 rounded-xl">
-                <div class="text-3xl font-bold gradient-text mb-2">150K+</div>
-                <div class="text-gray-400">Active Traders</div>
-            </div>
-            <div class="crypto-card p-6 rounded-xl">
-                <div class="text-3xl font-bold gradient-text mb-2">50+</div>
-                <div class="text-gray-400">Cryptocurrencies</div>
-            </div>
-            <div class="crypto-card p-6 rounded-xl">
-                <div class="text-3xl font-bold gradient-text mb-2">24/7</div>
-                <div class="text-gray-400">Support</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- TradingView Chart Section -->
-<section class="py-20">
+<!-- Hero Section -->
+<section class="relative py-32 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                <span class="gradient-text">Live Market</span> Analysis
-            </h2>
-            <p class="text-xl text-gray-400">Real-time crypto prices and advanced trading charts</p>
-        </div>
-        
-        <div class="crypto-card rounded-2xl overflow-hidden">
-            <!-- TradingView Widget -->
-            <div class="tradingview-widget-container" style="height: 600px;">
-                <div id="tradingview_chart"></div>
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+            <!-- Left Content -->
+            <div data-aos="fade-right">
+                <div class="inline-flex items-center gap-2 px-4 py-2 mb-8 border-2" style="border-color: var(--neon-pink); background: rgba(255, 0, 102, 0.1);">
+                    <span class="w-2 h-2 rounded-full animate-pulse" style="background: var(--neon-pink);"></span>
+                    <span class="text-sm font-bold mono-font" style="color: var(--neon-pink);">150K+ ACTIVE TRADERS</span>
+                </div>
+                
+                <h1 class="title-font text-7xl md:text-8xl mb-8 leading-none">
+                    <span class="glitch" data-text="TRADE" style="color: var(--neon-green);">TRADE</span><br>
+                    <span class="text-white">THE</span><br>
+                    <span style="color: var(--neon-blue);">FUTURE</span>
+                </h1>
+                
+                <p class="text-xl text-gray-400 mb-10 leading-relaxed max-w-xl">
+                    Professional trading platform with zero commissions. Access  24/7 with lightning-fast execution.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 mb-12">
+                    <a href="{% url 'register' %}" class="neon-btn px-10 py-5 text-lg font-bold">
+                        START TRADING FREE
+                        <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="#features" class="neon-btn neon-btn-pink px-10 py-5 text-lg font-bold">
+                        EXPLORE FEATURES
+                    </a>
+                </div>
+                
+                <!-- Trust Badges -->
+                <div class="flex flex-wrap gap-6 text-sm">
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-shield-alt text-2xl" style="color: var(--neon-green);"></i>
+                        <span class="text-gray-400">Bank Security</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-bolt text-2xl" style="color: var(--cyber-yellow);"></i>
+                        <span class="text-gray-400">0.01s Speed</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <i class="fas fa-globe text-2xl" style="color: var(--neon-blue);"></i>
+                        <span class="text-gray-400">50+ Markets</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Stats Grid -->
+            <div class="grid grid-cols-2 gap-6" data-aos="fade-left">
+                <div class="brutal-card p-8 text-center">
+                    <div class="title-font text-6xl mb-3" style="color: var(--neon-green);">$2.5B+</div>
+                    <div class="text-gray-400 font-semibold uppercase text-sm">Daily Volume</div>
+                </div>
+                <div class="brutal-card brutal-card-pink p-8 text-center">
+                    <div class="title-font text-6xl mb-3" style="color: var(--neon-pink);">0.01s</div>
+                    <div class="text-gray-400 font-semibold uppercase text-sm">Execution</div>
+                </div>
+                <div class="brutal-card brutal-card-blue p-8 text-center">
+                    <div class="title-font text-6xl mb-3" style="color: var(--neon-blue);">50+</div>
+                    <div class="text-gray-400 font-semibold uppercase text-sm">Markets</div>
+                </div>
+                <div class="brutal-card p-8 text-center" style="border-color: var(--cyber-yellow); box-shadow: 10px 10px 0 rgba(255, 255, 0, 0.3);">
+                    <div class="title-font text-6xl mb-3" style="color: var(--cyber-yellow);">24/7</div>
+                    <div class="text-gray-400 font-semibold uppercase text-sm">Support</div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Benefits Section -->
-<section class="py-20">
+<!-- Features Section -->
+<section id="features" class="py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="title-font text-6xl mb-6" style="color: var(--neon-green);">
+                POWERFUL FEATURES
+            </h2>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+                Everything you need to dominate the markets
+            </p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Feature 1 -->
+            <div class="brutal-card p-10 group" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--neon-green); box-shadow: 5px 5px 0 rgba(0, 255, 136, 0.5);">
+                    <i class="fas fa-lock text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">BANK SECURITY</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    256-bit encryption, cold storage, and multi-factor authentication protect your assets.
+                </p>
+            </div>
+            
+            <!-- Feature 2 -->
+            <div class="brutal-card brutal-card-pink p-10 group" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--neon-pink); box-shadow: 5px 5px 0 rgba(255, 0, 102, 0.5);">
+                    <i class="fas fa-bolt text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">LIGHTNING FAST</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Execute trades in milliseconds with our cutting-edge infrastructure.
+                </p>
+            </div>
+            
+            <!-- Feature 3 -->
+            <div class="brutal-card brutal-card-blue p-10 group" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--neon-blue); box-shadow: 5px 5px 0 rgba(0, 212, 255, 0.5);">
+                    <i class="fas fa-robot text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">AI BOTS</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Automated trading powered by machine learning algorithms.
+                </p>
+            </div>
+            
+            <!-- Feature 4 -->
+            <div class="brutal-card p-10 group" data-aos="fade-up" data-aos-delay="100">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--cyber-yellow); box-shadow: 5px 5px 0 rgba(255, 255, 0, 0.5);">
+                    <i class="fas fa-chart-line text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">ANALYTICS</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Real-time insights, custom indicators, and portfolio tracking.
+                </p>
+            </div>
+            
+            <!-- Feature 5 -->
+            <div class="brutal-card brutal-card-pink p-10 group" data-aos="fade-up" data-aos-delay="200">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--neon-pink); box-shadow: 5px 5px 0 rgba(255, 0, 102, 0.5);">
+                    <i class="fas fa-mobile-alt text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">MOBILE READY</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Trade anywhere on desktop, tablet, or mobile devices.
+                </p>
+            </div>
+            
+            <!-- Feature 6 -->
+            <div class="brutal-card brutal-card-blue p-10 group" data-aos="fade-up" data-aos-delay="300">
+                <div class="w-20 h-20 mb-6 flex items-center justify-center" style="background: var(--neon-blue); box-shadow: 5px 5px 0 rgba(0, 212, 255, 0.5);">
+                    <i class="fas fa-users text-4xl text-black"></i>
+                </div>
+                <h3 class="title-font text-3xl mb-4 text-white">COPY TRADING</h3>
+                <p class="text-gray-400 leading-relaxed">
+                    Follow and copy trades from top-performing traders.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Live Chart Section -->
+<section class="py-32 relative">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                Why Choose <span class="gradient-text">Trade Simplified</span>
+            <h2 class="title-font text-6xl mb-6" style="color: var(--neon-pink);">
+                LIVE MARKET DATA
             </h2>
-            <p class="text-xl text-gray-400">Everything you need to succeed in crypto trading</p>
+            <p class="text-xl text-gray-400">
+                Real-time charts powered by TradingView
+            </p>
+        </div>
+        
+        <div class="brutal-card p-8">
+            <div id="tradingview_chart" style="height: 600px;"></div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-32">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-20">
+            <h2 class="title-font text-6xl mb-6" style="color: var(--neon-blue);">
+                TRADER REVIEWS
+            </h2>
+            <p class="text-xl text-gray-400">
+                Join thousands of successful traders
+            </p>
         </div>
         
         <div class="grid md:grid-cols-3 gap-8">
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-shield-alt text-cyan-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">Secure & Safe</h3>
-                <p class="text-gray-400">Bank-level security with multi-layer encryption and cold storage for your assets.</p>
+            <!-- Testimonial 1 -->
+            <div class="brutal-card p-10" data-aos="zoom-in" data-aos-delay="100">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.pravatar.cc/100?img=12" alt="Trader" class="w-16 h-16" style="clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);">
+                    <div>
+                        <h4 class="text-white font-bold text-lg">Marcus Chen</h4>
+                        <p class="text-gray-400 text-sm mono-font">New York, USA</p>
+                    </div>
+                </div>
+                <div class="flex gap-1 mb-4">
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                </div>
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    The platform is incredibly intuitive. AI bots have helped me stay profitable for over a year.
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-700">
+                    <span class="text-sm text-gray-500 mono-font">Since 2022</span>
+                    <span class="font-bold title-font text-2xl" style="color: var(--neon-green);">+$47.2K</span>
+                </div>
             </div>
             
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-chart-line text-blue-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">Advanced Trading</h3>
-                <p class="text-gray-400">Professional trading tools with AI-powered bots and real-time analytics.</p>
+            <!-- Testimonial 2 -->
+            <div class="brutal-card brutal-card-pink p-10" data-aos="zoom-in" data-aos-delay="200">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.pravatar.cc/100?img=47" alt="Trader" class="w-16 h-16" style="clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);">
+                    <div>
+                        <h4 class="text-white font-bold text-lg">Sophie Bennett</h4>
+                        <p class="text-gray-400 text-sm mono-font">London, UK</p>
+                    </div>
+                </div>
+                <div class="flex gap-1 mb-4">
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                </div>
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    Copy trading is a game changer! My portfolio grew 180% in just six months.
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-700">
+                    <span class="text-sm text-gray-500 mono-font">Since 2023</span>
+                    <span class="font-bold title-font text-2xl" style="color: var(--neon-green);">+£32.5K</span>
+                </div>
             </div>
             
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-users text-purple-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">Copy Trading</h3>
-                <p class="text-gray-400">Follow and copy trades from top-performing professional traders automatically.</p>
-            </div>
-            
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-mobile-alt text-green-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">Trade Anywhere</h3>
-                <p class="text-gray-400">Fully responsive platform. Trade on desktop, tablet, or mobile with ease.</p>
-            </div>
-            
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-clock text-yellow-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">24/7 Support</h3>
-                <p class="text-gray-400">Round-the-clock customer support to help you whenever you need assistance.</p>
-            </div>
-            
-            <div class="crypto-card p-8 rounded-2xl">
-                <div class="text-5xl mb-4"><i class="fas fa-bolt text-red-400"></i></div>
-                <h3 class="text-2xl font-bold mb-4">Instant Deposits</h3>
-                <p class="text-gray-400">Quick deposits and withdrawals with support for major cryptocurrencies.</p>
+            <!-- Testimonial 3 -->
+            <div class="brutal-card brutal-card-blue p-10" data-aos="zoom-in" data-aos-delay="300">
+                <div class="flex items-center gap-4 mb-6">
+                    <img src="https://i.pravatar.cc/100?img=33" alt="Trader" class="w-16 h-16" style="clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);">
+                    <div>
+                        <h4 class="text-white font-bold text-lg">Wei Chen</h4>
+                        <p class="text-gray-400 text-sm mono-font">Shanghai, China</p>
+                    </div>
+                </div>
+                <div class="flex gap-1 mb-4">
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                    <i class="fas fa-star text-2xl" style="color: var(--cyber-yellow);"></i>
+                </div>
+                <p class="text-gray-300 mb-6 leading-relaxed">
+                    Outstanding security and execution speed. Real-time analytics are incredibly helpful!
+                </p>
+                <div class="flex items-center justify-between pt-4 border-t border-gray-700">
+                    <span class="text-sm text-gray-500 mono-font">Since 2021</span>
+                    <span class="font-bold title-font text-2xl" style="color: var(--neon-green);">+¥421K</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
-
-<!-- How It Works Section -->
-<section class="py-20 bg-slate-900/50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                <span class="gradient-text">How to Get Started</span>
-            </h2>
-            <p class="text-xl text-gray-400">Start trading in 3 simple steps</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-12">
-            <!-- Step 1 -->
-            <div class="text-center">
-                <div class="relative inline-block mb-6">
-                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-blue-500/50">
-                        1
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold mb-4">Create Account</h3>
-                <p class="text-gray-400 mb-4">Sign up with your email and complete the quick registration process. Verify your account to get started.</p>
-                <div class="text-cyan-400">
-                    <i class="fas fa-user-plus text-3xl"></i>
-                </div>
-            </div>
-            
-            <!-- Step 2 -->
-            <div class="text-center">
-                <div class="relative inline-block mb-6">
-                    <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-purple-500/50">
-                        2
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold mb-4">Fund Your Account</h3>
-                <p class="text-gray-400 mb-4">Deposit funds using Bitcoin, Ethereum, or other supported cryptocurrencies. Secure and instant deposits.</p>
-                <div class="text-purple-400">
-                    <i class="fas fa-wallet text-3xl"></i>
-                </div>
-            </div>
-            
-            <!-- Step 3 -->
-            <div class="text-center">
-                <div class="relative inline-block mb-6">
-                    <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-4xl font-bold shadow-lg shadow-green-500/50">
-                        3
-                    </div>
-                </div>
-                <h3 class="text-2xl font-bold mb-4">Start Trading</h3>
-                <p class="text-gray-400 mb-4">Access trading bots, copy professional traders, or trade manually. Watch your profits grow daily.</p>
-                <div class="text-green-400">
-                    <i class="fas fa-chart-line text-3xl"></i>
-                </div>
-            </div>
-        </div>
-        
-        <div class="text-center mt-12">
-            <a href="{% url 'register' %}" class="btn-primary inline-block px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
-                Start Trading Now <i class="fas fa-rocket ml-2"></i>
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- Satisfied Traders Section -->
-<section class="py-20 bg-slate-900/50 relative overflow-hidden">
-    <!-- Animated Background -->
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute w-96 h-96 bg-blue-500 rounded-full blur-3xl animate-pulse" style="top: 10%; left: 10%;"></div>
-        <div class="absolute w-96 h-96 bg-cyan-500 rounded-full blur-3xl animate-pulse" style="bottom: 10%; right: 10%; animation-delay: 1s;"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-16 animate-fade-in">
-            <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-blue-900/40 to-cyan-900/40 border border-cyan-500/30 mb-6">
-                <i class="fas fa-trophy text-yellow-400 mr-2"></i>
-                <span class="text-sm text-gray-300">150,000+ Happy Traders Worldwide</span>
-            </div>
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                What Our <span class="gradient-text">Traders Say</span>
-            </h2>
-            <p class="text-xl text-gray-400">Real people, real results, real profits</p>
-        </div>
-        
-        <!-- Reviews Carousel -->
-        <div class="relative">
-            <div class="overflow-hidden rounded-3xl">
-                <div class="reviews-slider flex transition-all duration-1000 ease-out" id="reviews-slider" style="will-change: transform;">
-                    <!-- Review 1 - James Mitchell -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=12" alt="James Mitchell" class="w-20 h-20 rounded-full border-4 border-blue-500/50 shadow-lg shadow-blue-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">James Mitchell</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        New York, USA
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-cyan-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    I've been trading for 3 years now, and InfinityinfluxTrading has been a game-changer. The AI-powered bots are incredibly accurate, and I've seen consistent 15-20% monthly returns. The 24/7 support team is always there when I need them.
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2022</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+$47,200</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review 2 - Sophie Bennett -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=47" alt="Sophie Bennett" class="w-20 h-20 rounded-full border-4 border-purple-500/50 shadow-lg shadow-purple-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">Sophie Bennett</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        London, UK
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-purple-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    As a beginner, I was nervous about crypto trading. The copy trading feature allowed me to follow experienced traders and learn while earning. In just 6 months, I've grown my portfolio by 180%. Best investment decision ever!
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2023</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+£32,500</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review 3 - Wei Chen -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=33" alt="Wei Chen" class="w-20 h-20 rounded-full border-4 border-green-500/50 shadow-lg shadow-green-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">Wei Chen</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        Shanghai, China
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-green-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    The platform's security measures are top-notch. I trade with confidence knowing my assets are protected. The real-time analytics and instant deposits make trading seamless. I've recommended this to all my friends and colleagues.
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2021</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+¥421,000</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review 4 - Michael Schmidt -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-yellow-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=59" alt="Michael Schmidt" class="w-20 h-20 rounded-full border-4 border-yellow-500/50 shadow-lg shadow-yellow-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">Michael Schmidt</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        Berlin, Germany
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-yellow-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    Outstanding platform! The advanced trading tools are professional-grade, yet easy to use. I've been able to automate my strategies and the results speak for themselves. Withdrawals are fast and the fees are very competitive.
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2022</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+€56,800</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review 5 - Carlos Rodriguez -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-red-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=68" alt="Carlos Rodriguez" class="w-20 h-20 rounded-full border-4 border-red-500/50 shadow-lg shadow-red-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">Carlos Rodriguez</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        Madrid, Spain
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-red-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    I started with just €500 and turned it into over €8,000 in 8 months! The educational resources helped me understand the market better. The mobile app is fantastic - I can trade from anywhere. Highly recommended for both beginners and pros!
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2023</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+€8,340</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review 6 - Robert Johnson -->
-                    <div class="review-card min-w-full md:min-w-[33.333%] px-3">
-                        <div class="crypto-card p-8 rounded-2xl h-full transform transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-indigo-500/30">
-                            <div class="flex items-center mb-6">
-                                <div class="relative">
-                                    <img src="https://i.pravatar.cc/150?img=15" alt="Robert Johnson" class="w-20 h-20 rounded-full border-4 border-indigo-500/50 shadow-lg shadow-indigo-500/50 object-cover">
-                                    <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-slate-900 flex items-center justify-center">
-                                        <i class="fas fa-check text-white text-xs"></i>
-                                    </div>
-                                </div>
-                                <div class="ml-4 flex-1">
-                                    <h4 class="text-xl font-bold text-white">Robert Johnson</h4>
-                                    <p class="text-gray-400 text-sm flex items-center">
-                                        <i class="fas fa-map-marker-alt text-cyan-400 mr-1"></i>
-                                        Houston, Texas
-                                    </p>
-                                    <div class="flex text-yellow-400 mt-1">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="relative">
-                                <i class="fas fa-quote-left text-3xl text-indigo-400/20 absolute -top-2 -left-2"></i>
-                                <p class="text-gray-300 leading-relaxed mb-4 pl-6">
-                                    I've tried several trading platforms, but this one stands out. The interface is intuitive, execution is lightning-fast, and the customer support is exceptional. I've been consistently profitable for over a year now. This platform is the real deal!
-                                </p>
-                            </div>
-                            <div class="flex items-center justify-between pt-4 border-t border-slate-700/50">
-                                <div class="flex items-center text-xs text-cyan-400">
-                                    <i class="fas fa-clock mr-1"></i>
-                                    <span class="font-semibold">Since 2022</span>
-                                </div>
-                                <div class="flex items-center text-sm font-bold text-green-400">
-                                    <i class="fas fa-arrow-trend-up mr-1"></i>
-                                    <span>+$63,900</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Navigation Arrows -->
-            <button class="absolute left-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-blue-600 hover:to-cyan-600 text-white p-4 rounded-full transition-all z-10 shadow-xl hover:scale-110 transform" onclick="previousReview()">
-                <i class="fas fa-chevron-left text-xl"></i>
-            </button>
-            <button class="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-blue-600 hover:to-cyan-600 text-white p-4 rounded-full transition-all z-10 shadow-xl hover:scale-110 transform" onclick="nextReview()">
-                <i class="fas fa-chevron-right text-xl"></i>
-            </button>
-        </div>
-        
-        <!-- Dots Indicator -->
-        <div class="flex justify-center mt-10 gap-3" id="review-dots">
-            <button class="dot active" onclick="goToReview(0)"></button>
-            <button class="dot" onclick="goToReview(1)"></button>
-            <button class="dot" onclick="goToReview(2)"></button>
-            <button class="dot" onclick="goToReview(3)"></button>
-        </div>
-    </div>
-</section>
-
-<!-- Trusted by Leading Companies Section -->
-<section class="py-20 relative overflow-hidden">
-    <!-- Animated Background -->
-    <div class="absolute inset-0 opacity-5">
-        <div class="absolute w-96 h-96 bg-purple-500 rounded-full blur-3xl animate-pulse" style="top: 20%; right: 10%; animation-delay: 0.5s;"></div>
-        <div class="absolute w-96 h-96 bg-pink-500 rounded-full blur-3xl animate-pulse" style="bottom: 20%; left: 10%; animation-delay: 1.5s;"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div class="text-center mb-16 animate-fade-in">
-            <div class="inline-flex items-center px-4 py-2 rounded-full bg-gradient-to-r from-purple-900/40 to-pink-900/40 border border-purple-500/30 mb-6">
-                <i class="fas fa-building text-purple-400 mr-2"></i>
-                <span class="text-sm text-gray-300">Trusted by Fortune 500 Companies</span>
-            </div>
-            <h2 class="text-4xl md:text-5xl font-bold mb-4">
-                <span class="gradient-text">Institutional Grade</span> Trading Solutions
-            </h2>
-            <p class="text-xl text-gray-400">Corporate clients generating millions in returns</p>
-        </div>
-        
-        <!-- Companies Carousel -->
-        <div class="relative">
-            <div class="overflow-hidden rounded-3xl">
-                <div class="companies-slider flex transition-all duration-1000 ease-out" id="companies-slider" style="will-change: transform;">
-                    <!-- Company 1 - TechVenture Capital -->
-                    <div class="company-card min-w-full px-4">
-                        <div class="crypto-card p-10 rounded-3xl transform transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/20">
-                            <div class="flex flex-col lg:flex-row items-center gap-8">
-                                <div class="lg:w-1/3 text-center">
-                                    <div class="relative inline-block mb-6">
-                                        <div class="w-40 h-40 mx-auto rounded-3xl bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-800 flex items-center justify-center mb-4 shadow-2xl shadow-blue-500/50 transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
-                                            <img src="https://api.dicebear.com/7.x/shapes/svg?seed=techventure&backgroundColor=3b82f6,06b6d4" alt="TechVenture Capital" class="w-24 h-24 object-contain relative z-10">
-                                        </div>
-                                        <div class="absolute -top-2 -right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                                            <i class="fas fa-check-circle mr-1"></i>Verified
-                                        </div>
-                                    </div>
-                                    <h3 class="text-2xl font-bold text-white mb-2">TechVenture Capital LLC</h3>
-                                    <p class="text-cyan-400 font-semibold flex items-center justify-center">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>
-                                        San Francisco, USA
-                                    </p>
-                                    <div class="flex justify-center mt-3 space-x-1">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <div class="lg:w-2/3">
-                                    <div class="mb-6">
-                                        <div class="relative">
-                                            <i class="fas fa-quote-left text-4xl text-blue-400/20 absolute -top-3 -left-3"></i>
-                                            <p class="text-gray-300 text-lg leading-relaxed mb-6 pl-8">
-                                                We've allocated $2.5M of our investment portfolio to InfinityinfluxTrading's automated trading systems. Over 18 months, we've achieved a remarkable 142% ROI. The platform's institutional-grade security and transparent reporting have exceeded our expectations.
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center mb-6">
-                                            <img src="https://i.pravatar.cc/100?img=52" alt="David Martinez" class="w-12 h-12 rounded-full border-2 border-cyan-500 mr-3">
-                                            <div>
-                                                <p class="text-white font-semibold">David Martinez</p>
-                                                <p class="text-gray-400 text-sm">Chief Investment Officer</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Company 2 - Global Finance Group -->
-                    <div class="company-card min-w-full px-4">
-                        <div class="crypto-card p-10 rounded-3xl transform transition-all duration-500 hover:shadow-2xl hover:shadow-purple-500/20">
-                            <div class="flex flex-col lg:flex-row items-center gap-8">
-                                <div class="lg:w-1/3 text-center">
-                                    <div class="relative inline-block mb-6">
-                                        <div class="w-40 h-40 mx-auto rounded-3xl bg-gradient-to-br from-purple-600 via-pink-600 to-purple-800 flex items-center justify-center mb-4 shadow-2xl shadow-purple-500/50 transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
-                                            <img src="https://api.dicebear.com/7.x/shapes/svg?seed=globalfinance&backgroundColor=a855f7,ec4899" alt="Global Finance Group" class="w-24 h-24 object-contain relative z-10">
-                                        </div>
-                                        <div class="absolute -top-2 -right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                                            <i class="fas fa-check-circle mr-1"></i>Verified
-                                        </div>
-                                    </div>
-                                    <h3 class="text-2xl font-bold text-white mb-2">Global Finance Group AG</h3>
-                                    <p class="text-cyan-400 font-semibold flex items-center justify-center">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>
-                                        Zurich, Switzerland
-                                    </p>
-                                    <div class="flex justify-center mt-3 space-x-1">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <div class="lg:w-2/3">
-                                    <div class="mb-6">
-                                        <div class="relative">
-                                            <i class="fas fa-quote-left text-4xl text-purple-400/20 absolute -top-3 -left-3"></i>
-                                            <p class="text-gray-300 text-lg leading-relaxed mb-6 pl-8">
-                                                As a European financial institution managing €50M+ in assets, we demand excellence. InfinityinfluxTrading delivers with sophisticated algorithms, real-time risk management, and exceptional liquidity. Our crypto division has seen 94% growth year-over-year.
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center mb-6">
-                                            <img src="https://i.pravatar.cc/100?img=57" alt="Dr. Klaus Weber" class="w-12 h-12 rounded-full border-2 border-purple-500 mr-3">
-                                            <div>
-                                                <p class="text-white font-semibold">Dr. Klaus Weber</p>
-                                                <p class="text-gray-400 text-sm">Managing Director</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Company 3 - Apex Investment Partners -->
-                    <div class="company-card min-w-full px-4">
-                        <div class="crypto-card p-10 rounded-3xl transform transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/20">
-                            <div class="flex flex-col lg:flex-row items-center gap-8">
-                                <div class="lg:w-1/3 text-center">
-                                    <div class="relative inline-block mb-6">
-                                        <div class="w-40 h-40 mx-auto rounded-3xl bg-gradient-to-br from-green-600 via-emerald-600 to-green-800 flex items-center justify-center mb-4 shadow-2xl shadow-green-500/50 transform hover:scale-105 transition-transform duration-500 relative overflow-hidden">
-                                            <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent"></div>
-                                            <img src="https://api.dicebear.com/7.x/shapes/svg?seed=apexinvestment&backgroundColor=22c55e,10b981" alt="Apex Investment Partners" class="w-24 h-24 object-contain relative z-10">
-                                        </div>
-                                        <div class="absolute -top-2 -right-2 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-                                            <i class="fas fa-check-circle mr-1"></i>Verified
-                                        </div>
-                                    </div>
-                                    <h3 class="text-2xl font-bold text-white mb-2">Apex Investment Partners</h3>
-                                    <p class="text-cyan-400 font-semibold flex items-center justify-center">
-                                        <i class="fas fa-map-marker-alt mr-2"></i>
-                                        London, United Kingdom
-                                    </p>
-                                    <div class="flex justify-center mt-3 space-x-1">
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                        <i class="fas fa-star text-yellow-400"></i>
-                                    </div>
-                                </div>
-                                <div class="lg:w-2/3">
-                                    <div class="mb-6">
-                                        <div class="relative">
-                                            <i class="fas fa-quote-left text-4xl text-green-400/20 absolute -top-3 -left-3"></i>
-                                            <p class="text-gray-300 text-lg leading-relaxed mb-6 pl-8">
-                                                After evaluating 12+ trading platforms, InfinityinfluxTrading emerged as the clear leader. Their institutional tools, combined with 24/7 dedicated account management, have helped us generate $8.7M in profits. The ROI speaks for itself.
-                                            </p>
-                                        </div>
-                                        <div class="flex items-center mb-6">
-                                            <img src="https://i.pravatar.cc/100?img=44" alt="Sarah Thompson" class="w-12 h-12 rounded-full border-2 border-green-500 mr-3">
-                                            <div>
-                                                <p class="text-white font-semibold">Sarah Thompson</p>
-                                                <p class="text-gray-400 text-sm">Head of Digital Assets</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Navigation Arrows -->
-            <button class="absolute left-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full transition-all z-10 shadow-xl hover:scale-110 transform" onclick="previousCompany()">
-                <i class="fas fa-chevron-left text-xl"></i>
-            </button>
-            <button class="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-slate-800 to-slate-700 hover:from-purple-600 hover:to-pink-600 text-white p-4 rounded-full transition-all z-10 shadow-xl hover:scale-110 transform" onclick="nextCompany()">
-                <i class="fas fa-chevron-right text-xl"></i>
-            </button>
-        </div>
-        
-        <!-- Dots Indicator -->
-        <div class="flex justify-center mt-10 gap-3" id="company-dots">
-            <button class="dot active" onclick="goToCompany(0)"></button>
-            <button class="dot" onclick="goToCompany(1)"></button>
-            <button class="dot" onclick="goToCompany(2)"></button>
-        </div>
-    </div>
-</section>
-
-<style>
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .animate-fade-in {
-        animation: fadeIn 0.8s ease-out;
-    }
-
-    .reviews-slider,
-    .companies-slider {
-        display: flex;
-        transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .dot {
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: rgba(59, 130, 246, 0.3);
-        border: none;
-        cursor: pointer;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .dot::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-
-    .dot:hover::before {
-        opacity: 0.6;
-    }
-
-    .dot:hover {
-        transform: scale(1.3);
-    }
-
-    .dot.active {
-        background: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-        width: 40px;
-        border-radius: 6px;
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
-    }
-
-    .dot.active::before {
-        opacity: 1;
-    }
-
-    @media (max-width: 768px) {
-        .review-card,
-        .company-card {
-            min-width: 100% !important;
-        }
-    }
-
-    /* Smooth hover animations */
-    .crypto-card {
-        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Enhanced star animations */
-    @keyframes starGlow {
-        0%, 100% {
-            filter: drop-shadow(0 0 2px rgba(250, 204, 21, 0.5));
-        }
-        50% {
-            filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.8));
-        }
-    }
-
-    .fa-star {
-        animation: starGlow 2s ease-in-out infinite;
-    }
-
-    .fa-star:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .fa-star:nth-child(3) {
-        animation-delay: 0.4s;
-    }
-
-    .fa-star:nth-child(4) {
-        animation-delay: 0.6s;
-    }
-
-    .fa-star:nth-child(5) {
-        animation-delay: 0.8s;
-    }
-</style>
-
-<script>
-    // Reviews Carousel with smooth animations
-    let currentReviewIndex = 0;
-    let reviewAutoplayInterval;
-    const reviewsPerView = window.innerWidth >= 768 ? 3 : 1;
-    const totalReviews = 6;
-    const maxReviewIndex = Math.ceil(totalReviews / reviewsPerView) - 1;
-
-    function updateReviewSlider(instant = false) {
-        const slider = document.getElementById('reviews-slider');
-        const offset = -(currentReviewIndex * (100 / reviewsPerView));
-        
-        if (instant) {
-            slider.style.transition = 'none';
-        } else {
-            slider.style.transition = 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-        
-        slider.style.transform = `translateX(${offset}%)`;
-        
-        // Update dots with stagger effect
-        const dots = document.querySelectorAll('#review-dots .dot');
-        dots.forEach((dot, index) => {
-            setTimeout(() => {
-                dot.classList.toggle('active', index === currentReviewIndex);
-            }, index * 50);
-        });
-    }
-
-    function nextReview() {
-        currentReviewIndex = (currentReviewIndex + 1) > maxReviewIndex ? 0 : currentReviewIndex + 1;
-        updateReviewSlider();
-        resetReviewAutoplay();
-    }
-
-    function previousReview() {
-        currentReviewIndex = (currentReviewIndex - 1) < 0 ? maxReviewIndex : currentReviewIndex - 1;
-        updateReviewSlider();
-        resetReviewAutoplay();
-    }
-
-    function goToReview(index) {
-        currentReviewIndex = index;
-        updateReviewSlider();
-        resetReviewAutoplay();
-    }
-
-    function startReviewAutoplay() {
-        reviewAutoplayInterval = setInterval(nextReview, 5000);
-    }
-
-    function resetReviewAutoplay() {
-        clearInterval(reviewAutoplayInterval);
-        startReviewAutoplay();
-    }
-
-    // Companies Carousel with smooth animations
-    let currentCompanyIndex = 0;
-    let companyAutoplayInterval;
-    const totalCompanies = 3;
-
-    function updateCompanySlider(instant = false) {
-        const slider = document.getElementById('companies-slider');
-        const offset = -(currentCompanyIndex * 100);
-        
-        if (instant) {
-            slider.style.transition = 'none';
-        } else {
-            slider.style.transition = 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-        
-        slider.style.transform = `translateX(${offset}%)`;
-        
-        // Update dots with stagger effect
-        const dots = document.querySelectorAll('#company-dots .dot');
-        dots.forEach((dot, index) => {
-            setTimeout(() => {
-                dot.classList.toggle('active', index === currentCompanyIndex);
-            }, index * 50);
-        });
-    }
-
-    function nextCompany() {
-        currentCompanyIndex = (currentCompanyIndex + 1) % totalCompanies;
-        updateCompanySlider();
-        resetCompanyAutoplay();
-    }
-
-    function previousCompany() {
-        currentCompanyIndex = (currentCompanyIndex - 1 + totalCompanies) % totalCompanies;
-        updateCompanySlider();
-        resetCompanyAutoplay();
-    }
-
-    function goToCompany(index) {
-        currentCompanyIndex = index;
-        updateCompanySlider();
-        resetCompanyAutoplay();
-    }
-
-    function startCompanyAutoplay() {
-        companyAutoplayInterval = setInterval(nextCompany, 7000);
-    }
-
-    function resetCompanyAutoplay() {
-        clearInterval(companyAutoplayInterval);
-        startCompanyAutoplay();
-    }
-
-    // Initialize carousels
-    document.addEventListener('DOMContentLoaded', function() {
-        startReviewAutoplay();
-        startCompanyAutoplay();
-        
-        // Handle window resize
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                updateReviewSlider(true);
-                updateCompanySlider(true);
-            }, 250);
-        });
-
-        // Pause on hover
-        const reviewsSection = document.querySelector('.reviews-slider');
-        const companiesSection = document.querySelector('.companies-slider');
-        
-        if (reviewsSection) {
-            reviewsSection.addEventListener('mouseenter', () => clearInterval(reviewAutoplayInterval));
-            reviewsSection.addEventListener('mouseleave', startReviewAutoplay);
-        }
-        
-        if (companiesSection) {
-            companiesSection.addEventListener('mouseenter', () => clearInterval(companyAutoplayInterval));
-            companiesSection.addEventListener('mouseleave', startCompanyAutoplay);
-        }
-    });
-</script>
 
 <!-- CTA Section -->
-<section class="py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="crypto-card p-12 rounded-3xl">
-            <h2 class="text-4xl md:text-5xl font-bold mb-6">
-                Ready to Start Your <span class="gradient-text">Trading Journey?</span>
-            </h2>
-            <p class="text-xl text-gray-400 mb-8">
-                Join thousands of traders who are already profiting from our advanced trading platform.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-lg font-bold text-white shadow-xl">
-                    Create Free Account
-                </a>
-                <a href="{% url 'login' %}" class="bg-slate-700 hover:bg-slate-600 px-10 py-4 rounded-xl text-lg font-bold text-white transition">
-                    Sign In
-                </a>
+<section class="py-40 relative overflow-hidden">
+    <!-- Extra glow effect -->
+    <div class="absolute inset-0" style="background: radial-gradient(circle at center, rgba(0, 255, 136, 0.15) 0%, transparent 70%);"></div>
+    
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
+        <h2 class="title-font text-7xl md:text-8xl mb-8 glitch" data-text="START TODAY" style="color: var(--neon-green);">
+            START TODAY
+        </h2>
+        <p class="text-2xl text-gray-300 mb-12 max-w-3xl mx-auto">
+            Join 150,000+ traders who trust our platform for their investments
+        </p>
+        <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <a href="{% url 'register' %}" class="neon-btn px-16 py-6 text-xl font-bold">
+                CREATE FREE ACCOUNT
+            </a>
+            <a href="{% url 'login' %}" class="neon-btn neon-btn-pink px-16 py-6 text-xl font-bold">
+                SIGN IN
+            </a>
+        </div>
+        <div class="mt-12 flex flex-wrap justify-center gap-8 text-gray-400">
+            <div class="flex items-center gap-2">
+                <i class="fas fa-check-circle" style="color: var(--neon-green);"></i>
+                <span>No Credit Card Required</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-check-circle" style="color: var(--neon-green);"></i>
+                <span>Instant Access</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <i class="fas fa-check-circle" style="color: var(--neon-green);"></i>
+                <span>24/7 Support</span>
             </div>
         </div>
     </div>
 </section>
+
+<!-- AOS Animation Library -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+<style>
+    .ticker-scroll {
+        animation: tickerScroll 20s linear infinite;
+    }
+    
+    @keyframes tickerScroll {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    
+    /* Smooth scroll */
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: var(--dark-bg);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--neon-green);
+        border-radius: 5px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--neon-blue);
+    }
+</style>
 
 {% endblock %}
 
 {% block extra_js %}
-<!-- TradingView Widget Script -->
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
+    // Initialize AOS
+    AOS.init({
+        duration: 1000,
+        once: true,
+        offset: 100
+    });
+
     // TradingView Chart
     new TradingView.widget({
         "width": "100%",
@@ -973,46 +378,67 @@
         "theme": "dark",
         "style": "1",
         "locale": "en",
-        "toolbar_bg": "#0f172a",
+        "toolbar_bg": "#0a0a0a",
         "enable_publishing": false,
         "allow_symbol_change": true,
-        "container_id": "tradingview_chart"
+        "container_id": "tradingview_chart",
+        "backgroundColor": "#141414",
+        "gridColor": "#1a1a1a",
+        "hide_side_toolbar": false
     });
     
-    // Crypto Ticker
-    const cryptoSymbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'USDT'];
-    const ticker = document.getElementById('crypto-ticker');
+    // Price Ticker
+    const symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX'];
+    const ticker = document.getElementById('price-ticker');
     
-    async function updateTicker() {
+    async function updatePrices() {
         try {
             const response = await fetch('/api/crypto-prices/');
             const prices = await response.json();
             
-            let tickerHTML = '';
-            cryptoSymbols.forEach(symbol => {
-                const price = prices[symbol] || 0;
-                const change = (Math.random() * 10 - 5).toFixed(2); // Mock change percentage
-                const isPositive = change >= 0;
+            let html = '';
+            symbols.forEach(symbol => {
+                const price = prices[symbol] || (Math.random() * 50000 + 1000).toFixed(2);
+                const change = (Math.random() * 10 - 5).toFixed(2);
+                const isUp = change >= 0;
                 
-                tickerHTML += `
-                    <div class="flex items-center space-x-3 px-6">
-                        <span class="font-bold text-cyan-400">${symbol}</span>
-                        <span class="text-white font-semibold">$${price.toLocaleString()}</span>
-                        <span class="${isPositive ? 'text-green-400' : 'text-red-400'} text-sm">
-                            ${isPositive ? '↑' : '↓'} ${Math.abs(change)}%
+                html += `
+                    <div class="flex items-center gap-3 whitespace-nowrap">
+                        <span class="font-bold text-white mono-font">${symbol}</span>
+                        <span class="font-bold text-white text-lg mono-font">$${parseFloat(price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        <span class="font-bold text-sm mono-font px-2 py-1" style="background: ${isUp ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 0, 102, 0.2)'}; color: ${isUp ? 'var(--neon-green)' : 'var(--neon-pink)'};">
+                            ${isUp ? '↑' : '↓'}${Math.abs(change)}%
                         </span>
                     </div>
                 `;
             });
             
-            // Duplicate for seamless scroll
-            ticker.innerHTML = tickerHTML + tickerHTML;
-        } catch (error) {
-            console.error('Error fetching prices:', error);
+            // Double the content for seamless loop
+            ticker.innerHTML = html + html;
+        } catch (err) {
+            console.error('Price update failed:', err);
+            // Fallback with dummy data
+            let html = '';
+            symbols.forEach(symbol => {
+                const price = (Math.random() * 50000 + 1000).toFixed(2);
+                const change = (Math.random() * 10 - 5).toFixed(2);
+                const isUp = change >= 0;
+                
+                html += `
+                    <div class="flex items-center gap-3 whitespace-nowrap">
+                        <span class="font-bold text-white mono-font">${symbol}</span>
+                        <span class="font-bold text-white text-lg mono-font">$${parseFloat(price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                        <span class="font-bold text-sm mono-font px-2 py-1" style="background: ${isUp ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 0, 102, 0.2)'}; color: ${isUp ? 'var(--neon-green)' : 'var(--neon-pink)'};">
+                            ${isUp ? '↑' : '↓'}${Math.abs(change)}%
+                        </span>
+                    </div>
+                `;
+            });
+            ticker.innerHTML = html + html;
         }
     }
     
-    updateTicker();
-    setInterval(updateTicker, 10000); // Update every 10 seconds
+    updatePrices();
+    setInterval(updatePrices, 15000);
 </script>
 {% endblock %}

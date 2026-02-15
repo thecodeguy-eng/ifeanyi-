@@ -1,96 +1,252 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Account - InfinityinfluxTrading{% endblock %}
+{% block title %}Create Account - Influxfinancetrading {% endblock %}
 
 {% block content %}
-<section class="min-h-screen py-20">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="crypto-card p-8 md:p-12 rounded-3xl">
+<section class="min-h-screen py-12" style="background: var(--bg-secondary);">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="glass-card rounded-2xl p-8 md:p-12">
             <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold mb-2">
-                    Create Your <span class="gradient-text">Account</span>
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl mb-4" style="background: rgba(16, 185, 129, 0.1);">
+                    <i class="fas fa-user-plus text-emerald-600 text-3xl"></i>
+                </div>
+                <h1 class="text-3xl font-bold mb-2" style="color: var(--text-primary);">
+                    Start Your Journey
                 </h1>
-                <p class="text-gray-400">Join thousands of successful traders</p>
+                <p style="color: var(--text-secondary);">Join thousands of successful traders</p>
             </div>
             
-            <form method="post" class="space-y-6">
+            <form method="post" class="space-y-5" id="registerForm">
                 {% csrf_token %}
                 
-                <!-- Username -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Username</label>
-                    <input type="text" name="username" required
-                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition">
-                </div>
-                
-                <!-- Email -->
-                <div>
-                    <label class="block text-sm font-medium mb-2">Email Address</label>
-                    <input type="email" name="email" required
-                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition">
-                </div>
-                
-                <!-- Name Fields -->
-                <div class="grid md:grid-cols-2 gap-4">
+                <div class="grid md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-sm font-medium mb-2">Legal First Name</label>
+                        <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">First Name</label>
                         <input type="text" name="legal_first_name" required
-                               class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition">
+                               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                               style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium mb-2">Legal Last Name</label>
+                        <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Last Name</label>
                         <input type="text" name="legal_last_name" required
-                               class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition">
+                               class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                               style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
                     </div>
                 </div>
                 
-                <!-- Phone Number -->
                 <div>
-                    <label class="block text-sm font-medium mb-2">Phone Number</label>
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Username</label>
+                    <input type="text" name="username" required
+                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                           style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Email Address</label>
+                    <input type="email" name="email" required
+                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                           style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Phone Number</label>
                     <input type="tel" name="phone_number" required
-                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
+                           class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                           style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"
                            placeholder="+1234567890">
                 </div>
                 
-                <!-- Preferred Currency -->
                 <div>
-                    <label class="block text-sm font-medium mb-2">Preferred Currency</label>
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Preferred Currency</label>
                     <select name="preferred_currency" required
-                            class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition">
+                            class="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                            style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);">
                         <option value="USD">USD - US Dollar</option>
                         <option value="EUR">EUR - Euro</option>
                         <option value="GBP">GBP - British Pound</option>
                     </select>
                 </div>
                 
-                <!-- Password -->
                 <div>
-                    <label class="block text-sm font-medium mb-2">Password</label>
-                    <input type="password" name="password" required
-                           class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
-                           placeholder="Minimum 8 characters">
+                    <label class="block text-sm font-semibold mb-2" style="color: var(--text-primary);">Password</label>
+                    <div class="relative">
+                        <input type="password" name="password" id="password" required
+                               class="w-full px-4 pr-12 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                               style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"
+                               placeholder="Minimum 8 characters">
+                        <button type="button" onclick="togglePassword()" 
+                                class="absolute inset-y-0 right-0 pr-4 flex items-center hover:text-emerald-600"
+                                style="color: var(--text-tertiary);">
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    <div class="mt-2 space-y-1">
+                        <div class="flex items-center text-xs" id="length-check">
+                            <i class="fas fa-circle text-gray-400 mr-2"></i>
+                            <span style="color: var(--text-tertiary);">At least 8 characters</span>
+                        </div>
+                        <div class="flex items-center text-xs" id="uppercase-check">
+                            <i class="fas fa-circle text-gray-400 mr-2"></i>
+                            <span style="color: var(--text-tertiary);">One uppercase letter</span>
+                        </div>
+                        <div class="flex items-center text-xs" id="number-check">
+                            <i class="fas fa-circle text-gray-400 mr-2"></i>
+                            <span style="color: var(--text-tertiary);">One number</span>
+                        </div>
+                    </div>
                 </div>
                 
-                <!-- Terms -->
-                <div class="flex items-start">
-                    <input type="checkbox" required class="mt-1 mr-3">
-                    <label class="text-sm text-gray-400">
-                        I agree to the <a href="#" class="text-cyan-400 hover:underline">Terms of Service</a> and 
-                        <a href="#" class="text-cyan-400 hover:underline">Privacy Policy</a>
+                <!-- CAPTCHA Container -->
+                <div id="captchaContainer" class="hidden">
+                    <div class="border rounded-lg p-4" style="background: var(--bg-tertiary); border-color: var(--border-color);">
+                        <label class="block text-sm font-semibold mb-3" style="color: var(--text-primary);">
+                            <i class="fas fa-shield-alt text-blue-500 mr-2"></i>
+                            Verify you're human
+                        </label>
+                        <div class="flex items-center gap-4">
+                            <div id="captchaQuestion" class="text-lg font-bold p-4 rounded-lg text-center flex-1" style="background: var(--bg-secondary); color: var(--text-primary);">
+                                <!-- CAPTCHA question will appear here -->
+                            </div>
+                            <input type="number" id="captchaAnswer" 
+                                   class="w-24 px-4 py-3 text-center text-lg font-bold border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                   style="background: var(--bg-tertiary); border-color: var(--border-color); color: var(--text-primary);"
+                                   placeholder="?" required>
+                        </div>
+                        <button type="button" onclick="generateCaptcha()" class="text-sm text-blue-500 hover:text-blue-600 mt-2">
+                            <i class="fas fa-sync-alt mr-1"></i> Generate new puzzle
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex items-start rounded-lg p-4" style="background: var(--bg-tertiary);">
+                    <input type="checkbox" required class="w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 mt-1" style="border-color: var(--border-color);">
+                    <label class="ml-3 text-sm" style="color: var(--text-primary);">
+                        I agree to the <a href="#" class="text-emerald-600 hover:text-emerald-700 font-semibold">Terms of Service</a> and 
+                        <a href="#" class="text-emerald-600 hover:text-emerald-700 font-semibold">Privacy Policy</a>
                     </label>
                 </div>
                 
-                <!-- Submit Button -->
-                <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
-                    Create Account <i class="fas fa-arrow-right ml-2"></i>
+                <button type="submit" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                    Create Account
                 </button>
                 
-                <div class="text-center text-gray-400">
+                <div class="text-center text-sm" style="color: var(--text-secondary);">
                     Already have an account? 
-                    <a href="{% url 'login' %}" class="text-cyan-400 hover:underline font-semibold">Sign In</a>
+                    <a href="{% url 'login' %}" class="text-emerald-600 hover:text-emerald-700 font-bold">Sign in</a>
                 </div>
             </form>
         </div>
     </div>
 </section>
+
+<script>
+    let captchaAnswer = null;
+    let captchaShown = false;
+    
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        const operations = ['+', '-', '*'];
+        const operation = operations[Math.floor(Math.random() * operations.length)];
+        
+        let answer;
+        switch(operation) {
+            case '+':
+                answer = num1 + num2;
+                break;
+            case '-':
+                answer = num1 - num2;
+                break;
+            case '*':
+                answer = num1 * num2;
+                break;
+        }
+        
+        captchaAnswer = answer;
+        document.getElementById('captchaQuestion').innerHTML = `${num1} ${operation} ${num2} = ?`;
+        document.getElementById('captchaAnswer').value = '';
+    }
+    
+    function togglePassword() {
+        const passwordField = document.getElementById('password');
+        const toggleIcon = document.getElementById('toggleIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+    
+    // Password strength checker
+    document.getElementById('password').addEventListener('input', function(e) {
+        const password = e.target.value;
+        
+        // Length check
+        const lengthCheck = document.getElementById('length-check');
+        if (password.length >= 8) {
+            lengthCheck.querySelector('i').className = 'fas fa-check-circle text-emerald-500 mr-2';
+            lengthCheck.querySelector('span').className = 'text-emerald-600';
+        } else {
+            lengthCheck.querySelector('i').className = 'fas fa-circle text-gray-400 mr-2';
+            lengthCheck.querySelector('span').style.color = 'var(--text-tertiary)';
+        }
+        
+        // Uppercase check
+        const uppercaseCheck = document.getElementById('uppercase-check');
+        if (/[A-Z]/.test(password)) {
+            uppercaseCheck.querySelector('i').className = 'fas fa-check-circle text-emerald-500 mr-2';
+            uppercaseCheck.querySelector('span').className = 'text-emerald-600';
+        } else {
+            uppercaseCheck.querySelector('i').className = 'fas fa-circle text-gray-400 mr-2';
+            uppercaseCheck.querySelector('span').style.color = 'var(--text-tertiary)';
+        }
+        
+        // Number check
+        const numberCheck = document.getElementById('number-check');
+        if (/[0-9]/.test(password)) {
+            numberCheck.querySelector('i').className = 'fas fa-check-circle text-emerald-500 mr-2';
+            numberCheck.querySelector('span').className = 'text-emerald-600';
+        } else {
+            numberCheck.querySelector('i').className = 'fas fa-circle text-gray-400 mr-2';
+            numberCheck.querySelector('span').style.color = 'var(--text-tertiary)';
+        }
+    });
+    
+    // Show CAPTCHA when user starts filling form
+    let fieldsInteracted = 0;
+    const formFields = document.querySelectorAll('#registerForm input[required], #registerForm select[required]');
+    
+    formFields.forEach(field => {
+        field.addEventListener('blur', function() {
+            if (this.value && !captchaShown) {
+                fieldsInteracted++;
+                if (fieldsInteracted >= 2) {
+                    captchaShown = true;
+                    document.getElementById('captchaContainer').classList.remove('hidden');
+                    generateCaptcha();
+                    // Smooth scroll to CAPTCHA
+                    document.getElementById('captchaContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    });
+    
+    // Validate CAPTCHA before submission
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        if (captchaShown) {
+            const userAnswer = parseInt(document.getElementById('captchaAnswer').value);
+            if (userAnswer !== captchaAnswer) {
+                e.preventDefault();
+                alert('❌ CAPTCHA verification failed. Please solve the puzzle correctly.');
+                generateCaptcha();
+                return false;
+            }
+        }
+    });
+</script>
 {% endblock %}

@@ -1,0 +1,347 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome to Influxfinancetrading Global - Get Started{% endblock %}
+
+{% block content %}
+<section class="min-h-screen flex items-center py-12" style="background: var(--bg-secondary);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div class="glass-card rounded-2xl p-8 md:p-12">
+            <!-- Progress Bar -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-sm font-semibold" style="color: var(--text-primary);">
+                        Step <span id="currentStep">1</span> of 4
+                    </span>
+                    <button onclick="skipOnboarding()" class="text-sm font-semibold text-blue-600 hover:text-blue-700">
+                        Skip for now <i class="fas fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+                <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div id="progressBar" class="h-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-all duration-500" style="width: 25%;"></div>
+                </div>
+            </div>
+            
+            <!-- Slide 1: Welcome -->
+            <div id="slide1" class="onboarding-slide">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                        <i class="fas fa-check text-white text-4xl"></i>
+                    </div>
+                    <h1 class="text-4xl font-bold mb-4" style="color: var(--text-primary);">
+                        🎉 Welcome to Influxfinancetrading Global!
+                    </h1>
+                    <p class="text-xl mb-6" style="color: var(--text-secondary);">
+                        Your account has been successfully created
+                    </p>
+                </div>
+                
+                <div class="rounded-xl p-6 mb-6" style="background: rgba(16, 185, 129, 0.1); border: 2px solid rgba(16, 185, 129, 0.3);">
+                    <h3 class="font-bold text-lg mb-3 text-emerald-600">
+                        <i class="fas fa-lightbulb mr-2"></i>
+                        Quick Setup Guide
+                    </h3>
+                    <p style="color: var(--text-secondary);">
+                        Let's take 2 minutes to set up your account and learn how to stay safe while trading. 
+                        This will help you get the most out of our platform.
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-4 mb-8">
+                    <div class="text-center p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <i class="fas fa-lock text-blue-500 text-3xl mb-2"></i>
+                        <p class="font-semibold" style="color: var(--text-primary);">Security Tips</p>
+                    </div>
+                    <div class="text-center p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <i class="fas fa-chart-line text-emerald-500 text-3xl mb-2"></i>
+                        <p class="font-semibold" style="color: var(--text-primary);">Platform Tour</p>
+                    </div>
+                    <div class="text-center p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <i class="fas fa-rocket text-purple-500 text-3xl mb-2"></i>
+                        <p class="font-semibold" style="color: var(--text-primary);">Getting Started</p>
+                    </div>
+                </div>
+                
+                <button onclick="nextSlide()" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                    Let's Get Started <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
+            <!-- Slide 2: Security & Account Protection -->
+            <div id="slide2" class="onboarding-slide hidden">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
+                        <i class="fas fa-shield-alt text-white text-4xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">
+                        🔒 Protect Your Account
+                    </h2>
+                    <p class="text-lg" style="color: var(--text-secondary);">
+                        Essential security tips to keep your funds safe
+                    </p>
+                </div>
+                
+                <div class="space-y-4 mb-8">
+                    <div class="flex items-start p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-4" style="background: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-key text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2" style="color: var(--text-primary);">Use a Strong Password</h4>
+                            <p class="text-sm" style="color: var(--text-secondary);">
+                                Never share your password with anyone. Use a unique password that combines uppercase, lowercase, numbers, and symbols.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-4" style="background: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-mobile-alt text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2" style="color: var(--text-primary);">Enable Two-Factor Authentication (2FA)</h4>
+                            <p class="text-sm" style="color: var(--text-secondary);">
+                                Add an extra layer of security to your account. You can enable this in Settings → Security.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-4" style="background: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-exclamation-triangle text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2" style="color: var(--text-primary);">Beware of Phishing</h4>
+                            <p class="text-sm" style="color: var(--text-secondary);">
+                                Always verify you're on the official Influxfinancetrading Global website. Never click suspicious links in emails or messages.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-start p-4 rounded-lg" style="background: var(--bg-tertiary);">
+                        <div class="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center mr-4" style="background: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-user-shield text-blue-600"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold mb-2" style="color: var(--text-primary);">Verify Withdrawal Addresses</h4>
+                            <p class="text-sm" style="color: var(--text-secondary);">
+                                Always double-check wallet addresses before withdrawing. Transactions are irreversible.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="prevSlide()" class="flex-1 py-4 border-2 font-bold rounded-lg transition-all" style="border-color: var(--border-color); color: var(--text-primary);">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button onclick="nextSlide()" class="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Slide 3: Platform Features -->
+            <div id="slide3" class="onboarding-slide hidden">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);">
+                        <i class="fas fa-compass text-white text-4xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">
+                        🚀 Explore the Platform
+                    </h2>
+                    <p class="text-lg" style="color: var(--text-secondary);">
+                        Discover what you can do with your account
+                    </p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-4 mb-8">
+                    <div class="p-6 rounded-xl" style="background: var(--bg-tertiary);">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background: rgba(16, 185, 129, 0.2);">
+                            <i class="fas fa-wallet text-emerald-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2" style="color: var(--text-primary);">Deposit Funds</h4>
+                        <p class="text-sm mb-3" style="color: var(--text-secondary);">
+                            Add money to your account via crypto, bank transfer, or card. Instant processing available.
+                        </p>
+                        <a href="{% url 'deposit' %}" class="text-sm text-emerald-600 font-semibold hover:text-emerald-700">
+                            Go to Deposits →
+                        </a>
+                    </div>
+                    
+                    <div class="p-6 rounded-xl" style="background: var(--bg-tertiary);">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background: rgba(59, 130, 246, 0.2);">
+                            <i class="fas fa-chart-line text-blue-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2" style="color: var(--text-primary);">Start Trading</h4>
+                        <p class="text-sm mb-3" style="color: var(--text-secondary);">
+                            Access crypto, forex, stocks, and more. Real-time charts and advanced tools included.
+                        </p>
+                        <a href="{% url 'trading' %}" class="text-sm text-blue-600 font-semibold hover:text-blue-700">
+                            Go to Trading →
+                        </a>
+                    </div>
+                    
+                    <div class="p-6 rounded-xl" style="background: var(--bg-tertiary);">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background: rgba(139, 92, 246, 0.2);">
+                            <i class="fas fa-robot text-purple-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2" style="color: var(--text-primary);">AI Trading Bots</h4>
+                        <p class="text-sm mb-3" style="color: var(--text-secondary);">
+                            Let AI trade for you 24/7. Multiple strategies and risk levels available.
+                        </p>
+                        <a href="{% url 'trading_bot' %}" class="text-sm text-purple-600 font-semibold hover:text-purple-700">
+                            View Bots →
+                        </a>
+                    </div>
+                    
+                    <div class="p-6 rounded-xl" style="background: var(--bg-tertiary);">
+                        <div class="w-12 h-12 rounded-lg flex items-center justify-center mb-4" style="background: rgba(249, 115, 22, 0.2);">
+                            <i class="fas fa-users text-orange-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-bold mb-2" style="color: var(--text-primary);">Copy Trading</h4>
+                        <p class="text-sm mb-3" style="color: var(--text-secondary);">
+                            Follow and automatically copy trades from successful traders.
+                        </p>
+                        <a href="" class="text-sm text-orange-600 font-semibold hover:text-orange-700">
+                            Browse Traders →
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="prevSlide()" class="flex-1 py-4 border-2 font-bold rounded-lg transition-all" style="border-color: var(--border-color); color: var(--text-primary);">
+                        <i class="fas fa-arrow-left mr-2"></i> Back
+                    </button>
+                    <button onclick="nextSlide()" class="flex-1 py-4 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all">
+                        Next <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Slide 4: Ready to Trade -->
+            <div id="slide4" class="onboarding-slide hidden">
+                <div class="text-center mb-8">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                        <i class="fas fa-rocket text-white text-4xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">
+                        🎯 You're All Set!
+                    </h2>
+                    <p class="text-lg" style="color: var(--text-secondary);">
+                        Your account is ready. Time to start your trading journey!
+                    </p>
+                </div>
+                
+                <div class="rounded-xl p-6 mb-6" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%); border: 2px solid rgba(59, 130, 246, 0.3);">
+                    <h3 class="font-bold text-lg mb-4" style="color: var(--text-primary);">
+                        <i class="fas fa-list-check mr-2 text-blue-600"></i>
+                        Quick Checklist
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                            <span style="color: var(--text-secondary);">Account created successfully</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                            <span style="color: var(--text-secondary);">Security best practices learned</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle text-emerald-500 mr-3"></i>
+                            <span style="color: var(--text-secondary);">Platform features explored</span>
+                        </div>
+                        <div class="flex items-center opacity-50">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span style="color: var(--text-tertiary);">Make your first deposit (Optional)</span>
+                        </div>
+                        <div class="flex items-center opacity-50">
+                            <i class="fas fa-circle text-gray-400 mr-3"></i>
+                            <span style="color: var(--text-tertiary);">Enable 2FA for extra security (Recommended)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid gap-4 mb-6">
+                    <a href="{% url 'dashboard' %}" class="py-4 bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transition-all text-center">
+                        Go to Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                    <a href="{% url 'deposit' %}" class="py-4 border-2 font-bold rounded-lg transition-all text-center" style="border-color: var(--border-color); color: var(--text-primary);">
+                        <i class="fas fa-wallet mr-2"></i> Make First Deposit
+                    </a>
+                </div>
+                
+                <button onclick="prevSlide()" class="w-full py-3 text-sm font-semibold" style="color: var(--text-secondary);">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+            </div>
+        </div>
+        
+        <!-- Help Button -->
+        <div class="text-center mt-6">
+            <p class="text-sm" style="color: var(--text-tertiary);">
+                Need help? <a href="#" onclick="toggleChat(); return false;" class="text-blue-600 hover:text-blue-700 font-semibold">Contact Support</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+<style>
+    .onboarding-slide {
+        animation: slideIn 0.5s ease-out;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+</style>
+
+<script>
+    let currentSlide = 1;
+    const totalSlides = 4;
+    
+    function updateProgress() {
+        const progress = (currentSlide / totalSlides) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+        document.getElementById('currentStep').textContent = currentSlide;
+    }
+    
+    function showSlide(slideNumber) {
+        // Hide all slides
+        for (let i = 1; i <= totalSlides; i++) {
+            document.getElementById('slide' + i).classList.add('hidden');
+        }
+        // Show current slide
+        document.getElementById('slide' + slideNumber).classList.remove('hidden');
+        currentSlide = slideNumber;
+        updateProgress();
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function nextSlide() {
+        if (currentSlide < totalSlides) {
+            showSlide(currentSlide + 1);
+        }
+    }
+    
+    function prevSlide() {
+        if (currentSlide > 1) {
+            showSlide(currentSlide - 1);
+        }
+    }
+    
+    function skipOnboarding() {
+        if (confirm('Are you sure you want to skip the setup guide? You can always access it later from Settings.')) {
+            window.location.href = "{% url 'dashboard' %}";
+        }
+    }
+</script>
+{% endblock %}

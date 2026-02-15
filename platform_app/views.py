@@ -23,6 +23,15 @@ from .models import (
 logger = logging.getLogger(__name__)
 
 
+
+def onboarding(request):
+    """Onboarding page for new users"""
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'onboarding.html')
+
+
+
 def forgot_password(request):
     """Step 1: Request password reset - send code to email"""
     if request.method == 'POST':
@@ -308,8 +317,9 @@ def home(request):
 
 
 # Authentication views
+
 def register(request):
-    """User registration"""
+    """User registration with welcome email"""
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -337,11 +347,26 @@ def register(request):
             preferred_currency=preferred_currency
         )
         
-        messages.success(request, 'Account created successfully! Please login.')
-        return redirect('login')
+        # Send welcome email immediately
+        try:
+            email_service.send_welcome_email(user)
+            logger.info(f"Welcome email sent to {user.email}")
+        except Exception as e:
+            logger.error(f"Failed to send welcome email: {e}")
+        
+        # Schedule deposit reminder email
+        try:
+            email_service.send_deposit_reminder_email(user)
+            logger.info(f"Deposit reminder email sent to {user.email}")
+        except Exception as e:
+            logger.error(f"Failed to send deposit reminder email: {e}")
+        
+        # Auto-login the new user and redirect to onboarding
+        login(request, user)
+        messages.success(request, 'Account created successfully! Welcome to Influxfinancetrading Global.')
+        return redirect('onboarding')
     
     return render(request, 'register.html')
-
 
 def user_login(request):
     """User login"""
@@ -919,7 +944,7 @@ def clear_support_chat(request):
                 chat=new_chat,
                 sender_type='SUPPORT',
                 sender_name='Support Team',
-                message='Hello! Welcome to InfinityinfluxTrading support. How can we help you today?',
+                message='Hello! Welcome to Influxfinancetrading support. How can we help you today?',
                 is_read=False
             )
             
@@ -963,7 +988,7 @@ def get_auto_reply(message):
         return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, or any other features. Our support team will respond shortly if you need personalized assistance."
     
     elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
-        return "Hello! Thank you for contacting InfinityinfluxTrading support. How can I assist you today?"
+        return "Hello! Thank you for contacting Influxfinancetrading support. How can I assist you today?"
     
     # Return None if no auto-reply needed - admin will respond manually
     return None

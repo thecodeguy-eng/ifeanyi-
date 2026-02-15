@@ -73,7 +73,7 @@ class BrevoEmailService:
         Returns:
             dict: Response from send_email method
         """
-        subject = "Password Reset Code - InfinityinfluxTrading"
+        subject = "Password Reset Code - Influxfinancetrading"
         
         html_content = f"""
         <!DOCTYPE html>
@@ -88,7 +88,7 @@ class BrevoEmailService:
                 <!-- Header -->
                 <div style="text-align: center; margin-bottom: 40px;">
                     <h1 style="color: #06b6d4; margin: 0; font-size: 32px;">
-                        InfinityinfluxTrading
+                        Influxfinancetrading
                     </h1>
                     <p style="color: #94a3b8; margin-top: 10px;">
                         Cryptocurrency Trading Platform
@@ -158,7 +158,7 @@ class BrevoEmailService:
                         Need help? Contact our support team
                     </p>
                     <p style="color: #64748b; font-size: 12px; margin: 0;">
-                        © 2024 InfinityinfluxTrading. All rights reserved.
+                        © 2024 Influxfinancetrading. All rights reserved.
                     </p>
                 </div>
             </div>
