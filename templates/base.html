@@ -186,7 +186,7 @@
         .lang-dropdown {
             position: absolute;
             top: calc(100% + 0.5rem);
-            right: 0;
+            left: 0;
             background: #ffffff;
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -194,8 +194,8 @@
             min-width: 200px;
             max-height: 350px;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 9999;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-8px);
@@ -496,121 +496,121 @@
                     </a>
                 </div>
 
-                <!-- Language Selector (left side like reference) -->
-                <div class="hidden md:flex items-center">
+                <!-- Language Selector (visible on ALL screen sizes) -->
+                <div class="flex items-center">
                     <div class="lang-selector">
                         <button class="lang-btn" onclick="toggleLangDropdown()">
-                            <span>🇬🇧</span>
-                            <span id="current-lang">English</span>
+                            <span id="current-flag">🇬🇧</span>
+                            <span id="current-lang" class="hidden sm:inline">English</span>
                             <i class="fas fa-chevron-down text-xs"></i>
                         </button>
                         <div id="lang-dropdown" class="lang-dropdown">
-                            <div class="lang-option active" onclick="changeLang('en', 'English')">
+                            <div class="lang-option active" onclick="changeLang('en', 'English', '🇬🇧', event)">
                                 <span>🇬🇧</span><span>English</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('es', 'Español')">
+                            <div class="lang-option" onclick="changeLang('es', 'Español', '🇪🇸', event)">
                                 <span>🇪🇸</span><span>Español</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('fr', 'Français')">
+                            <div class="lang-option" onclick="changeLang('fr', 'Français', '🇫🇷', event)">
                                 <span>🇫🇷</span><span>Français</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('de', 'Deutsch')">
+                            <div class="lang-option" onclick="changeLang('de', 'Deutsch', '🇩🇪', event)">
                                 <span>🇩🇪</span><span>Deutsch</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('it', 'Italiano')">
+                            <div class="lang-option" onclick="changeLang('it', 'Italiano', '🇮🇹', event)">
                                 <span>🇮🇹</span><span>Italiano</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('pt', 'Português')">
+                            <div class="lang-option" onclick="changeLang('pt', 'Português', '🇵🇹', event)">
                                 <span>🇵🇹</span><span>Português</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ru', 'Русский')">
+                            <div class="lang-option" onclick="changeLang('ru', 'Русский', '🇷🇺', event)">
                                 <span>🇷🇺</span><span>Русский</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('zh-CN', '中文')">
+                            <div class="lang-option" onclick="changeLang('zh-CN', '中文', '🇨🇳', event)">
                                 <span>🇨🇳</span><span>中文 (简体)</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('zh-TW', '中文')">
+                            <div class="lang-option" onclick="changeLang('zh-TW', '中文', '🇹🇼', event)">
                                 <span>🇹🇼</span><span>中文 (繁體)</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ja', '日本語')">
+                            <div class="lang-option" onclick="changeLang('ja', '日本語', '🇯🇵', event)">
                                 <span>🇯🇵</span><span>日本語</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ko', '한국어')">
+                            <div class="lang-option" onclick="changeLang('ko', '한국어', '🇰🇷', event)">
                                 <span>🇰🇷</span><span>한국어</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ar', 'العربية')">
+                            <div class="lang-option" onclick="changeLang('ar', 'العربية', '🇸🇦', event)">
                                 <span>🇸🇦</span><span>العربية</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('hi', 'हिन्दी')">
+                            <div class="lang-option" onclick="changeLang('hi', 'हिन्दी', '🇮🇳', event)">
                                 <span>🇮🇳</span><span>हिन्दी</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('bn', 'বাংলা')">
+                            <div class="lang-option" onclick="changeLang('bn', 'বাংলা', '🇧🇩', event)">
                                 <span>🇧🇩</span><span>বাংলা</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('tr', 'Türkçe')">
+                            <div class="lang-option" onclick="changeLang('tr', 'Türkçe', '🇹🇷', event)">
                                 <span>🇹🇷</span><span>Türkçe</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('nl', 'Nederlands')">
+                            <div class="lang-option" onclick="changeLang('nl', 'Nederlands', '🇳🇱', event)">
                                 <span>🇳🇱</span><span>Nederlands</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('pl', 'Polski')">
+                            <div class="lang-option" onclick="changeLang('pl', 'Polski', '🇵🇱', event)">
                                 <span>🇵🇱</span><span>Polski</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('uk', 'Українська')">
+                            <div class="lang-option" onclick="changeLang('uk', 'Українська', '🇺🇦', event)">
                                 <span>🇺🇦</span><span>Українська</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('sv', 'Svenska')">
+                            <div class="lang-option" onclick="changeLang('sv', 'Svenska', '🇸🇪', event)">
                                 <span>🇸🇪</span><span>Svenska</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('da', 'Dansk')">
+                            <div class="lang-option" onclick="changeLang('da', 'Dansk', '🇩🇰', event)">
                                 <span>🇩🇰</span><span>Dansk</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('no', 'Norsk')">
+                            <div class="lang-option" onclick="changeLang('no', 'Norsk', '🇳🇴', event)">
                                 <span>🇳🇴</span><span>Norsk</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('fi', 'Suomi')">
+                            <div class="lang-option" onclick="changeLang('fi', 'Suomi', '🇫🇮', event)">
                                 <span>🇫🇮</span><span>Suomi</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('cs', 'Čeština')">
+                            <div class="lang-option" onclick="changeLang('cs', 'Čeština', '🇨🇿', event)">
                                 <span>🇨🇿</span><span>Čeština</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ro', 'Română')">
+                            <div class="lang-option" onclick="changeLang('ro', 'Română', '🇷🇴', event)">
                                 <span>🇷🇴</span><span>Română</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('el', 'Ελληνικά')">
+                            <div class="lang-option" onclick="changeLang('el', 'Ελληνικά', '🇬🇷', event)">
                                 <span>🇬🇷</span><span>Ελληνικά</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('th', 'ไทย')">
+                            <div class="lang-option" onclick="changeLang('th', 'ไทย', '🇹🇭', event)">
                                 <span>🇹🇭</span><span>ไทย</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('vi', 'Tiếng Việt')">
+                            <div class="lang-option" onclick="changeLang('vi', 'Tiếng Việt', '🇻🇳', event)">
                                 <span>🇻🇳</span><span>Tiếng Việt</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('id', 'Bahasa Indonesia')">
+                            <div class="lang-option" onclick="changeLang('id', 'Bahasa Indonesia', '🇮🇩', event)">
                                 <span>🇮🇩</span><span>Bahasa Indonesia</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ms', 'Bahasa Melayu')">
+                            <div class="lang-option" onclick="changeLang('ms', 'Bahasa Melayu', '🇲🇾', event)">
                                 <span>🇲🇾</span><span>Bahasa Melayu</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('fil', 'Filipino')">
+                            <div class="lang-option" onclick="changeLang('fil', 'Filipino', '🇵🇭', event)">
                                 <span>🇵🇭</span><span>Filipino</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('he', 'עברית')">
+                            <div class="lang-option" onclick="changeLang('he', 'עברית', '🇮🇱', event)">
                                 <span>🇮🇱</span><span>עברית</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('fa', 'فارسی')">
+                            <div class="lang-option" onclick="changeLang('fa', 'فارسی', '🇮🇷', event)">
                                 <span>🇮🇷</span><span>فارسی</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('ur', 'اردو')">
+                            <div class="lang-option" onclick="changeLang('ur', 'اردو', '🇵🇰', event)">
                                 <span>🇵🇰</span><span>اردو</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('sw', 'Kiswahili')">
+                            <div class="lang-option" onclick="changeLang('sw', 'Kiswahili', '🇰🇪', event)">
                                 <span>🇰🇪</span><span>Kiswahili</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('hu', 'Magyar')">
+                            <div class="lang-option" onclick="changeLang('hu', 'Magyar', '🇭🇺', event)">
                                 <span>🇭🇺</span><span>Magyar</span>
                             </div>
-                            <div class="lang-option" onclick="changeLang('af', 'Afrikaans')">
+                            <div class="lang-option" onclick="changeLang('af', 'Afrikaans', '🇿🇦', event)">
                                 <span>🇿🇦</span><span>Afrikaans</span>
                             </div>
                         </div>
@@ -836,10 +836,11 @@
             document.getElementById('lang-dropdown').classList.toggle('active');
         }
 
-        function changeLang(code, name) {
+        function changeLang(code, name, flag, e) {
             document.getElementById('current-lang').textContent = name;
+            document.getElementById('current-flag').textContent = flag;
             document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('active'));
-            event.target.closest('.lang-option').classList.add('active');
+            (e || event).target.closest('.lang-option').classList.add('active');
             
             const select = document.querySelector('.goog-te-combo');
             if (select) {
