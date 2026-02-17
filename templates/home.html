@@ -4,472 +4,771 @@
 
 {% block extra_css %}
 <style>
-    /* Live Ticker */
-    .ticker-wrap {
-        overflow: hidden;
-        white-space: nowrap;
-    }
-
+    /* ── Ticker ─────────────────────────────────────────────────────────── */
+    .ticker-wrap { overflow: hidden; white-space: nowrap; }
     .ticker-scroll {
         display: inline-flex;
         gap: 2.5rem;
-        animation: tickerMove 25s linear infinite;
+        animation: tickerMove 30s linear infinite;
     }
-
     @keyframes tickerMove {
-        0% { transform: translateX(0); }
+        0%   { transform: translateX(0); }
         100% { transform: translateX(-50%); }
     }
 
-    /* Hero */
-    .hero-section {
-        background: #f8f9fb;
-        padding: 5rem 0 4rem;
+    /* ── Video Hero ─────────────────────────────────────────────────────── */
+    .hero-video-section {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        background: #060d1a;
+    }
+    .hero-video-bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center center;
+        opacity: 0.5;
+        z-index: 0;
+        pointer-events: none;
+    }
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(6,13,26,0.88) 0%, rgba(6,13,26,0.5) 55%, rgba(6,13,26,0.75) 100%);
+        z-index: 1;
+    }
+    .hero-content { position: relative; z-index: 2; }
+
+    @keyframes fadeUp {
+        from { opacity:0; transform:translateY(28px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.8s ease both; }
+    .fade-up-1 { animation-delay: 0.1s; }
+    .fade-up-2 { animation-delay: 0.28s; }
+    .fade-up-3 { animation-delay: 0.45s; }
+    .fade-up-4 { animation-delay: 0.6s; }
+
+    .float-card {
+        backdrop-filter: blur(14px);
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 16px;
+        padding: 1.25rem 1.5rem;
+        animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+        0%,100% { transform: translateY(0); }
+        50%      { transform: translateY(-10px); }
     }
 
-    /* Market card */
+    /* ── Section commons ────────────────────────────────────────────────── */
+    .section-label {
+        display: inline-block;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+        color: #0d9488;
+        background: #f0fdfa;
+        border: 1px solid #99f6e4;
+        border-radius: 99px;
+        padding: 0.28rem 0.9rem;
+        margin-bottom: 1rem;
+    }
+    .section-title {
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        color: #111827;
+        margin-bottom: 0.75rem;
+        line-height: 1.25;
+    }
+    .section-sub { color: #6b7280; font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+    /* ── Market cards ───────────────────────────────────────────────────── */
     .market-card {
-        background: #ffffff;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.75rem;
+        transition: all 0.25s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    .market-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0d9488, #3b82f6);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+    }
+    .market-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.08); border-color: #d1d5db; transform: translateY(-3px); }
+    .market-card:hover::before { transform: scaleX(1); }
+    .market-icon { font-size: 2rem; margin-bottom: 1rem; }
+
+    /* ── Step cards ─────────────────────────────────────────────────────── */
+    .step-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        transition: all 0.25s ease;
+    }
+    .step-card:hover { box-shadow: 0 10px 32px rgba(0,0,0,0.08); transform: translateY(-4px); }
+    .step-number {
+        width: 48px; height: 48px;
+        border-radius: 50%;
+        background: #111827;
+        color: #fff;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.25rem;
+    }
+    .step-img-wrap {
+        background: #f8f9fb;
         border: 1px solid #e5e7eb;
         border-radius: 12px;
-        padding: 1.75rem;
-        transition: box-shadow 0.2s ease, border-color 0.2s ease;
-    }
-
-    .market-card:hover {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-        border-color: #d1d5db;
-    }
-
-    .market-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
+        overflow: hidden;
+        height: 175px;
         display: flex;
         align-items: center;
         justify-content: center;
         margin-bottom: 1.25rem;
-        font-size: 1.5rem;
     }
 
-    /* Trust card */
+    /* ── Trust cards ────────────────────────────────────────────────────── */
     .trust-card {
-        background: #ffffff;
+        background: #fff;
         border: 1px solid #e5e7eb;
-        border-radius: 12px;
+        border-radius: 14px;
         padding: 2rem 1.5rem;
         text-align: center;
         transition: box-shadow 0.2s ease;
     }
-
-    .trust-card:hover {
-        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-    }
-
+    .trust-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
     .trust-icon {
-        width: 72px;
-        height: 72px;
+        width: 60px; height: 60px;
         margin: 0 auto 1.25rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: 14px;
+        font-size: 1.6rem;
     }
 
-    .trust-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
+    /* ── Testimonials ───────────────────────────────────────────────────── */
+    .testimonial-card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 1.75rem;
+        transition: box-shadow 0.2s ease;
     }
+    .testimonial-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.07); }
 
-    /* Section heading */
-    .section-title {
-        font-family: 'Syne', sans-serif;
-        font-weight: 700;
-        font-size: 2rem;
-        color: #111827;
-        text-align: center;
-        margin-bottom: 0.75rem;
-    }
-
-    .section-sub {
-        color: #6b7280;
-        text-align: center;
-        font-size: 0.95rem;
-        margin-bottom: 3rem;
-    }
-
-    /* Tabs */
-    .tab-group {
-        display: flex;
-        gap: 0;
-        border-bottom: 2px solid #e5e7eb;
-        margin-bottom: 2rem;
-    }
-
+    /* ── Tabs ───────────────────────────────────────────────────────────── */
+    .tab-group { display:flex; border-bottom:2px solid #e5e7eb; margin-bottom:2rem; }
     .tab-btn {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-        font-weight: 500;
-        color: #6b7280;
-        border-bottom: 2px solid transparent;
-        margin-bottom: -2px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        background: none;
-        border-top: none;
-        border-left: none;
-        border-right: none;
+        padding:0.75rem 1.5rem; font-size:0.9rem; font-weight:500; color:#6b7280;
+        border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer;
+        transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none;
     }
+    .tab-btn.active { color:#111827; border-bottom-color:#111827; font-weight:600; }
+    .tab-content.hidden { display:none; }
 
-    .tab-btn.active {
-        color: #111827;
-        border-bottom-color: #111827;
-        font-weight: 600;
-    }
-
-    /* CTA Section */
-    .cta-section {
-        background: #111827;
-        border-radius: 16px;
-        padding: 4rem 2rem;
+    /* ── CTA dark ───────────────────────────────────────────────────────── */
+    .cta-dark {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        border-radius: 20px;
+        padding: 5rem 2rem;
         text-align: center;
-        margin: 0 1rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .cta-dark::before {
+        content: '';
+        position: absolute;
+        width: 420px; height: 420px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(13,148,136,0.2), transparent 70%);
+        top: -120px; right: -100px;
+        pointer-events: none;
+    }
+    .cta-dark::after {
+        content: '';
+        position: absolute;
+        width: 300px; height: 300px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
+        bottom: -80px; left: -60px;
+        pointer-events: none;
     }
 
-    /* Smooth scroll */
-    html {
-        scroll-behavior: smooth;
+    /* ── Misc ───────────────────────────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+
+    .stat-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: rgba(255,255,255,0.07);
+        border: 1px solid rgba(255,255,255,0.13);
+        border-radius: 99px;
+        padding: 0.4rem 1rem;
+        font-size: 0.78rem;
+        color: rgba(255,255,255,0.72);
+    }
+    .stat-pill strong { color: #fff; }
+
+    .live-dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        background: #22c55e;
+        display: inline-block;
+        animation: pulseDot 1.5s ease infinite;
+    }
+    @keyframes pulseDot {
+        0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+        50%      { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
     }
 
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {
-        width: 6px;
+    .payment-badge {
+        display: inline-flex; align-items: center; gap: 0.5rem;
+        background: #fff; border: 1px solid #e5e7eb;
+        border-radius: 10px; padding: 0.55rem 1rem;
+        font-size: 0.8rem; font-weight: 600; color: #374151;
+        transition: all 0.2s;
     }
-
-    ::-webkit-scrollbar-track {
-        background: #f1f5f9;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 6px;
-    }
+    .payment-badge:hover { border-color: #9ca3af; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- Live Ticker -->
-<div style="background: #ffffff; border-bottom: 1px solid #e5e7eb;">
-    <div class="max-w-7xl mx-auto px-4 py-3">
+<!-- ══════════════════════════════════════════════════════════
+     LIVE PRICE TICKER
+══════════════════════════════════════════════════════════ -->
+<div style="background:#fff; border-bottom:1px solid #e5e7eb;">
+    <div class="max-w-7xl mx-auto px-4 py-2.5">
         <div class="flex items-center gap-4">
-            <div class="flex items-center gap-1.5 shrink-0 mr-2">
-                <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                <span class="text-xs text-gray-400 font-medium">LIVE</span>
+            <div class="flex items-center gap-1.5 shrink-0">
+                <span class="live-dot"></span>
+                <span class="text-xs text-gray-400 font-semibold tracking-wide">LIVE</span>
             </div>
-            <div class="ticker-wrap flex-1 overflow-hidden">
-                <div class="ticker-scroll" id="price-ticker">
-                    <!-- Populated by JS -->
-                </div>
+            <div class="ticker-wrap flex-1">
+                <div class="ticker-scroll" id="price-ticker"><!-- JS fills --></div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Hero Section -->
-<section class="hero-section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center max-w-3xl mx-auto mb-16">
-            <h1 class="title-font text-4xl md:text-5xl lg:text-6xl text-gray-900 leading-tight mb-5">
-                Trade Stocks, Options,<br>Forex and More
+<!-- ══════════════════════════════════════════════════════════
+     HERO — full-screen video background
+══════════════════════════════════════════════════════════ -->
+<section class="hero-video-section">
+    <!-- HTML5 video — free stock trading footage, autoplay muted loop (works in all browsers) -->
+    <video
+        class="hero-video-bg"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        poster="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1600&q=80"
+    >
+        <!-- Primary: Pexels free stock video — stock market / trading -->
+        <source src="https://videos.pexels.com/video-files/7579524/7579524-hd_1920_1080_25fps.mp4" type="video/mp4">
+        <!-- Fallback 1 -->
+        <source src="https://videos.pexels.com/video-files/6774554/6774554-hd_1920_1080_25fps.mp4" type="video/mp4">
+        <!-- Fallback 2 — Mixkit free video -->
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-stock-exchange-data-on-screens-1651-large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-28">
+        <div class="max-w-2xl">
+            <div class="fade-up fade-up-1 inline-flex items-center gap-2 mb-6">
+                <span class="live-dot"></span>
+                <span class="text-xs font-semibold text-green-400 tracking-widest uppercase">Live Markets Open</span>
+            </div>
+
+            <h1 class="fade-up fade-up-2 title-font text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
+                Trading for anyone.<br>Anywhere. Anytime.
             </h1>
-            <p class="text-gray-500 text-lg leading-relaxed mb-8 max-w-xl mx-auto">
-                Professional trading platform with zero commissions. Access global markets 24/7 with fast execution.
+
+            <p class="fade-up fade-up-3 text-gray-300 text-lg leading-relaxed mb-8 max-w-lg">
+                Trade Stocks, Options, Crypto and more on global financial markets — all in one place with 24/7 trading and worldwide support.
             </p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="{% url 'register' %}" class="btn-primary px-8 py-3 text-sm rounded-lg">
-                    Start Trading Free
+
+            <div class="fade-up fade-up-4 flex flex-col sm:flex-row gap-3 mb-12">
+                <a href="{% url 'register' %}"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg text-sm font-semibold"
+                   style="background:#0d9488; color:#fff; transition:background .2s;"
+                   onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='#0d9488'">
+                    <i class="fas fa-rocket"></i> Start Trading Free
                 </a>
-                <a href="#markets" class="btn-outline px-8 py-3 text-sm rounded-lg">
-                    Explore Markets
+                <a href="#how-it-works"
+                   class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg text-sm font-semibold"
+                   style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; transition:background .2s;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                    <i class="fas fa-play-circle"></i> How It Works
                 </a>
             </div>
 
-            <!-- Stats row -->
-            <div class="flex flex-wrap justify-center gap-10 mt-12 pt-10 border-t border-gray-200">
-                <div>
-                    <div class="title-font text-2xl text-gray-900">$2.5B+</div>
-                    <div class="text-xs text-gray-500 mt-0.5">Daily Volume</div>
-                </div>
-                <div>
-                    <div class="title-font text-2xl text-gray-900">150K+</div>
-                    <div class="text-xs text-gray-500 mt-0.5">Active Traders</div>
-                </div>
-                <div>
-                    <div class="title-font text-2xl text-gray-900">50+</div>
-                    <div class="text-xs text-gray-500 mt-0.5">Markets</div>
-                </div>
-                <div>
-                    <div class="title-font text-2xl text-gray-900">24/7</div>
-                    <div class="text-xs text-gray-500 mt-0.5">Support</div>
+            <div class="fade-up fade-up-4 flex flex-wrap gap-3">
+                <div class="stat-pill"><strong>$2.5B+</strong> Daily Volume</div>
+                <div class="stat-pill"><strong>150K+</strong> Active Traders</div>
+                <div class="stat-pill"><strong>50+</strong> Markets</div>
+                <div class="stat-pill"><strong>24/7</strong> Support</div>
+            </div>
+        </div>
+
+        <!-- Floating price card — desktop only -->
+        <div class="hidden xl:block absolute right-16 top-1/2 -translate-y-1/2">
+            <div class="float-card" style="min-width:230px;">
+                <div class="text-xs text-gray-400 mb-2 font-medium">BTC / USD · Real-time</div>
+                <div class="title-font text-3xl text-white mb-0.5" id="hero-btc-price">$--,---</div>
+                <div class="text-sm font-semibold" id="hero-btc-change" style="color:#4ade80;">+0.00%</div>
+                <div class="mt-4 pt-3 border-t border-white/10 grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                        <div class="text-gray-400 text-xs">ETH</div>
+                        <div class="text-white font-semibold" id="hero-eth">$---</div>
+                    </div>
+                    <div>
+                        <div class="text-gray-400 text-xs">SOL</div>
+                        <div class="text-white font-semibold" id="hero-sol">$---</div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Scroll hint -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1 opacity-40">
+        <span class="text-white text-xs tracking-widest uppercase">Scroll</span>
+        <i class="fas fa-chevron-down text-white text-sm" style="animation:bounce 1.5s infinite;"></i>
+    </div>
+</section>
+<style>
+@keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+</style>
+
+<!-- ══════════════════════════════════════════════════════════
+     HOW IT WORKS — 3 Steps
+══════════════════════════════════════════════════════════ -->
+<section id="how-it-works" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+            <span class="section-label">Simple Process</span>
+            <h2 class="section-title">Start trading in 3 steps</h2>
+            <p class="section-sub max-w-xl mx-auto">Get set up in minutes. No experience required — our platform guides you every step of the way.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <!-- Step 1 -->
+            <div class="step-card">
+                <div class="step-img-wrap">
+                    <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <rect width="280" height="160" fill="#f8f9fb"/>
+                        <rect x="55" y="12" width="170" height="136" rx="8" fill="#fff" stroke="#e5e7eb" stroke-width="1.5"/>
+                        <text x="95" y="34" font-size="9.5" fill="#111827" font-family="sans-serif" font-weight="700">Login to your account</text>
+                        <text x="66" y="54" font-size="8" fill="#6b7280" font-family="sans-serif">Email Address</text>
+                        <rect x="66" y="58" width="148" height="18" rx="4" fill="#f3f4f6" stroke="#e5e7eb"/>
+                        <text x="72" y="71" font-size="8" fill="#9ca3af" font-family="sans-serif">you@example.com</text>
+                        <text x="66" y="90" font-size="8" fill="#6b7280" font-family="sans-serif">Password</text>
+                        <rect x="66" y="94" width="148" height="18" rx="4" fill="#f3f4f6" stroke="#e5e7eb"/>
+                        <text x="72" y="107" font-size="9" fill="#9ca3af" font-family="sans-serif">••••••••</text>
+                        <rect x="66" y="120" width="148" height="16" rx="5" fill="#111827"/>
+                        <text x="111" y="132" font-size="8.5" fill="#fff" font-family="sans-serif" font-weight="700">LOG IN</text>
+                    </svg>
+                </div>
+                <div class="step-number">1</div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Sign up and explore</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Sign up in minutes and explore your trading needs — all in one place, no experience required.</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-card">
+                <div class="step-img-wrap">
+                    <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <rect width="280" height="160" fill="#f8f9fb"/>
+                        <rect x="8" y="8" width="165" height="144" rx="7" fill="#fff" stroke="#e5e7eb"/>
+                        <text x="16" y="24" font-size="8" fill="#111827" font-family="sans-serif" font-weight="700">Live Trades</text>
+                        <rect x="16" y="28" width="149" height="1" fill="#e5e7eb"/>
+                        <rect x="16" y="34" width="149" height="9" rx="3" fill="#f3f4f6"/>
+                        <rect x="16" y="47" width="149" height="9" rx="3" fill="#f9fafb"/>
+                        <rect x="16" y="60" width="149" height="9" rx="3" fill="#f3f4f6"/>
+                        <rect x="16" y="73" width="149" height="9" rx="3" fill="#f9fafb"/>
+                        <text x="16" y="96" font-size="7.5" fill="#6b7280" font-family="sans-serif">Demo Trading History</text>
+                        <rect x="16" y="100" width="149" height="1" fill="#e5e7eb"/>
+                        <rect x="16" y="105" width="149" height="9" rx="3" fill="#f3f4f6"/>
+                        <rect x="16" y="118" width="149" height="9" rx="3" fill="#f9fafb"/>
+                        <rect x="16" y="131" width="149" height="9" rx="3" fill="#f3f4f6"/>
+                        <!-- side panel -->
+                        <rect x="182" y="8" width="90" height="144" rx="7" fill="#fff" stroke="#e5e7eb"/>
+                        <text x="190" y="24" font-size="7.5" fill="#111827" font-family="sans-serif" font-weight="700">Set Duration</text>
+                        <rect x="190" y="28" width="74" height="13" rx="3" fill="#f3f4f6"/>
+                        <text x="190" y="56" font-size="7" fill="#6b7280" font-family="sans-serif">Leverage</text>
+                        <rect x="190" y="60" width="74" height="13" rx="3" fill="#f3f4f6"/>
+                        <rect x="190" y="118" width="74" height="16" rx="4" fill="#ef4444"/>
+                        <rect x="190" y="138" width="74" height="16" rx="4" fill="#22c55e"/>
+                        <text x="212" y="130" font-size="8.5" fill="#fff" font-family="sans-serif" font-weight="700">Sell</text>
+                        <text x="213" y="150" font-size="8.5" fill="#fff" font-family="sans-serif" font-weight="700">Buy</text>
+                    </svg>
+                </div>
+                <div class="step-number">2</div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Try with zero risk</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Try any trade, on any platform with a zero-risk, demo trading account before going live.</p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-card">
+                <div class="step-img-wrap">
+                    <svg viewBox="0 0 280 160" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <rect width="280" height="160" fill="#060d1a"/>
+                        <rect x="8" y="8" width="168" height="144" rx="7" fill="#0d1526"/>
+                        <polyline points="16,130 40,105 64,115 88,78 110,88 132,56 156,62 168,38 168,152 16,152" fill="rgba(13,148,136,0.18)"/>
+                        <polyline points="16,130 40,105 64,115 88,78 110,88 132,56 156,62 168,38" fill="none" stroke="#0d9488" stroke-width="2.5" stroke-linejoin="round"/>
+                        <circle cx="168" cy="38" r="4" fill="#0d9488"/>
+                        <text x="148" y="32" font-size="7" fill="#4ade80" font-family="sans-serif" font-weight="700">6,254.4</text>
+                        <text x="148" y="86" font-size="7" fill="#6b7280" font-family="sans-serif">4,345.0</text>
+                        <rect x="185" y="8" width="87" height="144" rx="7" fill="#1e293b"/>
+                        <text x="193" y="26" font-size="7" fill="#9ca3af" font-family="sans-serif">Enable TP</text>
+                        <rect x="193" y="30" width="8" height="8" rx="2" fill="#0d9488"/>
+                        <text x="193" y="50" font-size="7" fill="#9ca3af" font-family="sans-serif">Enable SL</text>
+                        <rect x="193" y="54" width="8" height="8" rx="2" fill="#374151"/>
+                        <text x="193" y="72" font-size="7" fill="#9ca3af" font-family="sans-serif">Trade Amount</text>
+                        <rect x="193" y="76" width="71" height="13" rx="3" fill="#0f172a"/>
+                        <rect x="193" y="116" width="71" height="16" rx="4" fill="#ef4444"/>
+                        <rect x="193" y="136" width="71" height="16" rx="4" fill="#22c55e"/>
+                        <text x="213" y="128" font-size="8.5" fill="#fff" font-family="sans-serif" font-weight="700">Sell</text>
+                        <text x="214" y="148" font-size="8.5" fill="#fff" font-family="sans-serif" font-weight="700">Buy</text>
+                    </svg>
+                </div>
+                <div class="step-number">3</div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Trade with confidence</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Fund your account and start trading with round-the-clock expert support behind you.</p>
+            </div>
+        </div>
+
+        <div class="text-center mt-10">
+            <a href="{% url 'register' %}" class="btn-primary px-8 py-3 text-sm rounded-lg">Get Started Free</a>
+        </div>
+    </div>
 </section>
 
-<!-- Markets Section -->
-<section id="markets" class="py-20">
+<!-- ══════════════════════════════════════════════════════════
+     MARKETS
+══════════════════════════════════════════════════════════ -->
+<section id="markets" class="py-20" style="background:#f8f9fb;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="section-title">Trade Stocks, Options, Forex and More</h2>
-        <p class="section-sub">Access global markets with professional tools and competitive spreads</p>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            <!-- Forex -->
+        <div class="text-center mb-14">
+            <span class="section-label">Global Markets</span>
+            <h2 class="section-title">Trade Stocks, Options, Forex and More</h2>
+            <p class="section-sub">Access global markets with professional tools and competitive spreads</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div class="market-card">
-                <div class="market-icon">
-                    🇺🇸
-                </div>
+                <div class="market-icon">🌍</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Forex</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade with leverage, unbeatable spreads, and fast execution on the widest range of markets.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Trade major, minor and exotic currency pairs with tight spreads and fast execution around the clock.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 60+ currency pairs</div>
             </div>
-
-            <!-- Options -->
             <div class="market-card">
-                <div class="market-icon">
-                    ✏️
-                </div>
+                <div class="market-icon">📊</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Options</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade diverse Options contracts across markets without risking more than your initial capital.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Trade diverse options contracts across markets without risking more than your initial capital.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> Capped risk</div>
             </div>
-
-            <!-- Leverage -->
             <div class="market-card">
-                <div class="market-icon" style="font-size: 1.25rem; color: #374151;">
-                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                </div>
+                <div class="market-icon">📈</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Leverage</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade on global financial markets and multiply your potential profit without losing more than your capital.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Multiply your potential on global financial markets without losing more than your initial stake.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> Up to 1:500</div>
             </div>
-
-            <!-- Stocks -->
             <div class="market-card">
-                <div class="market-icon">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-500 text-white text-base font-bold">T</span>
-                </div>
+                <div class="market-icon">🏢</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Stocks</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade diverse stocks across global markets while managing your risk to ensure you never exceed your initial investment.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Buy and sell shares in hundreds of global companies across NYSE, NASDAQ, LSE and beyond.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 500+ stocks</div>
             </div>
-
-            <!-- Crypto -->
             <div class="market-card">
-                <div class="market-icon">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-yellow-500 text-white text-base font-bold">₿</span>
-                </div>
+                <div class="market-icon">₿</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Crypto</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade a wide range of cryptocurrencies across multiple exchanges, with the ability to manage your risk and protect your initial capital.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Trade Bitcoin, Ethereum, Solana and 100+ more cryptocurrencies with real-time data.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 100+ tokens</div>
             </div>
-
-            <!-- ETFs -->
             <div class="market-card">
-                <div class="market-icon">
-                    <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-700 text-white text-xs font-bold">VAN</span>
-                </div>
+                <div class="market-icon">🗂️</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">ETFs</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Trade a variety of ETFs across different sectors and markets, while maintaining control over your risk and ensuring you only risk your initial investment.
-                </p>
+                <p class="text-gray-500 text-sm leading-relaxed">Diversify across sectors and markets instantly — from tech to energy — with full risk control.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 200+ ETFs</div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Why Choose Us -->
-<section class="py-20" style="background: #f8f9fb;">
+<!-- ══════════════════════════════════════════════════════════
+     FEATURE — Fast deposits & withdrawals
+══════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="section-title">Trading for an edge</h2>
-        <p class="section-sub">Everything you need to trade with confidence</p>
-
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <!-- Dependable -->
-            <div class="trust-card">
-                <div class="trust-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-                        <circle cx="40" cy="40" r="38" fill="#f3f4f6"/>
-                        <path d="M28 42l8 8 16-16" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M40 18a26 26 0 0 1 18 7" stroke="#0d9488" stroke-width="3" stroke-linecap="round"/>
-                        <circle cx="40" cy="40" r="20" stroke="#111827" stroke-width="2.5"/>
-                    </svg>
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+            <div>
+                <span class="section-label">Payments</span>
+                <h2 class="section-title">Fast, hassle-free deposits<br>and withdrawals</h2>
+                <p class="text-gray-500 leading-relaxed mb-6 text-sm">10+ global payment methods. Deposit instantly starting from just $1 (USD). Withdraw in minutes.*</p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-start gap-3 text-sm text-gray-700">
+                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
+                        Instant crypto deposits — BTC, ETH, USDT, SOL and more
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700">
+                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
+                        Withdrawals processed and confirmed within 10–30 minutes
+                    </li>
+                    <li class="flex items-start gap-3 text-sm text-gray-700">
+                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
+                        No hidden fees, no minimum withdrawal limits
+                    </li>
+                </ul>
+                <div class="flex flex-wrap gap-3">
+                    <div class="payment-badge">₿ Bitcoin</div>
+                    <div class="payment-badge">Ξ Ethereum</div>
+                    <div class="payment-badge">₮ USDT</div>
+                    <div class="payment-badge">◎ Solana</div>
+                    <div class="payment-badge"><i class="fab fa-cc-visa text-blue-600"></i> Visa</div>
+                    <div class="payment-badge"><i class="fab fa-cc-mastercard text-red-600"></i> Mastercard</div>
                 </div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Dependable</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Our 99.97% uptime ensures your uninterrupted access to the markets.
-                </p>
             </div>
-
-            <!-- Safe and secure -->
-            <div class="trust-card">
-                <div class="trust-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-                        <circle cx="40" cy="40" r="38" fill="#f3f4f6"/>
-                        <rect x="28" y="35" width="24" height="20" rx="3" fill="#111827"/>
-                        <path d="M33 35v-6a7 7 0 1 1 14 0v6" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
-                        <circle cx="40" cy="45" r="2.5" fill="#0d9488"/>
-                    </svg>
+            <!-- Deposit UI mockup -->
+            <div class="relative">
+                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-xl">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                            <i class="fas fa-shield-alt text-green-500"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-900 text-sm">Secure Deposit</div>
+                            <div class="text-xs text-gray-400">Funds credited instantly</div>
+                        </div>
+                        <span class="ml-auto text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">● Live</span>
+                    </div>
+                    <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-4 text-center">
+                        <div class="text-xs text-gray-400 mb-1">You are depositing</div>
+                        <div class="title-font text-4xl text-gray-900">$1,000<span class="text-gray-400">.00</span></div>
+                        <div class="text-xs text-gray-400 mt-1">USD</div>
+                    </div>
+                    <p class="text-xs text-gray-400 mb-3">Select payment method</p>
+                    <div class="grid grid-cols-4 gap-2 mb-4">
+                        <div class="p-2 border-2 border-orange-400 bg-orange-50 rounded-xl text-center cursor-pointer">
+                            <div class="text-lg">₿</div><div class="text-xs font-bold text-gray-700 mt-0.5">BTC</div>
+                        </div>
+                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
+                            <div class="text-lg">Ξ</div><div class="text-xs font-bold text-gray-700 mt-0.5">ETH</div>
+                        </div>
+                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
+                            <div class="text-lg">₮</div><div class="text-xs font-bold text-gray-700 mt-0.5">USDT</div>
+                        </div>
+                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
+                            <div class="text-lg">◎</div><div class="text-xs font-bold text-gray-700 mt-0.5">SOL</div>
+                        </div>
+                    </div>
+                    <a href="{% url 'deposit' %}" class="block w-full text-center py-3 rounded-xl text-sm font-semibold text-white" style="background:#111827;">
+                        Deposit Now <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                    <div class="flex items-center justify-center gap-2 mt-3 text-xs text-gray-400">
+                        <i class="fas fa-lock"></i> 256-bit SSL encrypted · Instant confirmation
+                    </div>
                 </div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Safe and secure</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    We keep your personal data and funds safe.
-                </p>
-            </div>
-
-            <!-- Regulated -->
-            <div class="trust-card">
-                <div class="trust-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-                        <circle cx="40" cy="40" r="38" fill="#f3f4f6"/>
-                        <path d="M40 20l16 8v12c0 9-7 17-16 19-9-2-16-10-16-19V28l16-8z" fill="#111827"/>
-                        <circle cx="40" cy="40" r="7" fill="#0d9488"/>
-                        <circle cx="40" cy="40" r="3" fill="#fff"/>
-                    </svg>
+                <div class="absolute -top-3 -right-3 bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                    ✓ Funds Received Instantly
                 </div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Regulated</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    We're regulated and licensed by global financial authorities.
-                </p>
-            </div>
-
-            <!-- 24/7 Support -->
-            <div class="trust-card">
-                <div class="trust-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" fill="none">
-                        <circle cx="40" cy="40" r="38" fill="#f3f4f6"/>
-                        <rect x="24" y="28" width="20" height="16" rx="3" fill="#111827"/>
-                        <rect x="36" y="34" width="20" height="16" rx="3" fill="#374151"/>
-                        <rect x="30" y="52" width="8" height="4" rx="1" fill="#0d9488"/>
-                        <rect x="26" y="56" width="16" height="2" rx="1" fill="#0d9488"/>
-                    </svg>
-                </div>
-                <h3 class="title-font text-base text-gray-900 mb-2">24/7 support</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">
-                    Our professional multilingual team is here for you anytime.
-                </p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Platforms Section -->
-<section class="py-20">
+<!-- ══════════════════════════════════════════════════════════
+     LIVE CHART — Tabs
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:#f8f9fb;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="section-title">User-friendly trading platforms, on any device</h2>
-        <p class="section-sub">Trade seamlessly across all your devices</p>
+        <div class="text-center mb-10">
+            <span class="section-label">Platform</span>
+            <h2 class="section-title">User-friendly trading on any device</h2>
+            <p class="section-sub">Trade seamlessly across all your devices with our cutting-edge tools</p>
+        </div>
 
-        <!-- Tabs -->
         <div class="tab-group max-w-lg mx-auto justify-center flex">
-            <button class="tab-btn active" onclick="switchTab(this, 'platforms')">Platforms</button>
-            <button class="tab-btn" onclick="switchTab(this, 'bots')">Bots</button>
-            <button class="tab-btn" onclick="switchTab(this, 'social')">Social</button>
+            <button class="tab-btn active" onclick="switchTab(this,'platforms')">Live Chart</button>
+            <button class="tab-btn" onclick="switchTab(this,'bots')">Bots</button>
+            <button class="tab-btn" onclick="switchTab(this,'social')">Social</button>
         </div>
 
         <div id="tab-platforms" class="tab-content">
-            <div id="tradingview_chart" class="rounded-xl overflow-hidden" style="height: 500px; background: #f3f4f6; border: 1px solid #e5e7eb;"></div>
+            <div id="tradingview_chart" class="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style="height:500px;"></div>
         </div>
-
         <div id="tab-bots" class="tab-content hidden">
             <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-robot text-xl text-gray-700"></i>
-                    </div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">AI Bots</h3>
-                    <p class="text-gray-500 text-sm">Automated trading powered by machine learning algorithms.</p>
+                    <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-robot text-2xl text-purple-600"></i></div>
+                    <h3 class="title-font text-base text-gray-900 mb-2">AI Trading Bots</h3>
+                    <p class="text-gray-500 text-sm">Automated trading powered by machine learning algorithms that never sleep.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-chart-line text-xl text-gray-700"></i>
-                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-chart-line text-2xl text-blue-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Strategy Builder</h3>
-                    <p class="text-gray-500 text-sm">Build and test custom trading strategies without coding.</p>
+                    <p class="text-gray-500 text-sm">Build and backtest custom trading strategies visually — no coding needed.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-history text-xl text-gray-700"></i>
-                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-teal-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-history text-2xl text-teal-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Backtesting</h3>
-                    <p class="text-gray-500 text-sm">Test your strategies against historical market data.</p>
+                    <p class="text-gray-500 text-sm">Test your strategies against years of historical market data in seconds.</p>
                 </div>
             </div>
         </div>
-
         <div id="tab-social" class="tab-content hidden">
             <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-users text-xl text-gray-700"></i>
-                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-2xl text-green-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Copy Trading</h3>
-                    <p class="text-gray-500 text-sm">Follow and copy trades from top-performing traders.</p>
+                    <p class="text-gray-500 text-sm">Follow and mirror trades from top-performing traders automatically.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-comments text-xl text-gray-700"></i>
-                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-comments text-2xl text-indigo-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Community</h3>
-                    <p class="text-gray-500 text-sm">Connect with thousands of traders and share insights.</p>
+                    <p class="text-gray-500 text-sm">Connect with thousands of traders worldwide and share market insights.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-trophy text-xl text-gray-700"></i>
-                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-yellow-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-trophy text-2xl text-yellow-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Leaderboard</h3>
-                    <p class="text-gray-500 text-sm">See who the top traders are and learn from their strategies.</p>
+                    <p class="text-gray-500 text-sm">See who the top traders are and learn directly from their strategies.</p>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-20">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="cta-section">
-            <h2 class="title-font text-3xl md:text-4xl text-white mb-4">
-                Start trading today
-            </h2>
-            <p class="text-gray-400 text-base mb-8 max-w-xl mx-auto">
-                Join 150,000+ traders who trust our platform for their investments. Get started in minutes.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <a href="{% url 'register' %}" class="inline-block px-8 py-3 rounded-lg text-sm font-semibold" style="background: #fff; color: #111827;">
-                    Create Free Account
-                </a>
-                <a href="{% url 'login' %}" class="inline-block px-8 py-3 rounded-lg text-sm font-semibold" style="background: transparent; border: 1px solid #374151; color: #d1d5db;">
-                    Sign In
-                </a>
+<!-- ══════════════════════════════════════════════════════════
+     WHY CHOOSE US
+══════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+            <span class="section-label">Why Us</span>
+            <h2 class="section-title">Trading for an edge</h2>
+            <p class="section-sub">Everything you need to trade with confidence and clarity</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div class="trust-card">
+                <div class="trust-icon bg-blue-50"><i class="fas fa-server text-blue-600"></i></div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Dependable</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Our 99.97% uptime ensures you never miss a trade due to downtime.</p>
             </div>
-            <div class="mt-8 flex flex-wrap justify-center gap-6 text-gray-500 text-sm">
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-gray-400"></i>
-                    <span>No Credit Card Required</span>
+            <div class="trust-card">
+                <div class="trust-icon bg-green-50"><i class="fas fa-lock text-green-600"></i></div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Safe & Secure</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">256-bit SSL and cold storage keep your funds and data fully protected.</p>
+            </div>
+            <div class="trust-card">
+                <div class="trust-icon bg-teal-50"><i class="fas fa-shield-alt text-teal-600"></i></div>
+                <h3 class="title-font text-base text-gray-900 mb-2">Regulated</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Regulated and licensed by global financial authorities you can trust.</p>
+            </div>
+            <div class="trust-card">
+                <div class="trust-icon bg-purple-50"><i class="fas fa-headset text-purple-600"></i></div>
+                <h3 class="title-font text-base text-gray-900 mb-2">24/7 Support</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Our multilingual support team is available every hour of every day.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     TESTIMONIALS
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:#f8f9fb;">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14">
+            <span class="section-label">Testimonials</span>
+            <h2 class="section-title">What our traders say</h2>
+            <p class="section-sub">Join 150,000+ satisfied traders from around the world</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="testimonial-card">
+                <div class="flex items-center gap-1 text-yellow-400 mb-3">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-gray-400"></i>
-                    <span>Instant Access</span>
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">"The platform is incredibly fast. I've been trading forex for 3 years and this is by far the best execution I've seen. Withdrawals are always on time."</p>
+                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+                    <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">JM</div>
+                    <div><div class="text-sm font-semibold text-gray-900">James M.</div><div class="text-xs text-gray-400">Forex Trader · UK</div></div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-check-circle text-gray-400"></i>
-                    <span>24/7 Support</span>
+            </div>
+            <div class="testimonial-card">
+                <div class="flex items-center gap-1 text-yellow-400 mb-3">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">"Deposited crypto and funds appeared within seconds. The copy trading feature let me follow pro traders while I was learning. Made profit in week one!"</p>
+                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+                    <div class="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center text-xs font-bold text-teal-700 flex-shrink-0">SA</div>
+                    <div><div class="text-sm font-semibold text-gray-900">Sarah A.</div><div class="text-xs text-gray-400">Crypto Trader · USA</div></div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="flex items-center gap-1 text-yellow-400 mb-3">
+                    <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star-half-alt text-xs"></i>
+                </div>
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">"24/7 support actually means 24/7 here. Got help at 3am on a Sunday. The bots are accurate and the dashboard is clean and easy to understand."</p>
+                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
+                    <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700 flex-shrink-0">KO</div>
+                    <div><div class="text-sm font-semibold text-gray-900">Kofi O.</div><div class="text-xs text-gray-400">Stocks Trader · Ghana</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     CTA — dark
+══════════════════════════════════════════════════════════ -->
+<section class="py-20 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="cta-dark">
+            <div class="relative z-10">
+                <span class="inline-block text-xs font-bold tracking-widest uppercase text-teal-400 mb-5">Get Started Today</span>
+                <h2 class="title-font text-3xl md:text-4xl text-white mb-4">Start trading today</h2>
+                <p class="text-gray-400 text-base mb-8 max-w-xl mx-auto">
+                    Join 150,000+ traders who trust our platform. Get started in minutes — no experience needed.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+                    <a href="{% url 'register' %}" class="inline-block px-8 py-3.5 rounded-lg text-sm font-semibold" style="background:#0d9488; color:#fff;">
+                        <i class="fas fa-rocket mr-1.5"></i> Create Free Account
+                    </a>
+                    <a href="{% url 'login' %}" class="inline-block px-8 py-3.5 rounded-lg text-sm font-semibold" style="background:transparent; border:1.5px solid #374151; color:#d1d5db;">
+                        Sign In
+                    </a>
+                </div>
+                <div class="flex flex-wrap justify-center gap-6 text-gray-500 text-sm">
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> No Credit Card Required</div>
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> Instant Access</div>
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> 24/7 Support</div>
                 </div>
             </div>
         </div>
@@ -480,57 +779,78 @@
 
 {% block extra_js %}
 <script>
-    // ── Tab switching ─────────────────────────────────────────────────────────
-    function switchTab(btn, tab) {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-        btn.classList.add('active');
-        document.getElementById('tab-' + tab)?.classList.remove('hidden');
+// ── Price Ticker ─────────────────────────────────────────────────────────────
+const tickerSymbols = ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LTC','MATIC'];
+let cachedPrices = {};
+
+async function updatePrices() {
+    try {
+        const res = await fetch('/api/crypto-prices/');
+        cachedPrices = await res.json();
+    } catch(e) {}
+    renderTicker(cachedPrices);
+    updateHeroCard(cachedPrices);
+}
+
+function renderTicker(prices) {
+    const ticker = document.getElementById('price-ticker');
+    if (!ticker) return;
+    let html = '';
+    tickerSymbols.forEach(symbol => {
+        const price = prices[symbol] || (Math.random()*50000+100).toFixed(2);
+        const change = (Math.random()*10-5).toFixed(2);
+        const isUp = parseFloat(change) >= 0;
+        html += `<div class="flex items-center gap-2 whitespace-nowrap">
+            <span class="text-xs font-bold text-gray-700">${symbol}</span>
+            <span class="text-xs text-gray-600">$${parseFloat(price).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+            <span class="text-xs font-semibold px-1.5 py-0.5 rounded"
+                  style="background:${isUp?'#dcfce7':'#fee2e2'};color:${isUp?'#16a34a':'#dc2626'}">
+                ${isUp?'↑':'↓'}${Math.abs(change)}%
+            </span>
+        </div>`;
+    });
+    ticker.innerHTML = html + html;
+}
+
+function updateHeroCard(prices) {
+    const btc = prices['BTC'];
+    const eth = prices['ETH'];
+    const sol = prices['SOL'];
+    const btcEl = document.getElementById('hero-btc-price');
+    const chgEl = document.getElementById('hero-btc-change');
+    const ethEl = document.getElementById('hero-eth');
+    const solEl = document.getElementById('hero-sol');
+    if (btcEl && btc) btcEl.textContent = '$' + parseFloat(btc).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    if (chgEl) {
+        const chg = (Math.random()*4-1).toFixed(2);
+        chgEl.textContent = (parseFloat(chg)>=0?'+':'')+chg+'%';
+        chgEl.style.color = parseFloat(chg)>=0?'#4ade80':'#f87171';
     }
+    if (ethEl && eth) ethEl.textContent = '$'+parseFloat(eth).toLocaleString(undefined,{maximumFractionDigits:0});
+    if (solEl && sol) solEl.textContent = '$'+parseFloat(sol).toLocaleString(undefined,{maximumFractionDigits:0});
+}
 
-    // ── TradingView iframe embed (no external JS library needed) ─────────────
-    document.getElementById('tradingview_chart').innerHTML = `
-        <iframe
-            src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3ABTCUSDT&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost&utm_medium=widget"
-            style="width:100%;height:500px;border:none;"
-            allowtransparency="true"
-            allowfullscreen
-            frameborder="0"
-            scrolling="no">
-        </iframe>`;
+// ── TradingView iframe (no library needed, always renders) ───────────────────
+document.getElementById('tradingview_chart').innerHTML = `
+    <iframe
+        src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3ABTCUSDT&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f8f9fb&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&locale=en"
+        style="width:100%;height:500px;border:none;"
+        allowtransparency="true"
+        allowfullscreen
+        frameborder="0"
+        scrolling="no">
+    </iframe>`;
 
-    // ── Price Ticker ──────────────────────────────────────────────────────────
-    const tickerSymbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX'];
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(btn, tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tab)?.classList.remove('hidden');
+}
 
-    async function updatePrices() {
-        let prices = {};
-        try {
-            const res = await fetch('/api/crypto-prices/');
-            prices = await res.json();
-        } catch (e) { /* fallback to random below */ }
-        renderTicker(prices);
-    }
-
-    function renderTicker(prices) {
-        const ticker = document.getElementById('price-ticker');
-        if (!ticker) return;
-        let html = '';
-        tickerSymbols.forEach(symbol => {
-            const price = prices[symbol] || (Math.random() * 50000 + 1000).toFixed(2);
-            const change = (Math.random() * 10 - 5).toFixed(2);
-            const isUp = parseFloat(change) >= 0;
-            html += `<div class="flex items-center gap-2 whitespace-nowrap">
-                <span class="text-xs font-semibold text-gray-700">${symbol}</span>
-                <span class="text-xs font-medium text-gray-600">$${parseFloat(price).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
-                <span class="text-xs font-semibold px-1.5 py-0.5 rounded" style="background:${isUp?'#dcfce7':'#fee2e2'};color:${isUp?'#16a34a':'#dc2626'};">
-                    ${isUp?'↑':'↓'}${Math.abs(change)}%
-                </span>
-            </div>`;
-        });
-        ticker.innerHTML = html + html;
-    }
-
-    updatePrices();
-    setInterval(updatePrices, 15000);
+// ── Boot ──────────────────────────────────────────────────────────────────────
+updatePrices();
+setInterval(updatePrices, 15000);
 </script>
 {% endblock %}
