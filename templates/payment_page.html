@@ -1,230 +1,211 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
-
 {% block title %}Payment - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.crypto-btn { padding:.9rem; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; cursor:pointer; transition:all .2s; text-align:center; }
+.crypto-btn:hover { border-color:#9ca3af; }
+.crypto-btn.selected { border-color:#111827; background:#f9fafb; }
 
+/* Timer */
+.timer-bar { height:4px; border-radius:4px; background:#e5e7eb; overflow:hidden; margin-top:.6rem; }
+.timer-fill { height:100%; border-radius:4px; transition:width 1s linear, background-color .5s ease; background:#16a34a; }
+.timer-urgent { background:#ef4444 !important; }
+.timer-warning { background:#f59e0b !important; }
+
+/* Buy Crypto platforms */
+.platform-btn { display:flex; align-items:center; gap:.6rem; padding:.65rem 1rem; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; cursor:pointer; text-decoration:none; transition:all .2s; font-size:.8rem; font-weight:600; color:#374151; }
+.platform-btn:hover { border-color:#9ca3af; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.platform-logo { width:28px; height:28px; border-radius:6px; object-fit:contain; flex-shrink:0; }
+</style>
+{% endblock %}
 {% block content %}
-<section class="py-8">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <!-- Header -->
+<section class="py-10" style="background:#f8f9fb;">
+    <div class="max-w-3xl mx-auto px-4">
+
         <div class="text-center mb-8">
-            <i class="fas fa-shield-alt text-6xl text-green-400 mb-4"></i>
-            <h1 class="text-3xl md:text-4xl font-bold mb-2">
-                <span class="gradient-text">Secure Payment</span>
-            </h1>
-            <p class="text-gray-400">Complete your transaction safely with real-time exchange rates</p>
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-green-50 mb-4">
+                <i class="fas fa-shield-alt text-green-500 text-xl"></i>
+            </div>
+            <h1 class="title-font text-2xl text-gray-900 mb-1">Secure Payment</h1>
+            <p class="text-gray-500 text-sm">Complete your transaction with real-time exchange rates</p>
         </div>
-        
-        <!-- Payment Amount -->
-        <div class="crypto-card p-8 rounded-2xl mb-6 text-center">
-            <div class="text-sm text-gray-400 mb-2">Amount to Pay</div>
-            <div class="text-5xl font-black gradient-text mb-2">${{ amount|floatformat:2 }}</div>
-            <div class="text-gray-400">{{ user.preferred_currency }}</div>
+
+        <!-- Countdown Timer -->
+        <div class="bg-white border border-gray-200 rounded-xl p-4 mb-5" id="timerCard">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-clock text-red-500 text-sm" id="timerIcon"></i>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 leading-none mb-0.5">Session expires in</p>
+                        <p class="text-sm font-bold text-gray-900" id="timerDisplay">10:00</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs text-gray-400">Quote locked at current rate</p>
+                    <p class="text-xs text-gray-500 mt-0.5" id="timerStatus">Rates are live</p>
+                </div>
+            </div>
+            <div class="timer-bar mt-3">
+                <div class="timer-fill" id="timerFill" style="width:100%"></div>
+            </div>
         </div>
-        
-        <!-- Select Cryptocurrency -->
-        <div class="crypto-card p-8 rounded-2xl mb-6">
-            <h2 class="text-2xl font-bold mb-6">Select Payment Method</h2>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+
+        <!-- Amount -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6 mb-5 text-center">
+            <p class="text-xs text-gray-400 mb-1">Amount to Pay</p>
+            <p class="title-font text-4xl text-gray-900 mb-1">${{ amount|floatformat:2 }}</p>
+            <p class="text-xs text-gray-400">{{ user.preferred_currency }}</p>
+        </div>
+
+        <!-- Select Crypto -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6 mb-5">
+            <h2 class="font-semibold text-gray-900 mb-4">Select Payment Method</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                 {% for wallet in wallet_addresses %}
-                <button type="button" onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})" 
-                        class="crypto-btn p-6 bg-slate-700 hover:bg-slate-600 rounded-xl transition border-2 border-transparent"
-                        data-crypto="{{ wallet.cryptocurrency }}">
-                    <div class="text-4xl mb-3">
-                        {% if wallet.cryptocurrency == 'BTC' %}₿
-                        {% elif wallet.cryptocurrency == 'ETH' %}Ξ
-                        {% elif wallet.cryptocurrency == 'SOL' %}◎
-                        {% elif wallet.cryptocurrency == 'USDT' %}₮(Trc)
-                        {% elif wallet.cryptocurrency == 'BNB' %}
-                        <i class="fab fa-bitcoin"></i>
-                        {% else %}
-                        <i class="fas fa-coins"></i>
-                        {% endif %}
+                <button type="button" onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})"
+                    class="crypto-btn" data-crypto="{{ wallet.cryptocurrency }}">
+                    <div class="text-2xl mb-2">
+                        {% if wallet.cryptocurrency == 'BTC' %}₿{% elif wallet.cryptocurrency == 'ETH' %}Ξ{% elif wallet.cryptocurrency == 'SOL' %}◎{% elif wallet.cryptocurrency == 'USDT' %}₮{% else %}<i class="fas fa-coins"></i>{% endif %}
                     </div>
-                    <div class="font-bold">{{ wallet.cryptocurrency }}</div>
-                    <div class="text-xs text-gray-400 mt-1" id="amount_{{ wallet.cryptocurrency }}">
-                        {{ crypto_amounts|get_item:wallet.cryptocurrency|floatformat:8 }}
-                    </div>
+                    <div class="text-xs font-bold text-gray-700">{{ wallet.cryptocurrency }}</div>
+                    <div class="text-xs text-gray-400 mt-0.5" id="amount_{{ wallet.cryptocurrency }}">{{ crypto_amounts|get_item:wallet.cryptocurrency|floatformat:8 }}</div>
                 </button>
                 {% endfor %}
             </div>
-            
-            <!-- Selection Required Notice -->
-            <div id="selectionNotice" class="p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg mb-4">
-                <div class="flex items-center">
-                    <i class="fas fa-arrow-up text-yellow-400 mr-3"></i>
-                    <div class="text-sm text-yellow-400">
-                        Please select a payment method above to continue
-                    </div>
-                </div>
+
+            <div id="selectionNotice" class="p-3 bg-amber-50 border border-amber-100 rounded-lg text-xs text-amber-700 flex items-center gap-2 mb-4">
+                <i class="fas fa-hand-pointer text-amber-500"></i>Please select a payment method above to continue
             </div>
-            
-            <!-- Selected Wallet Details -->
+
             <div id="walletDetails" class="hidden">
-                <div class="p-6 bg-gradient-to-br from-blue-900/30 to-cyan-900/30 rounded-xl border border-cyan-500/30">
+                <div class="p-5 bg-gray-50 border border-gray-200 rounded-xl">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-bold">Payment Details</h3>
-                        <span class="px-3 py-1 bg-cyan-900/30 text-cyan-400 rounded-full text-sm font-semibold" id="selected_crypto">BTC</span>
+                        <h3 class="font-semibold text-gray-900 text-sm">Payment Details</h3>
+                        <span id="selected_crypto" class="text-xs font-bold bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">BTC</span>
                     </div>
-                    
+                    <div class="mb-3">
+                        <p class="text-xs text-gray-400 mb-1.5">Send Exactly</p>
+                        <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+                            <span class="font-bold text-gray-900 break-all" id="crypto_amount_display">0.00000000</span>
+                            <button onclick="copyAmount()" class="text-gray-400 hover:text-gray-600 ml-2 flex-shrink-0"><i class="fas fa-copy text-sm"></i></button>
+                        </div>
+                    </div>
                     <div class="mb-4">
-                        <div class="text-sm text-gray-400 mb-2">Send Exactly</div>
-                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
-                            <span class="text-2xl font-bold break-all" id="crypto_amount_display">0.00000000</span>
-                            <button type="button" onclick="copyAmount()" class="text-cyan-400 hover:text-cyan-300 ml-2 flex-shrink-0">
-                                <i class="fas fa-copy"></i>
-                            </button>
+                        <p class="text-xs text-gray-400 mb-1.5">To This Address</p>
+                        <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg break-all">
+                            <span class="font-mono text-xs text-gray-700" id="wallet_address_display">Loading...</span>
+                            <button onclick="copyAddress()" class="text-gray-400 hover:text-gray-600 ml-2 flex-shrink-0"><i class="fas fa-copy text-sm"></i></button>
                         </div>
                     </div>
-                    
-                    <div class="mb-4">
-                        <div class="text-sm text-gray-400 mb-2">To This Address</div>
-                        <div class="flex items-center justify-between p-4 bg-slate-800 rounded-lg break-all">
-                            <span class="font-mono text-sm" id="wallet_address_display">Loading...</span>
-                            <button type="button" onclick="copyAddress()" class="text-cyan-400 hover:text-cyan-300 ml-2 flex-shrink-0">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Important Notice -->
-                    <div class="p-4 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mr-3 mt-1"></i>
-                            <div class="text-sm">
-                                <strong>Important:</strong> Send only <span id="notice_crypto">BTC</span> to this address. Sending any other cryptocurrency may result in permanent loss. The exchange rate is calculated in real-time based on current market prices.
-                            </div>
-                        </div>
+                    <div class="p-3 bg-amber-50 border border-amber-100 rounded-lg text-xs text-amber-700">
+                        <i class="fas fa-exclamation-triangle mr-1.5"></i>
+                        <strong>Important:</strong> Send only <span id="notice_crypto">BTC</span> to this address. Sending any other cryptocurrency may result in permanent loss.
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Payment Proof Form -->
-        <form method="post" enctype="multipart/form-data" class="crypto-card p-8 rounded-2xl" id="paymentForm" onsubmit="return validateForm()">
+
+        <!-- Buy Crypto Section -->
+        <div class="bg-white border border-gray-200 rounded-xl p-6 mb-5">
+            <div class="flex items-center gap-2 mb-1">
+                <i class="fas fa-shopping-cart text-blue-500 text-sm"></i>
+                <h2 class="font-semibold text-gray-900 text-sm">Don't have crypto yet?</h2>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Buy cryptocurrency instantly using your card or bank account on these trusted platforms:</p>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                <a href="https://www.moonpay.com/buy" target="_blank" rel="noopener noreferrer" class="platform-btn">
+                    <img src="data:image/jpeg;base64,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" alt="MoonPay" class="platform-logo">
+                    <div><p class="text-xs font-bold text-gray-900">MoonPay</p><p class="text-xs text-gray-400 font-normal">Instant buy</p></div>
+                </a>
+            </div>
+
+            <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2">
+                <i class="fas fa-info-circle text-blue-500 text-xs mt-0.5 flex-shrink-0"></i>
+                <p class="text-xs text-blue-700">After purchasing, send the exact crypto amount shown in Payment Details above to our wallet address. Keep your receipt as proof of purchase.</p>
+            </div>
+        </div>
+
+        <!-- Proof Form -->
+        <form method="post" enctype="multipart/form-data" class="bg-white border border-gray-200 rounded-xl p-6" id="paymentForm" onsubmit="return validateForm()">
             {% csrf_token %}
-            <h2 class="text-2xl font-bold mb-6">Submit Payment Proof</h2>
-            
+            <h2 class="font-semibold text-gray-900 mb-5">Submit Payment Proof</h2>
             <input type="hidden" name="cryptocurrency" id="selected_cryptocurrency" required>
-            
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Upload Payment Screenshot <span class="text-red-500">*</span></label>
-                <div class="border-2 border-dashed border-slate-600 rounded-lg p-8 text-center hover:border-cyan-500 transition">
-                    <input type="file" name="proof_image" accept="image/*" required
-                           class="hidden" id="proof_image_input" onchange="previewImage(event)">
+
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Upload Payment Screenshot <span class="text-red-500">*</span></label>
+                <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-gray-400 transition">
+                    <input type="file" name="proof_image" accept="image/*" required class="hidden" id="proof_image_input" onchange="previewImage(event)">
                     <label for="proof_image_input" class="cursor-pointer">
-                        <i class="fas fa-cloud-upload-alt text-6xl text-gray-500 mb-4 block"></i>
-                        <div class="text-gray-400 mb-2">Click to upload or drag and drop</div>
-                        <div class="text-sm text-gray-500">PNG, JPG up to 5MB</div>
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 mb-3 block"></i>
+                        <p class="text-sm text-gray-400 mb-1">Click to upload or drag and drop</p>
+                        <p class="text-xs text-gray-300">PNG, JPG up to 5MB</p>
                     </label>
                     <div id="image_preview" class="mt-4 hidden">
-                        <img id="preview_img" src="" alt="Preview" class="max-w-xs mx-auto rounded-lg">
+                        <img id="preview_img" src="" alt="Preview" class="max-w-xs mx-auto rounded-lg border border-gray-200">
                     </div>
                 </div>
             </div>
-            
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2">Transaction ID (Optional)</label>
+
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 mb-1.5">Transaction ID (Optional)</label>
                 <input type="text" name="transaction_id"
-                       class="w-full px-4 py-3 bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
-                       placeholder="Enter blockchain transaction ID">
-                <div class="text-xs text-gray-400 mt-1">This helps us verify your payment faster</div>
+                    class="w-full px-4 py-2.5 border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-gray-400 text-sm text-gray-900 transition font-family-dm-sans"
+                    placeholder="Enter blockchain transaction ID">
+                <p class="text-xs text-gray-400 mt-1">This helps us verify your payment faster</p>
             </div>
-            
-            <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
-                Submit Payment Proof <i class="fas fa-check ml-2"></i>
+
+            <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-semibold">
+                Submit Payment Proof <i class="fas fa-check ml-1.5"></i>
             </button>
-            
-            <div class="mt-4 text-center text-sm text-gray-400">
-                <i class="fas fa-lock mr-1"></i>
-                Your payment will be verified within 10-30 minutes
-            </div>
+            <p class="text-center text-xs text-gray-400 mt-3"><i class="fas fa-lock mr-1"></i>Your payment will be verified within 10–30 minutes</p>
         </form>
-        
     </div>
 </section>
 
 <script>
-    let selectedWalletAddress = '';
-    let selectedCryptoAmount = '';
-    let selectedCryptoSymbol = '';
-    
-    function selectCrypto(crypto, address, amount) {
-        selectedCryptoSymbol = crypto;
-        selectedWalletAddress = address;
-        selectedCryptoAmount = amount;
-        
-        // Update UI
-        document.querySelectorAll('.crypto-btn').forEach(btn => {
-            btn.classList.remove('border-cyan-500', 'bg-cyan-900/30');
-        });
-        document.querySelector(`[data-crypto="${crypto}"]`).classList.add('border-cyan-500', 'bg-cyan-900/30');
-        
-        document.getElementById('walletDetails').classList.remove('hidden');
-        document.getElementById('selectionNotice').classList.add('hidden');
-        document.getElementById('selected_crypto').textContent = crypto;
-        document.getElementById('crypto_amount_display').textContent = parseFloat(amount).toFixed(8);
-        document.getElementById('wallet_address_display').textContent = address;
-        document.getElementById('notice_crypto').textContent = crypto;
-        document.getElementById('selected_cryptocurrency').value = crypto;
+let selectedWalletAddress='', selectedCryptoAmount='', selectedCryptoSymbol='';
+
+function selectCrypto(crypto, address, amount) {
+    selectedCryptoSymbol = crypto; selectedWalletAddress = address; selectedCryptoAmount = amount;
+    document.querySelectorAll('.crypto-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelector(`[data-crypto="${crypto}"]`).classList.add('selected');
+    document.getElementById('walletDetails').classList.remove('hidden');
+    document.getElementById('selectionNotice').classList.add('hidden');
+    document.getElementById('selected_crypto').textContent = crypto;
+    document.getElementById('crypto_amount_display').textContent = parseFloat(amount).toFixed(8);
+    document.getElementById('wallet_address_display').textContent = address;
+    document.getElementById('notice_crypto').textContent = crypto;
+    document.getElementById('selected_cryptocurrency').value = crypto;
+}
+
+function validateForm() {
+    if (!document.getElementById('selected_cryptocurrency').value) { showToast('Please select a cryptocurrency first!', 'error'); return false; }
+    if (!document.getElementById('proof_image_input').files.length) { showToast('Please upload payment proof screenshot!', 'error'); return false; }
+    return true;
+}
+
+function copyAmount() { navigator.clipboard.writeText(parseFloat(selectedCryptoAmount).toFixed(8)); showToast('Amount copied!'); }
+function copyAddress() { navigator.clipboard.writeText(selectedWalletAddress); showToast('Address copied!'); }
+
+function showToast(msg, type='success') {
+    const t = document.createElement('div');
+    t.className = `fixed top-20 right-4 z-50 px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg ${type==='error'?'bg-red-600':'bg-gray-900'} text-white`;
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 2500);
+}
+
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const r = new FileReader();
+        r.onload = e => { document.getElementById('preview_img').src=e.target.result; document.getElementById('image_preview').classList.remove('hidden'); };
+        r.readAsDataURL(file);
     }
-    
-    function validateForm() {
-        const cryptoSelected = document.getElementById('selected_cryptocurrency').value;
-        const imageSelected = document.getElementById('proof_image_input').files.length > 0;
-        
-        if (!cryptoSelected) {
-            showNotification('Please select a cryptocurrency first!', 'error');
-            return false;
-        }
-        
-        if (!imageSelected) {
-            showNotification('Please upload payment proof screenshot!', 'error');
-            return false;
-        }
-        
-        return true;
-    }
-    
-    function copyAmount() {
-        const amount = parseFloat(selectedCryptoAmount).toFixed(8);
-        navigator.clipboard.writeText(amount);
-        showNotification('Amount copied to clipboard!', 'success');
-    }
-    
-    function copyAddress() {
-        navigator.clipboard.writeText(selectedWalletAddress);
-        showNotification('Address copied to clipboard!', 'success');
-    }
-    
-    function showNotification(message, type = 'success') {
-        const bgColor = type === 'error' ? 'bg-red-600' : 'bg-green-600';
-        const icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
-        
-        const notification = document.createElement('div');
-        notification.className = `fixed top-20 right-4 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg z-50`;
-        notification.innerHTML = `<i class="fas ${icon} mr-2"></i>${message}`;
-        document.body.appendChild(notification);
-        
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transition = 'opacity 0.3s';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-    
-    function previewImage(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('preview_img').src = e.target.result;
-                document.getElementById('image_preview').classList.remove('hidden');
-            }
-            reader.readAsDataURL(file);
-        }
-    }
+}
 </script>
 {% endblock %}

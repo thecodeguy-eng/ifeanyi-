@@ -1,93 +1,62 @@
-<!-- DEPOSIT TEMPLATE -->
 {% extends 'base.html' %}
-
 {% block title %}Deposit Funds - Influxfinancetrading{% endblock %}
-
+{% block extra_css %}
+<style>
+.amount-input { width:100%; padding:1rem 1rem 1rem 2.5rem; border:1px solid #e5e7eb; border-radius:10px; font-size:1.5rem; font-weight:700; color:#111827; background:#f9fafb; transition:all .2s; font-family:'Syne',sans-serif; }
+.amount-input:focus { outline:none; border-color:#9ca3af; background:#fff; }
+.quick-btn { padding:.6rem; border:1px solid #e5e7eb; border-radius:8px; font-size:.8rem; font-weight:600; color:#374151; background:#fff; cursor:pointer; transition:all .2s; text-align:center; }
+.quick-btn:hover { border-color:#9ca3af; background:#f9fafb; }
+</style>
+{% endblock %}
 {% block content %}
-<section class="py-8">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="crypto-card p-8 md:p-12 rounded-3xl">
+<section class="py-12" style="background:#f8f9fb;">
+    <div class="max-w-lg mx-auto px-4">
+        <div class="bg-white border border-gray-200 rounded-2xl p-8 md:p-10 shadow-sm">
             <div class="text-center mb-8">
-                <div class="inline-block p-4 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-2xl mb-4">
-                    <i class="fas fa-plus-circle text-6xl text-green-400"></i>
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-green-50 mb-4">
+                    <i class="fas fa-plus-circle text-green-500 text-xl"></i>
                 </div>
-                <h1 class="text-4xl font-bold mb-2">
-                    <span class="gradient-text">Deposit Funds</span>
-                </h1>
-                <p class="text-gray-400">Add funds to start trading</p>
+                <h1 class="title-font text-2xl text-gray-900 mb-1">Deposit Funds</h1>
+                <p class="text-gray-500 text-sm">Add funds to start trading</p>
             </div>
-            
+
             <form method="post">
                 {% csrf_token %}
-                
-                <!-- Amount -->
-                <div class="mb-6">
-                    <label class="block text-sm font-medium mb-2">Deposit Amount</label>
+
+                <div class="mb-5">
+                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Deposit Amount</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl text-gray-400">$</span>
-                        <input type="number" name="amount" min="500" step="0.01" required
-                               class="w-full pl-12 pr-4 py-4 text-2xl font-bold bg-slate-700 border border-slate-600 rounded-lg focus:outline-none focus:border-cyan-500 transition"
-                               placeholder="0.00">
+                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-lg">$</span>
+                        <input type="number" name="amount" min="500" step="0.01" required class="amount-input" placeholder="0.00">
                     </div>
-                    <div class="text-sm text-gray-400 mt-2">
-                        <i class="fas fa-info-circle mr-1"></i>
-                        Minimum deposit: $500.00
-                    </div>
+                    <p class="text-xs text-gray-400 mt-1.5"><i class="fas fa-info-circle mr-1"></i>Minimum deposit: $500.00</p>
                 </div>
-                
-                <!-- Quick Amount Buttons -->
-                <div class="grid grid-cols-4 gap-3 mb-8">
-                    <button type="button" onclick="setAmount(500)" class="p-3 bg-slate-700 hover:bg-cyan-600 rounded-lg transition font-semibold">
-                        $500
-                    </button>
-                    <button type="button" onclick="setAmount(1000)" class="p-3 bg-slate-700 hover:bg-cyan-600 rounded-lg transition font-semibold">
-                        $1,000
-                    </button>
-                    <button type="button" onclick="setAmount(5000)" class="p-3 bg-slate-700 hover:bg-cyan-600 rounded-lg transition font-semibold">
-                        $5,000
-                    </button>
-                    <button type="button" onclick="setAmount(10000)" class="p-3 bg-slate-700 hover:bg-cyan-600 rounded-lg transition font-semibold">
-                        $10,000
-                    </button>
+
+                <div class="grid grid-cols-4 gap-2 mb-6">
+                    <button type="button" onclick="setAmount(500)" class="quick-btn">$500</button>
+                    <button type="button" onclick="setAmount(1000)" class="quick-btn">$1,000</button>
+                    <button type="button" onclick="setAmount(5000)" class="quick-btn">$5,000</button>
+                    <button type="button" onclick="setAmount(10000)" class="quick-btn">$10K</button>
                 </div>
-                
-                <!-- Benefits -->
-                <div class="p-6 bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-xl border border-cyan-500/30 mb-8">
-                    <h3 class="font-bold mb-4">Why Deposit?</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                            <span>Access advanced trading features</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                            <span>Activate AI trading bots</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                            <span>Copy professional traders</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fas fa-check-circle text-green-400 mr-3"></i>
-                            <span>24/7 automated trading</span>
-                        </li>
+
+                <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl mb-6">
+                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Why Deposit?</h3>
+                    <ul class="space-y-2 text-xs text-gray-500">
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Access advanced trading features</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Activate AI trading bots</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Copy professional traders</li>
+                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>24/7 automated trading</li>
                     </ul>
                 </div>
-                
-                <!-- Submit Button -->
-                <button type="submit" class="w-full btn-primary py-4 rounded-lg font-bold text-lg">
-                    Proceed to Payment <i class="fas fa-arrow-right ml-2"></i>
+
+                <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-semibold">
+                    Proceed to Payment <i class="fas fa-arrow-right ml-1.5"></i>
                 </button>
             </form>
         </div>
-        
     </div>
 </section>
-
 <script>
-    function setAmount(amount) {
-        document.querySelector('input[name="amount"]').value = amount;
-    }
+function setAmount(amount) { document.querySelector('input[name="amount"]').value = amount; }
 </script>
 {% endblock %}
