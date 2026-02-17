@@ -479,69 +479,55 @@
 {% endblock %}
 
 {% block extra_js %}
-<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    // TradingView Chart
-    new TradingView.widget({
-        "width": "100%",
-        "height": 500,
-        "symbol": "BINANCE:BTCUSDT",
-        "interval": "D",
-        "timezone": "Etc/UTC",
-        "theme": "light",
-        "style": "1",
-        "locale": "en",
-        "toolbar_bg": "#ffffff",
-        "enable_publishing": false,
-        "allow_symbol_change": true,
-        "container_id": "tradingview_chart",
-        "backgroundColor": "#ffffff",
-        "gridColor": "#f3f4f6",
-        "hide_side_toolbar": false
-    });
-
-    // Price Ticker
-    const symbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX'];
-    const ticker = document.getElementById('price-ticker');
-
-    async function updatePrices() {
-        try {
-            const response = await fetch('/api/crypto-prices/');
-            const prices = await response.json();
-            renderTicker(prices);
-        } catch (err) {
-            // Fallback with simulated data
-            renderTicker({});
-        }
-    }
-
-    function renderTicker(prices) {
-        let html = '';
-        symbols.forEach(symbol => {
-            const price = prices[symbol] || (Math.random() * 50000 + 1000).toFixed(2);
-            const change = (Math.random() * 10 - 5).toFixed(2);
-            const isUp = change >= 0;
-
-            html += `
-                <div class="flex items-center gap-2 whitespace-nowrap">
-                    <span class="text-xs font-semibold text-gray-700">${symbol}</span>
-                    <span class="text-xs font-medium text-gray-600">$${parseFloat(price).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-                    <span class="text-xs font-semibold px-1.5 py-0.5 rounded" style="background: ${isUp ? '#dcfce7' : '#fee2e2'}; color: ${isUp ? '#16a34a' : '#dc2626'};">
-                        ${isUp ? '↑' : '↓'}${Math.abs(change)}%
-                    </span>
-                </div>
-            `;
-        });
-
-        ticker.innerHTML = html + html;
-    }
-
-    // Tab switching
+    // ── Tab switching ─────────────────────────────────────────────────────────
     function switchTab(btn, tab) {
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
         btn.classList.add('active');
         document.getElementById('tab-' + tab)?.classList.remove('hidden');
+    }
+
+    // ── TradingView iframe embed (no external JS library needed) ─────────────
+    document.getElementById('tradingview_chart').innerHTML = `
+        <iframe
+            src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3ABTCUSDT&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost&utm_medium=widget"
+            style="width:100%;height:500px;border:none;"
+            allowtransparency="true"
+            allowfullscreen
+            frameborder="0"
+            scrolling="no">
+        </iframe>`;
+
+    // ── Price Ticker ──────────────────────────────────────────────────────────
+    const tickerSymbols = ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX'];
+
+    async function updatePrices() {
+        let prices = {};
+        try {
+            const res = await fetch('/api/crypto-prices/');
+            prices = await res.json();
+        } catch (e) { /* fallback to random below */ }
+        renderTicker(prices);
+    }
+
+    function renderTicker(prices) {
+        const ticker = document.getElementById('price-ticker');
+        if (!ticker) return;
+        let html = '';
+        tickerSymbols.forEach(symbol => {
+            const price = prices[symbol] || (Math.random() * 50000 + 1000).toFixed(2);
+            const change = (Math.random() * 10 - 5).toFixed(2);
+            const isUp = parseFloat(change) >= 0;
+            html += `<div class="flex items-center gap-2 whitespace-nowrap">
+                <span class="text-xs font-semibold text-gray-700">${symbol}</span>
+                <span class="text-xs font-medium text-gray-600">$${parseFloat(price).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+                <span class="text-xs font-semibold px-1.5 py-0.5 rounded" style="background:${isUp?'#dcfce7':'#fee2e2'};color:${isUp?'#16a34a':'#dc2626'};">
+                    ${isUp?'↑':'↓'}${Math.abs(change)}%
+                </span>
+            </div>`;
+        });
+        ticker.innerHTML = html + html;
     }
 
     updatePrices();

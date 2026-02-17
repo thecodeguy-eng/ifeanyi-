@@ -167,6 +167,66 @@
 </section>
 
 <script>
+// ─── Countdown Timer ────────────────────────────────────────────────────────
+(function () {
+    const TOTAL_SECONDS = 10 * 60;   // 10 minutes
+    let remaining = TOTAL_SECONDS;
+
+    const display  = document.getElementById('timerDisplay');
+    const fill     = document.getElementById('timerFill');
+    const status   = document.getElementById('timerStatus');
+    const card     = document.getElementById('timerCard');
+    const icon     = document.getElementById('timerIcon');
+
+    function formatTime(secs) {
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function tick() {
+        if (remaining <= 0) {
+            display.textContent = '00:00';
+            fill.style.width = '0%';
+            fill.classList.add('timer-urgent');
+            status.textContent = 'Session expired — please refresh';
+            card.style.background = '#fff1f2';
+            card.style.borderColor = '#fecaca';
+            icon.className = 'fas fa-clock text-red-600 text-sm';
+            clearInterval(timer);
+            return;
+        }
+
+        remaining--;
+
+        const pct = (remaining / TOTAL_SECONDS) * 100;
+        display.textContent = formatTime(remaining);
+        fill.style.width = pct + '%';
+
+        // Colour states: green → amber → red
+        fill.classList.remove('timer-warning', 'timer-urgent');
+        if (remaining <= 60) {
+            fill.classList.add('timer-urgent');   // last 60 s → red
+            status.textContent = 'Hurry! Rate expiring soon';
+            card.style.background = '#fff1f2';
+            card.style.borderColor = '#fecaca';
+        } else if (remaining <= 3 * 60) {
+            fill.classList.add('timer-warning');  // last 3 min → amber
+            status.textContent = 'Rate expiring soon';
+            card.style.background = '#fffbeb';
+            card.style.borderColor = '#fde68a';
+        } else {
+            status.textContent = 'Rates are live';
+            card.style.background = '';
+            card.style.borderColor = '';
+        }
+    }
+
+    tick();  // run immediately so there's no 1-second blank
+    const timer = setInterval(tick, 1000);
+})();
+// ────────────────────────────────────────────────────────────────────────────
+
 let selectedWalletAddress='', selectedCryptoAmount='', selectedCryptoSymbol='';
 
 function selectCrypto(crypto, address, amount) {

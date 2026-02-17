@@ -1,62 +1,210 @@
 {% extends 'base.html' %}
-{% block title %}Deposit Funds - Influxfinancetrading{% endblock %}
+
+{% block title %}Dashboard - Influxfinancetrading{% endblock %}
+
 {% block extra_css %}
 <style>
-.amount-input { width:100%; padding:1rem 1rem 1rem 2.5rem; border:1px solid #e5e7eb; border-radius:10px; font-size:1.5rem; font-weight:700; color:#111827; background:#f9fafb; transition:all .2s; font-family:'Syne',sans-serif; }
-.amount-input:focus { outline:none; border-color:#9ca3af; background:#fff; }
-.quick-btn { padding:.6rem; border:1px solid #e5e7eb; border-radius:8px; font-size:.8rem; font-weight:600; color:#374151; background:#fff; cursor:pointer; transition:all .2s; text-align:center; }
-.quick-btn:hover { border-color:#9ca3af; background:#f9fafb; }
+.stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:1.5rem; transition:box-shadow .2s ease; }
+.stat-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.06); }
+.stat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+.quick-link { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border-radius:10px; border:1px solid #e5e7eb; background:#fff; font-size:.875rem; font-weight:500; color:#374151; transition:all .2s ease; text-decoration:none; }
+.quick-link:hover { border-color:#9ca3af; background:#f9fafb; }
+.badge { display:inline-flex; align-items:center; padding:.25rem .75rem; border-radius:99px; font-size:.7rem; font-weight:600; }
+.badge-green { background:#dcfce7; color:#16a34a; }
+.badge-yellow { background:#fef9c3; color:#ca8a04; }
+.badge-red { background:#fee2e2; color:#dc2626; }
+.badge-blue { background:#dbeafe; color:#2563eb; }
 </style>
 {% endblock %}
+
 {% block content %}
-<section class="py-12" style="background:#f8f9fb;">
-    <div class="max-w-lg mx-auto px-4">
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 md:p-10 shadow-sm">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-green-50 mb-4">
-                    <i class="fas fa-plus-circle text-green-500 text-xl"></i>
+<section class="py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Welcome Header -->
+        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <h1 class="title-font text-2xl text-gray-900 mb-1">
+                    Hello, {{ user.legal_first_name }} {{ user.legal_last_name }} 👋
+                </h1>
+                <p class="text-gray-500 text-sm">Your trading journey, simplified.</p>
+            </div>
+            <div class="flex gap-3">
+                <a href="{% url 'deposit' %}" class="btn-primary px-5 py-2.5 rounded-lg text-sm font-semibold">
+                    <i class="fas fa-plus mr-1.5"></i>Deposit
+                </a>
+                {% if withdrawal_enabled %}
+                <a href="{% url 'withdrawal' %}" class="inline-block px-5 py-2.5 rounded-lg text-sm font-semibold bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition">
+                    <i class="fas fa-minus mr-1.5"></i>Withdraw
+                </a>
+                {% else %}
+                <button disabled class="px-5 py-2.5 rounded-lg text-sm font-semibold bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed">
+                    <i class="fas fa-lock mr-1.5"></i>Withdraw
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Primary Stats -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="stat-card">
+                <div class="stat-icon bg-blue-50"><i class="fas fa-wallet text-blue-500"></i></div>
+                <p class="text-xs text-gray-400 mb-1">Account Balance</p>
+                <p class="title-font text-2xl text-gray-900">${{ user.account_balance|floatformat:2 }}</p>
+                <p class="text-xs text-gray-400 mt-1">{{ user.preferred_currency }}</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-green-50"><i class="fas fa-chart-line text-green-500"></i></div>
+                <p class="text-xs text-gray-400 mb-1">Total Profit</p>
+                <p class="title-font text-2xl text-green-600">${{ user.total_profit|floatformat:2 }}</p>
+                <p class="text-xs text-green-500 mt-1">+{{ user.total_profit|floatformat:1 }}%</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-purple-50"><i class="fas fa-gift text-purple-500"></i></div>
+                <p class="text-xs text-gray-400 mb-1">Bonus</p>
+                <p class="title-font text-2xl text-purple-600">${{ user.bonus|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon bg-orange-50"><i class="fas fa-exchange-alt text-orange-500"></i></div>
+                <p class="text-xs text-gray-400 mb-1">Total Trades</p>
+                <p class="title-font text-2xl text-gray-900">{{ user.trading_count }}</p>
+                <p class="text-xs text-gray-400 mt-1">All time</p>
+            </div>
+        </div>
+
+        <!-- Secondary Stats -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="stat-card">
+                <p class="text-xs text-gray-400 mb-1">Commission</p>
+                <p class="font-bold text-gray-900 text-lg">${{ user.commission|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="text-xs text-gray-400 mb-1">Total Deposit</p>
+                <p class="font-bold text-green-600 text-lg">${{ user.total_deposit|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="text-xs text-gray-400 mb-1">Total Withdrawn</p>
+                <p class="font-bold text-red-500 text-lg">${{ user.total_withdrawal|floatformat:2 }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="text-xs text-gray-400 mb-1">Latest Deposit</p>
+                <p class="font-bold text-gray-900 text-lg">$0.00</p>
+            </div>
+        </div>
+
+        <!-- Chart + Sidebar -->
+        <div class="grid lg:grid-cols-3 gap-5 mb-6">
+            <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl overflow-hidden">
+                <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+                    <h2 class="font-semibold text-gray-900 text-sm">Live Market Chart</h2>
+                    <span class="badge badge-green"><i class="fas fa-circle text-xs mr-1"></i>Live</span>
                 </div>
-                <h1 class="title-font text-2xl text-gray-900 mb-1">Deposit Funds</h1>
-                <p class="text-gray-500 text-sm">Add funds to start trading</p>
+                <div id="tradingview_chart_dashboard" style="height:420px;"></div>
             </div>
 
-            <form method="post">
-                {% csrf_token %}
-
-                <div class="mb-5">
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Deposit Amount</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-lg">$</span>
-                        <input type="number" name="amount" min="500" step="0.01" required class="amount-input" placeholder="0.00">
+            <div class="space-y-4">
+                <!-- Quick Actions -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5">
+                    <h3 class="font-semibold text-gray-900 text-sm mb-3">Quick Actions</h3>
+                    <div class="space-y-2">
+                        <a href="{% url 'trading' %}" class="quick-link"><i class="fas fa-exchange-alt text-blue-500 w-4"></i>Start Trading</a>
+                        <a href="{% url 'trading_bot' %}" class="quick-link"><i class="fas fa-robot text-purple-500 w-4"></i>Trading Bots</a>
+                        <a href="{% url 'copy_trading' %}" class="quick-link"><i class="fas fa-users text-green-500 w-4"></i>Copy Trading</a>
+                        <a href="{% url 'portfolio' %}" class="quick-link"><i class="fas fa-briefcase text-orange-500 w-4"></i>My Portfolio</a>
                     </div>
-                    <p class="text-xs text-gray-400 mt-1.5"><i class="fas fa-info-circle mr-1"></i>Minimum deposit: $500.00</p>
                 </div>
 
-                <div class="grid grid-cols-4 gap-2 mb-6">
-                    <button type="button" onclick="setAmount(500)" class="quick-btn">$500</button>
-                    <button type="button" onclick="setAmount(1000)" class="quick-btn">$1,000</button>
-                    <button type="button" onclick="setAmount(5000)" class="quick-btn">$5,000</button>
-                    <button type="button" onclick="setAmount(10000)" class="quick-btn">$10K</button>
+                <!-- Account Info -->
+                <div class="bg-white border border-gray-200 rounded-xl p-5">
+                    <h3 class="font-semibold text-gray-900 text-sm mb-3">Account Info</h3>
+                    <div class="space-y-2.5 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">User ID</span>
+                            <span class="font-mono text-gray-700 text-xs">{{ user.id }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Email</span>
+                            <span class="text-gray-700 text-xs truncate max-w-32">{{ user.email }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Status</span>
+                            <span class="badge badge-green"><i class="fas fa-check text-xs mr-1"></i>Active</span>
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-                <div class="p-4 bg-gray-50 border border-gray-100 rounded-xl mb-6">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Why Deposit?</h3>
-                    <ul class="space-y-2 text-xs text-gray-500">
-                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Access advanced trading features</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Activate AI trading bots</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>Copy professional traders</li>
-                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i>24/7 automated trading</li>
-                    </ul>
-                </div>
-
-                <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-semibold">
-                    Proceed to Payment <i class="fas fa-arrow-right ml-1.5"></i>
-                </button>
-            </form>
+        <!-- Recent Transactions -->
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
+            <div class="p-5 border-b border-gray-100 flex items-center justify-between">
+                <h2 class="font-semibold text-gray-900">Recent Transactions</h2>
+                <a href="{% url 'transactions' %}" class="text-sm text-gray-500 hover:text-gray-700 font-medium">View All →</a>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Type</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Amount</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                            <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50">
+                        {% for transaction in recent_transactions %}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-4">
+                                <div class="flex items-center gap-2.5">
+                                    {% if transaction.transaction_type == 'DEPOSIT' %}
+                                    <div class="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center"><i class="fas fa-arrow-down text-green-500 text-xs"></i></div>
+                                    {% elif transaction.transaction_type == 'WITHDRAWAL' %}
+                                    <div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center"><i class="fas fa-arrow-up text-red-500 text-xs"></i></div>
+                                    {% elif transaction.transaction_type == 'PROFIT' %}
+                                    <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="fas fa-chart-line text-blue-500 text-xs"></i></div>
+                                    {% else %}
+                                    <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center"><i class="fas fa-exchange-alt text-gray-500 text-xs"></i></div>
+                                    {% endif %}
+                                    <span class="text-sm text-gray-700 font-medium">{{ transaction.transaction_type|title }}</span>
+                                </div>
+                            </td>
+                            <td class="px-5 py-4 text-sm font-semibold text-gray-900">${{ transaction.amount|floatformat:2 }}</td>
+                            <td class="px-5 py-4">
+                                {% if transaction.status == 'COMPLETED' or transaction.status == 'APPROVED' %}
+                                <span class="badge badge-green">{{ transaction.status }}</span>
+                                {% elif transaction.status == 'PENDING' %}
+                                <span class="badge badge-yellow">{{ transaction.status }}</span>
+                                {% else %}
+                                <span class="badge badge-red">{{ transaction.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-5 py-4 text-xs text-gray-400">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-5 py-12 text-center">
+                                <i class="fas fa-inbox text-3xl text-gray-300 mb-3 block"></i>
+                                <p class="text-sm text-gray-400">No transactions yet. Start by making your first deposit!</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </section>
+
 <script>
-function setAmount(amount) { document.querySelector('input[name="amount"]').value = amount; }
+    // TradingView iframe embed — no external JS library, always loads reliably
+    document.getElementById('tradingview_chart_dashboard').innerHTML = `
+        <iframe
+            src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart_dashboard&symbol=BINANCE%3ABTCUSDT&interval=15&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=ffffff&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en"
+            style="width:100%;height:420px;border:none;"
+            allowtransparency="true"
+            allowfullscreen
+            frameborder="0"
+            scrolling="no">
+        </iframe>`;
 </script>
 {% endblock %}
