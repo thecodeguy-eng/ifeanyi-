@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% block title %}Cookie Policy - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section:last-child { border-bottom: none; }
+.cookie-type { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; }
+</style>
+{% endblock %}
+{% block content %}
+
+<section class="py-16 px-4">
+    <div class="max-w-3xl mx-auto">
+
+        <div class="mb-10">
+            <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-2">Legal</p>
+            <h1 class="title-font text-4xl text-gray-900 mb-3">Cookie Policy</h1>
+            <p class="text-gray-500 text-sm">Last updated: January 1, 2025</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">What Are Cookies?</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Cookies are small text files that are stored on your device when you visit a website. They are widely used to make websites work efficiently and to provide information to site owners. We use cookies and similar tracking technologies to improve your experience on our platform, remember your preferences, and understand how you use our services.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">Types of Cookies We Use</h2>
+            <div class="space-y-3">
+                <div class="cookie-type">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold bg-green-50 text-green-700 px-2.5 py-1 rounded-full">Strictly Necessary</span>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-sm mb-1">Essential Cookies</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed">These cookies are required for the Platform to function. They enable core functionality such as security, login session management, and account authentication. These cannot be disabled.</p>
+                    <p class="text-gray-400 text-xs mt-2"><strong>Examples:</strong> Session cookies, CSRF tokens, authentication state</p>
+                </div>
+                <div class="cookie-type">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full">Functional</span>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-sm mb-1">Preference Cookies</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed">These cookies remember your settings and preferences, such as your selected language, currency preferences, and chart configurations, so you don't need to re-configure them every visit.</p>
+                    <p class="text-gray-400 text-xs mt-2"><strong>Examples:</strong> Language selection, UI preferences, chart settings</p>
+                </div>
+                <div class="cookie-type">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold bg-purple-50 text-purple-700 px-2.5 py-1 rounded-full">Analytics</span>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-sm mb-1">Performance Cookies</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed">These cookies collect anonymized information about how visitors use the Platform — which pages are visited most, error messages encountered, and how users navigate. This helps us improve the platform.</p>
+                    <p class="text-gray-400 text-xs mt-2"><strong>Examples:</strong> Page view tracking, session duration, feature usage</p>
+                </div>
+                <div class="cookie-type">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xs font-semibold bg-orange-50 text-orange-700 px-2.5 py-1 rounded-full">Security</span>
+                    </div>
+                    <h3 class="font-medium text-gray-900 text-sm mb-1">Security Cookies</h3>
+                    <p class="text-gray-500 text-xs leading-relaxed">These cookies help detect and prevent suspicious activity, protect against fraud, and maintain the security of your account by monitoring unusual access patterns.</p>
+                    <p class="text-gray-400 text-xs mt-2"><strong>Examples:</strong> Fraud detection, device fingerprinting, IP verification</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">Cookie Retention</h2>
+            <p class="text-gray-500 text-sm leading-relaxed mb-3">Cookies may be either session cookies (deleted when you close your browser) or persistent cookies (retained for a set period). Our cookies are retained as follows:</p>
+            <ul class="text-gray-500 text-sm space-y-2 ml-4">
+                <li><strong class="text-gray-700">Session Cookies:</strong> Deleted when browser is closed</li>
+                <li><strong class="text-gray-700">Authentication Cookies:</strong> 30 days or until logout</li>
+                <li><strong class="text-gray-700">Preference Cookies:</strong> 12 months</li>
+                <li><strong class="text-gray-700">Analytics Cookies:</strong> 90 days (anonymized)</li>
+            </ul>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">Managing Cookies</h2>
+            <p class="text-gray-500 text-sm leading-relaxed mb-3">Most browsers allow you to control cookies through their settings. You can set your browser to refuse cookies or to notify you when cookies are being set. Note that disabling essential cookies may prevent certain features of the Platform from functioning correctly.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">Instructions for managing cookies in common browsers:</p>
+            <ul class="text-gray-500 text-sm space-y-1.5 mt-2 ml-4">
+                <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" class="text-blue-600 hover:underline">Google Chrome</a></li>
+                <li><a href="https://support.mozilla.org/en-US/kb/cookies-information-websites-store-on-your-computer" target="_blank" class="text-blue-600 hover:underline">Mozilla Firefox</a></li>
+                <li><a href="https://support.apple.com/guide/safari/manage-cookies-sfri11471/mac" target="_blank" class="text-blue-600 hover:underline">Apple Safari</a></li>
+                <li><a href="https://support.microsoft.com/en-us/help/17442/windows-internet-explorer-delete-manage-cookies" target="_blank" class="text-blue-600 hover:underline">Microsoft Edge</a></li>
+            </ul>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">Third-Party Cookies</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Some third-party services embedded in our Platform (such as TradingView charts) may set their own cookies. We do not control these cookies and recommend reviewing the privacy policies of those services. We do not allow third-party advertising cookies on our Platform.</p>
+        </div>
+
+        <div>
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">Contact</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">For questions about our use of cookies, contact us at <a href="mailto:privacy@influxfinancetrading.com" class="text-blue-600 hover:underline">privacy@influxfinancetrading.com</a>.</p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

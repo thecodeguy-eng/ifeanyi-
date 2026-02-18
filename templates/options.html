@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}Options Trading - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.hero-options { background: linear-gradient(135deg, #1a0533 0%, #2d0a5e 50%, #4c1d95 100%); }
+.glass-chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; }
+.feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.07); transform: translateY(-2px); }
+.strategy-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; transition: all .2s; }
+.strategy-card:hover { border-color: #7c3aed; box-shadow: 0 4px 16px rgba(124,58,237,.1); }
+.risk-badge { display: inline-flex; align-items: center; padding: .2rem .7rem; border-radius: 99px; font-size: .7rem; font-weight: 600; }
+.risk-low { background: #dcfce7; color: #16a34a; }
+.risk-med { background: #fef9c3; color: #ca8a04; }
+.risk-high { background: #fee2e2; color: #dc2626; }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="hero-options py-24 px-4 text-white">
+    <div class="max-w-6xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-6 border border-white/20 bg-white/10">
+            <i class="fas fa-layer-group text-violet-300 text-xs"></i>
+            Calls &amp; Puts on 1,000+ Underlyings
+        </div>
+        <h1 class="title-font text-5xl md:text-6xl mb-5 leading-tight">Master Options<br><span class="text-violet-300">Trading</span></h1>
+        <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Leverage strategic flexibility with calls, puts, spreads, and multi-leg options strategies. Defined risk. Unlimited potential.</p>
+        <div class="flex flex-wrap justify-center gap-4 mb-16">
+            <a href="{% url 'register' %}" class="px-8 py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition text-sm">Start Trading Options</a>
+            <a href="{% url 'login' %}" class="px-8 py-3.5 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition text-sm">View Dashboard</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">1,000+</p><p class="text-white/50 text-xs mt-1">Underlyings</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">$0.65</p><p class="text-white/50 text-xs mt-1">Per Contract</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">Real-time</p><p class="text-white/50 text-xs mt-1">Greeks Data</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">24/5</p><p class="text-white/50 text-xs mt-1">Extended Hours</p></div>
+        </div>
+    </div>
+</div>
+
+<section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">Popular Options Strategies</h2>
+            <p class="text-gray-500 text-sm">From beginner covered calls to advanced spreads</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Covered Call</h3>
+                    <span class="risk-badge risk-low">Low Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Sell call options on stock you own to generate income. Ideal for neutral to slightly bullish outlook.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Income</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Neutral</span>
+                </div>
+            </div>
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Protective Put</h3>
+                    <span class="risk-badge risk-low">Low Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Buy puts to hedge your long stock positions. Acts like portfolio insurance against sharp declines.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Hedge</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Protection</span>
+                </div>
+            </div>
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Bull Call Spread</h3>
+                    <span class="risk-badge risk-med">Med Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Buy a call and sell a higher-strike call. Defined risk, defined reward on a bullish directional bet.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Bullish</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Spread</span>
+                </div>
+            </div>
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Iron Condor</h3>
+                    <span class="risk-badge risk-med">Med Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Sell a call spread and a put spread simultaneously. Profit when the underlying stays in a range.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Neutral</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Income</span>
+                </div>
+            </div>
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Long Straddle</h3>
+                    <span class="risk-badge risk-med">Med Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Buy a call and put at the same strike. Profit from large moves in either direction around earnings or events.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Volatility</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Event</span>
+                </div>
+            </div>
+            <div class="strategy-card">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="font-semibold text-gray-900">Naked Put</h3>
+                    <span class="risk-badge risk-high">Higher Risk</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-3">Sell puts on stocks you want to own at a lower price. Collect premium with a bullish bias strategy.</p>
+                <div class="flex gap-2 text-xs">
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Bullish</span>
+                    <span class="bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">Premium</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">Options Trading Tools</h2>
+            <p class="text-gray-500 text-sm">Everything you need to analyze and execute options trades</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-violet-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-calculator text-violet-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Options Chain</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Full options chain with real-time bid/ask, open interest, volume, implied volatility, and all Greeks at a glance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-chart-line text-blue-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">P&amp;L Visualizer</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Interactive payoff diagrams for any strategy. See your max gain, max loss, and break-even before you trade.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-greek text-green-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Greeks Dashboard</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Monitor Delta, Gamma, Theta, Vega, and Rho in real time. Understand your risk exposure at every moment.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-amber-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-fire text-amber-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Volatility Scanner</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Scan for unusual options activity, high IV rank, and earnings play candidates across thousands of tickers.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-layer-group text-red-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Multi-Leg Orders</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Build and execute complex spreads, condors, and butterflies as single multi-leg orders with one click.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-cyan-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-graduation-cap text-cyan-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Options Academy</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Free educational resources, video tutorials, and strategy guides to help you trade options with confidence.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 px-4">
+    <div class="max-w-2xl mx-auto text-center">
+        <h2 class="title-font text-3xl text-gray-900 mb-4">Start Trading Options</h2>
+        <p class="text-gray-500 mb-8">Open your account and access the full options suite in minutes.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-base font-semibold">Open Free Account <i class="fas fa-arrow-right ml-2"></i></a>
+            <a href="{% url 'login' %}" class="px-10 py-4 rounded-xl text-base font-semibold border border-gray-200 text-gray-700 hover:border-gray-400 transition inline-block">Login</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %

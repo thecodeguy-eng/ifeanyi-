@@ -992,3 +992,95 @@ def get_auto_reply(message):
     
     # Return None if no auto-reply needed - admin will respond manually
     return None
+
+# ============================================================
+# PRODUCT PAGES
+# ============================================================
+
+def stocks(request):
+    """Stocks product page"""
+    return render(request, 'stocks.html')
+
+
+def crypto(request):
+    """Crypto product page"""
+    return render(request, 'crypto.html')
+
+
+def forex(request):
+    """Forex product page"""
+    return render(request, 'forex.html')
+
+
+def options(request):
+    """Options product page"""
+    return render(request, 'options.html')
+
+
+# ============================================================
+# COMPANY PAGES
+# ============================================================
+
+def about(request):
+    """About Us page"""
+    return render(request, 'about.html')
+
+
+def contact(request):
+    """Contact page — handles GET and POST (form submission)"""
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name  = request.POST.get('last_name', '').strip()
+        email      = request.POST.get('email', '').strip()
+        subject    = request.POST.get('subject', '').strip()
+        message    = request.POST.get('message', '').strip()
+
+        if all([first_name, last_name, email, subject, message]):
+            # Log the contact request
+            logger.info(
+                f"Contact form submitted: {first_name} {last_name} <{email}> — {subject}"
+            )
+            messages.success(
+                request,
+                "Thank you for reaching out! Our team will reply within 2 hours."
+            )
+        else:
+            messages.error(request, "Please fill in all required fields.")
+
+        return redirect('contact')
+
+    return render(request, 'contact.html')
+
+
+def careers(request):
+    """Careers page"""
+    return render(request, 'careers.html')
+
+
+def press(request):
+    """Press / media page"""
+    return render(request, 'press.html')
+
+
+# ============================================================
+# LEGAL PAGES
+# ============================================================
+
+def privacy_policy(request):
+    """Privacy Policy page"""
+    return render(request, 'privacy_policy.html')
+
+
+def terms_of_service(request):
+    """Terms of Service page"""
+    return render(request, 'terms_of_service.html')
+
+
+def cookie_policy(request):
+    """Cookie Policy page"""
+    return render(request, 'cookie_policy.html')
+
+
+def disclaimer(request):
+    """Disclaimer page"""
+    return render(request, 'disclaimer.html')

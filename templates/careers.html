@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block title %}Careers - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.hero-careers { background: linear-gradient(135deg, #111827 0%, #1f2937 100%); }
+.job-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; transition: all .2s; cursor: pointer; }
+.job-card:hover { border-color: #1d4ed8; box-shadow: 0 6px 20px rgba(29,78,216,.1); }
+.perk-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; text-align: center; transition: all .2s; }
+.perk-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.07); }
+.dept-pill { display: inline-flex; align-items: center; padding: .25rem .85rem; border-radius: 99px; font-size: .7rem; font-weight: 600; }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="hero-careers py-24 px-4 text-white">
+    <div class="max-w-4xl mx-auto text-center">
+        <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest mb-4">Join Our Team</p>
+        <h1 class="title-font text-5xl md:text-6xl mb-5">Build the Future<br>of Finance</h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8">We're a remote-first team of traders, engineers, and designers on a mission to democratize global markets. If you're passionate about fintech, we want to hear from you.</p>
+        <div class="flex flex-wrap justify-center gap-4">
+            <a href="#open-roles" class="px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition text-sm">View Open Roles</a>
+        </div>
+    </div>
+</div>
+
+<section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">Why Work With Us?</h2>
+            <p class="text-gray-500 text-sm">Perks and benefits for the whole team</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-globe text-blue-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Remote First</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Work from anywhere in the world. We've been remote since day one.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-heartbeat text-green-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Health Benefits</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Comprehensive health, dental, and vision coverage for you and your family.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-chart-line text-purple-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Equity Package</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Competitive equity for every employee. You'll own a piece of what we build together.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-graduation-cap text-amber-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Learning Budget</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">$2,000/year for courses, conferences, books, and professional development.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-sun text-red-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Unlimited PTO</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Take the time you need. We trust you to manage your own time and deliverables.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-cyan-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-laptop text-cyan-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Home Office</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">$1,500 home office stipend to set up your perfect work environment.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-coins text-indigo-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Crypto Perks</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Zero-fee trading on our platform. Optional crypto salary payments supported.</p>
+            </div>
+            <div class="perk-card">
+                <div class="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center mx-auto mb-3"><i class="fas fa-users text-orange-600 text-lg"></i></div>
+                <h3 class="font-semibold text-gray-900 text-sm mb-1">Team Retreats</h3>
+                <p class="text-gray-500 text-xs leading-relaxed">Annual all-hands retreats in amazing locations. Past destinations include Lisbon, Bali, and NYC.</p>
+            </div>
+        </div>
+
+        <div id="open-roles">
+            <div class="text-center mb-10">
+                <h2 class="title-font text-3xl text-gray-900 mb-2">Open Positions</h2>
+                <p class="text-gray-500 text-sm">We're hiring across engineering, product, and operations</p>
+            </div>
+            <div class="space-y-4">
+                <div class="job-card">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="dept-pill bg-blue-50 text-blue-700">Engineering</span>
+                                <span class="dept-pill bg-gray-100 text-gray-600">Remote</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Senior Backend Engineer (Python/Django)</h3>
+                            <p class="text-gray-500 text-sm">Build and scale the core trading infrastructure. 5+ years experience with high-throughput financial systems preferred.</p>
+                        </div>
+                        <a href="{% url 'contact' %}" class="flex-shrink-0 btn-primary px-5 py-2 rounded-lg text-sm">Apply</a>
+                    </div>
+                </div>
+                <div class="job-card">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="dept-pill bg-purple-50 text-purple-700">Product</span>
+                                <span class="dept-pill bg-gray-100 text-gray-600">Remote</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Product Designer (UI/UX)</h3>
+                            <p class="text-gray-500 text-sm">Shape the look and feel of our trading platform. Experience with fintech or data-heavy products a strong plus.</p>
+                        </div>
+                        <a href="{% url 'contact' %}" class="flex-shrink-0 btn-primary px-5 py-2 rounded-lg text-sm">Apply</a>
+                    </div>
+                </div>
+                <div class="job-card">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="dept-pill bg-green-50 text-green-700">Data Science</span>
+                                <span class="dept-pill bg-gray-100 text-gray-600">Remote</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Machine Learning Engineer (Trading Bots)</h3>
+                            <p class="text-gray-500 text-sm">Develop and improve our AI trading algorithms. Proficiency in Python, TensorFlow or PyTorch required.</p>
+                        </div>
+                        <a href="{% url 'contact' %}" class="flex-shrink-0 btn-primary px-5 py-2 rounded-lg text-sm">Apply</a>
+                    </div>
+                </div>
+                <div class="job-card">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="dept-pill bg-orange-50 text-orange-700">Customer Success</span>
+                                <span class="dept-pill bg-gray-100 text-gray-600">Remote</span>
+                            </div>
+                            <h3 class="font-semibold text-gray-900 mb-1">Customer Support Specialist</h3>
+                            <p class="text-gray-500 text-sm">Help our global community of traders get the most out of our platform. Fintech or trading background preferred.</p>
+                        </div>
+                        <a href="{% url 'contact' %}" class="flex-shrink-0 btn-primary px-5 py-2 rounded-lg text-sm">Apply</a>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center text-gray-500 text-sm mt-8">Don't see a role that fits? <a href="{% url 'contact' %}" class="text-blue-600 font-medium hover:underline">Send us a general application</a> and we'll keep you in mind for future openings.</p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.form-input { width: 100%; padding: .75rem 1rem; border: 1px solid #e5e7eb; border-radius: 8px; font-size: .9rem; color: #111827; background: #f9fafb; transition: all .2s; font-family: 'DM Sans', sans-serif; }
+.form-input:focus { outline: none; border-color: #9ca3af; background: #fff; box-shadow: 0 0 0 3px rgba(156,163,175,.1); }
+.form-input::placeholder { color: #9ca3af; }
+.contact-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; text-align: center; transition: all .2s; }
+.contact-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.07); transform: translateY(-2px); }
+</style>
+{% endblock %}
+{% block content %}
+
+<section class="py-20 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="text-center mb-14">
+            <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-3">Get in Touch</p>
+            <h1 class="title-font text-4xl md:text-5xl text-gray-900 mb-4">We're Here to Help</h1>
+            <p class="text-gray-500 text-lg max-w-2xl mx-auto">Our support team is available 24/7. Whether you have a question about your account, trading, or anything else — we're always ready to help.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-5 mb-14">
+            <div class="contact-card">
+                <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-comments text-blue-600 text-xl"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-1.5">Live Chat</h3>
+                <p class="text-gray-500 text-sm mb-3">Chat with our team in real time. Average response: under 2 minutes.</p>
+                {% if user.is_authenticated %}
+                <button onclick="toggleChat()" class="btn-primary px-5 py-2 rounded-lg text-sm w-full">Start Chat</button>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn-primary px-5 py-2 rounded-lg text-sm inline-block w-full text-center">Login to Chat</a>
+                {% endif %}
+            </div>
+            <div class="contact-card">
+                <div class="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-envelope text-green-600 text-xl"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-1.5">Email Support</h3>
+                <p class="text-gray-500 text-sm mb-3">Send us a message. We reply to all emails within 2 business hours.</p>
+                <a href="mailto:support@influxfinancetrading.com" class="inline-block w-full text-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 transition">support@influxfinancetrading.com</a>
+            </div>
+            <div class="contact-card">
+                <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mx-auto mb-4"><i class="fas fa-book-open text-purple-600 text-xl"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-1.5">Help Center</h3>
+                <p class="text-gray-500 text-sm mb-3">Browse 200+ articles covering every aspect of our platform.</p>
+                <a href="#" class="inline-block w-full text-center px-5 py-2 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 hover:border-gray-400 transition">Browse Articles</a>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-10">
+            <div class="bg-white border border-gray-200 rounded-2xl p-8">
+                <h2 class="title-font text-2xl text-gray-900 mb-1.5">Send a Message</h2>
+                <p class="text-gray-500 text-sm mb-6">Fill in the form below and we'll get back to you within 2 hours.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="grid sm:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                            <input type="text" name="first_name" required class="form-input" placeholder="John">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                            <input type="text" name="last_name" required class="form-input" placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                        <input type="email" name="email" required class="form-input" placeholder="john@example.com">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Subject</label>
+                        <select name="subject" required class="form-input">
+                            <option value="">Select a topic</option>
+                            <option>Account &amp; Registration</option>
+                            <option>Deposits &amp; Withdrawals</option>
+                            <option>Trading &amp; Orders</option>
+                            <option>Trading Bots</option>
+                            <option>Copy Trading</option>
+                            <option>Technical Issue</option>
+                            <option>Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Message</label>
+                        <textarea name="message" rows="5" required class="form-input resize-none" placeholder="Describe your issue or question in detail..."></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-3 rounded-xl text-sm font-semibold">Send Message <i class="fas fa-paper-plane ml-1.5"></i></button>
+                </form>
+            </div>
+
+            <div class="space-y-6">
+                <div class="bg-white border border-gray-200 rounded-2xl p-7">
+                    <h3 class="font-semibold text-gray-900 mb-4">Office Hours</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-50">
+                            <span class="text-gray-500">Live Chat &amp; Email</span>
+                            <span class="font-semibold text-gray-900">24/7 Always On</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-50">
+                            <span class="text-gray-500">Phone Support</span>
+                            <span class="font-semibold text-gray-900">Mon–Fri, 9am–6pm UTC</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-500">Response Time</span>
+                            <span class="font-semibold text-green-600">Under 2 hours</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-2xl p-7">
+                    <h3 class="font-semibold text-gray-900 mb-4">Frequently Asked</h3>
+                    <div class="space-y-3">
+                        <details class="group">
+                            <summary class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center justify-between">How long do deposits take?<i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition-transform"></i></summary>
+                            <p class="text-gray-500 text-sm mt-2 leading-relaxed">Crypto deposits are credited after 1 network confirmation, typically 10–30 minutes depending on the blockchain.</p>
+                        </details>
+                        <details class="group border-t border-gray-50 pt-3">
+                            <summary class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center justify-between">How do I withdraw funds?<i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition-transform"></i></summary>
+                            <p class="text-gray-500 text-sm mt-2 leading-relaxed">Go to Dashboard &gt; Withdrawal. Enter your amount and wallet address. Processing takes 24–48 hours after manual review.</p>
+                        </details>
+                        <details class="group border-t border-gray-50 pt-3">
+                            <summary class="cursor-pointer text-sm font-medium text-gray-700 hover:text-gray-900 flex items-center justify-between">Is my money safe?<i class="fas fa-chevron-down text-xs text-gray-400 group-open:rotate-180 transition-transform"></i></summary>
+                            <p class="text-gray-500 text-sm mt-2 leading-relaxed">Yes. Funds are held in segregated accounts. We use 256-bit SSL encryption and store 95% of crypto in cold wallets.</p>
+                        </details>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-7">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5"></i>
+                        <div>
+                            <p class="font-semibold text-gray-900 text-sm mb-1">Fastest way to get help</p>
+                            <p class="text-gray-500 text-sm leading-relaxed">For account-specific issues, use the Live Chat in your dashboard. Our support agents have direct access to account details and can resolve issues immediately.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

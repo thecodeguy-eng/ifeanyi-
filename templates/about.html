@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}About Us - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.hero-about { background: linear-gradient(135deg, #111827 0%, #1e293b 100%); }
+.value-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+.value-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.07); }
+.stat-block { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; text-align: center; }
+.team-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; overflow: hidden; transition: all .2s; }
+.team-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); transform: translateY(-2px); }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="hero-about py-24 px-4 text-white">
+    <div class="max-w-4xl mx-auto text-center">
+        <p class="text-gray-400 text-sm font-semibold uppercase tracking-widest mb-4">Our Story</p>
+        <h1 class="title-font text-5xl md:text-6xl mb-5">Built by Traders,<br>For Traders</h1>
+        <p class="text-gray-400 text-lg max-w-2xl mx-auto">Influxfinancetrading was founded with one mission: to give every person on earth access to the same financial tools that were previously reserved for the wealthy few.</p>
+    </div>
+</div>
+
+<section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+            <div>
+                <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-3">Our Mission</p>
+                <h2 class="title-font text-3xl text-gray-900 mb-5">Democratizing Access to Global Markets</h2>
+                <p class="text-gray-500 leading-relaxed mb-4">For too long, sophisticated trading tools, real institutional-grade data, and access to diverse asset classes were gatekept behind high minimums and complex paperwork. We built Influxfinancetrading to tear down those barriers.</p>
+                <p class="text-gray-500 leading-relaxed">Whether you're trading stocks, crypto, forex, or options — our platform gives you the same infrastructure used by professional fund managers, available from any device, starting with as little as $50.</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="stat-block"><p class="title-font text-3xl text-gray-900 mb-1">120,000+</p><p class="text-gray-500 text-sm">Active Traders</p></div>
+                <div class="stat-block"><p class="title-font text-3xl text-gray-900 mb-1">$4.2B+</p><p class="text-gray-500 text-sm">Volume Traded</p></div>
+                <div class="stat-block"><p class="title-font text-3xl text-gray-900 mb-1">195</p><p class="text-gray-500 text-sm">Countries Served</p></div>
+                <div class="stat-block"><p class="title-font text-3xl text-gray-900 mb-1">99.9%</p><p class="text-gray-500 text-sm">Platform Uptime</p></div>
+            </div>
+        </div>
+
+        <div class="text-center mb-12">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">What We Stand For</h2>
+            <p class="text-gray-500 text-sm">The values that guide every decision we make</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-5 mb-20">
+            <div class="value-card">
+                <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-handshake text-blue-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Transparency</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">No hidden fees. No confusing terms. We show you exactly what you pay, what you earn, and how your money moves at every step.</p>
+            </div>
+            <div class="value-card">
+                <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-shield-alt text-green-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Security First</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Bank-level 256-bit encryption, cold storage for crypto assets, and mandatory two-factor authentication protect every account.</p>
+            </div>
+            <div class="value-card">
+                <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-users text-purple-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Community</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">From copy trading to our support chat, we believe traders grow together. We foster a collaborative environment built on shared success.</p>
+            </div>
+            <div class="value-card">
+                <div class="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-lightbulb text-orange-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Innovation</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">We ship new features constantly — from AI trading bots to real-time charting — because staying ahead of the market means staying ahead of technology.</p>
+            </div>
+            <div class="value-card">
+                <div class="w-11 h-11 bg-cyan-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-globe text-cyan-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Global Access</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">We support 30+ languages and 195 countries because great financial opportunities shouldn't have geographic borders.</p>
+            </div>
+            <div class="value-card">
+                <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-headset text-red-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">24/7 Support</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Markets never sleep, and neither does our support team. We're always here via live chat, email, and our help center.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 px-4 bg-gray-50">
+    <div class="max-w-3xl mx-auto text-center">
+        <h2 class="title-font text-3xl text-gray-900 mb-4">Ready to Join Us?</h2>
+        <p class="text-gray-500 mb-8">Be part of a global community of 120,000+ traders across 195 countries.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-base font-semibold">Create Free Account <i class="fas fa-arrow-right ml-2"></i></a>
+            <a href="{% url 'contact' %}" class="px-10 py-4 rounded-xl text-base font-semibold border border-gray-200 text-gray-700 hover:border-gray-400 transition inline-block">Contact Us</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

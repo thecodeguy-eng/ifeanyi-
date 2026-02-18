@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}Disclaimer - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section:last-child { border-bottom: none; }
+</style>
+{% endblock %}
+{% block content %}
+
+<section class="py-16 px-4">
+    <div class="max-w-3xl mx-auto">
+
+        <div class="mb-10">
+            <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-2">Legal</p>
+            <h1 class="title-font text-4xl text-gray-900 mb-3">Disclaimer</h1>
+            <p class="text-gray-500 text-sm">Last updated: January 1, 2025</p>
+        </div>
+
+        <div class="bg-red-50 border border-red-200 rounded-xl p-6 mb-10">
+            <div class="flex items-start gap-3">
+                <i class="fas fa-exclamation-triangle text-red-500 text-lg mt-0.5"></i>
+                <div>
+                    <p class="font-semibold text-red-800 mb-1">Important Risk Warning</p>
+                    <p class="text-red-700 text-sm leading-relaxed">Trading in financial instruments, including cryptocurrencies, stocks, forex, and options, carries a high level of risk and may not be suitable for all investors. You could sustain a loss of some or all of your invested capital. You should not invest money that you cannot afford to lose.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">1. No Financial Advice</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">The content, tools, charts, news, data, and other materials available on the Influxfinancetrading Platform are provided for informational and educational purposes only. Nothing on this Platform constitutes financial advice, investment advice, trading advice, or any other form of advice. We are not a licensed financial advisor, broker-dealer, or investment advisor.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">2. Trading Risks</h2>
+            <p class="text-gray-500 text-sm leading-relaxed mb-3">You acknowledge and accept the following risks associated with trading on our Platform:</p>
+            <ul class="text-gray-500 text-sm space-y-2 ml-4">
+                <li><strong class="text-gray-700">Market Risk:</strong> Financial markets are volatile and prices can change rapidly and unpredictably.</li>
+                <li><strong class="text-gray-700">Liquidity Risk:</strong> It may not always be possible to liquidate a position at a favorable price.</li>
+                <li><strong class="text-gray-700">Technology Risk:</strong> Electronic trading systems can experience downtime, outages, or technical failures.</li>
+                <li><strong class="text-gray-700">Leverage Risk:</strong> Using leverage amplifies both gains and losses. You can lose more than your initial deposit when using leveraged products.</li>
+                <li><strong class="text-gray-700">Cryptocurrency Risk:</strong> Cryptocurrencies are highly volatile, largely unregulated, and not backed by any government or central authority.</li>
+            </ul>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">3. Past Performance</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Past performance of any trading strategy, trading bot, copy trader, or investment is not a guarantee of future results. All profit figures, percentage returns, and performance data shown on our Platform are historical and may not be representative of future performance. Any projected returns are illustrative only.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">4. Trading Bots and Automated Systems</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Our AI trading bots and automated trading systems are tools designed to assist in trading. We do not guarantee any specific returns or profit amounts from the use of these tools. Markets can and do move against automated strategies. The "guaranteed daily profits" referenced in bot plan descriptions reflect historical average performance and are not contractual guarantees.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">5. Copy Trading</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">When copying another trader's strategy, you accept that the copied trader's past performance does not guarantee future results. Copied trades are executed on a best-efforts basis and actual results may differ from the original trader's results due to timing differences, market conditions, and available liquidity.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">6. Third-Party Information</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Our Platform may display market data, news, analysis, and other content from third-party providers. We do not verify the accuracy or completeness of third-party content and are not responsible for any errors or omissions therein. Third-party content does not constitute an endorsement by Influxfinancetrading.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">7. Regulatory Compliance</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">It is your responsibility to ensure that your use of our Platform complies with all applicable laws and regulations in your jurisdiction. Some products and services may not be available in your jurisdiction. We do not represent that the Platform or any of its services are appropriate or available for use in all locations.</p>
+        </div>
+
+        <div class="legal-section">
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">8. Accuracy of Information</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">While we make every effort to ensure that information on the Platform is accurate and up-to-date, we make no warranties or representations as to the accuracy, completeness, or timeliness of any information on the Platform. Market data may be delayed and should not be used as the sole basis for trading decisions.</p>
+        </div>
+
+        <div>
+            <h2 class="font-semibold text-gray-900 text-lg mb-3">9. Seek Independent Advice</h2>
+            <p class="text-gray-500 text-sm leading-relaxed">Before making any trading or investment decisions, we strongly recommend seeking independent financial advice from a qualified and authorized financial advisor. Consider your investment objectives, experience level, and risk tolerance carefully before trading. For questions, contact us at <a href="mailto:legal@influxfinancetrading.com" class="text-blue-600 hover:underline">legal@influxfinancetrading.com</a>.</p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -56,6 +56,25 @@ urlpatterns = [
 
 
 
+
+    # Products
+    path('products/stocks/', views.stocks, name='stocks'),
+    path('products/crypto/', views.crypto, name='crypto'),
+    path('products/forex/', views.forex, name='forex'),
+    path('products/options/', views.options, name='options'),
+
+    # Company
+    path('about/', views.about, name='about'),
+    path('contact/', views.contact, name='contact'),
+    path('careers/', views.careers, name='careers'),
+    path('press/', views.press, name='press'),
+
+    # Legal
+    path('legal/privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('legal/terms-of-service/', views.terms_of_service, name='terms_of_service'),
+    path('legal/cookie-policy/', views.cookie_policy, name='cookie_policy'),
+    path('legal/disclaimer/', views.disclaimer, name='disclaimer'),
+
     # ADMIN_URL
     
     # Dashboard

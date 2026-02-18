@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Stocks Trading - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.hero-stocks { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%); }
+.glass-chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; backdrop-filter: blur(8px); }
+.feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: box-shadow .2s, transform .2s; }
+.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.08); transform: translateY(-2px); }
+.sector-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all .2s; }
+.sector-card:hover { border-color: #1d4ed8; box-shadow: 0 4px 16px rgba(29,78,216,.1); }
+.ticker-wrap { overflow: hidden; background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+.ticker-track { display: flex; gap: 2.5rem; animation: ticker 35s linear infinite; white-space: nowrap; padding: .6rem 0; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+</style>
+{% endblock %}
+{% block content %}
+
+<div class="hero-stocks py-24 px-4 text-white">
+    <div class="max-w-6xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-6 border border-white/20 bg-white/10">
+            <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            NYSE &amp; NASDAQ Live
+        </div>
+        <h1 class="title-font text-5xl md:text-6xl mb-5 leading-tight">Trade Global Stocks<br><span class="text-blue-300">With Precision</span></h1>
+        <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Access thousands of US and international equities with real-time data, professional charting, and instant execution.</p>
+        <div class="flex flex-wrap justify-center gap-4 mb-16">
+            <a href="{% url 'register' %}" class="px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition text-sm">Open Free Account</a>
+            <a href="{% url 'login' %}" class="px-8 py-3.5 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition text-sm">Go to Dashboard</a>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">5,000+</p><p class="text-white/50 text-xs mt-1">US Stocks</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">$0</p><p class="text-white/50 text-xs mt-1">Commission</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">&lt;10ms</p><p class="text-white/50 text-xs mt-1">Execution</p></div>
+            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">24/5</p><p class="text-white/50 text-xs mt-1">Market Access</p></div>
+        </div>
+    </div>
+</div>
+
+<div class="ticker-wrap">
+    <div class="ticker-track text-xs font-mono">
+        <span class="text-gray-600">AAPL <span class="text-green-600 font-semibold">$189.30 (+1.2%)</span></span>
+        <span class="text-gray-600">MSFT <span class="text-green-600 font-semibold">$415.70 (+0.8%)</span></span>
+        <span class="text-gray-600">GOOGL <span class="text-red-500 font-semibold">$140.50 (-0.3%)</span></span>
+        <span class="text-gray-600">AMZN <span class="text-green-600 font-semibold">$185.20 (+1.5%)</span></span>
+        <span class="text-gray-600">NVDA <span class="text-green-600 font-semibold">$875.40 (+3.1%)</span></span>
+        <span class="text-gray-600">TSLA <span class="text-red-500 font-semibold">$248.60 (-1.7%)</span></span>
+        <span class="text-gray-600">META <span class="text-green-600 font-semibold">$521.30 (+2.0%)</span></span>
+        <span class="text-gray-600">JPM <span class="text-green-600 font-semibold">$202.80 (+0.6%)</span></span>
+        <span class="text-gray-600">NFLX <span class="text-green-600 font-semibold">$630.20 (+2.3%)</span></span>
+        <span class="text-gray-600">AAPL <span class="text-green-600 font-semibold">$189.30 (+1.2%)</span></span>
+        <span class="text-gray-600">MSFT <span class="text-green-600 font-semibold">$415.70 (+0.8%)</span></span>
+        <span class="text-gray-600">GOOGL <span class="text-red-500 font-semibold">$140.50 (-0.3%)</span></span>
+        <span class="text-gray-600">AMZN <span class="text-green-600 font-semibold">$185.20 (+1.5%)</span></span>
+        <span class="text-gray-600">NVDA <span class="text-green-600 font-semibold">$875.40 (+3.1%)</span></span>
+        <span class="text-gray-600">TSLA <span class="text-red-500 font-semibold">$248.60 (-1.7%)</span></span>
+        <span class="text-gray-600">META <span class="text-green-600 font-semibold">$521.30 (+2.0%)</span></span>
+        <span class="text-gray-600">JPM <span class="text-green-600 font-semibold">$202.80 (+0.6%)</span></span>
+        <span class="text-gray-600">NFLX <span class="text-green-600 font-semibold">$630.20 (+2.3%)</span></span>
+    </div>
+</div>
+
+<section class="py-16 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-10">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">Trade by Sector</h2>
+            <p class="text-gray-500 text-sm">Diversify across the world's leading industries</p>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128187;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Technology</h3><p class="text-xs text-gray-400 mb-2">1,200+ stocks</p><p class="text-xs font-semibold text-green-600">+2.4% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127973;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Healthcare</h3><p class="text-xs text-gray-400 mb-2">850+ stocks</p><p class="text-xs font-semibold text-green-600">+0.7% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127970;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Finance</h3><p class="text-xs text-gray-400 mb-2">620+ stocks</p><p class="text-xs font-semibold text-red-500">-0.3% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#9889;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Energy</h3><p class="text-xs text-gray-400 mb-2">410+ stocks</p><p class="text-xs font-semibold text-green-600">+1.1% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128722;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Consumer</h3><p class="text-xs text-gray-400 mb-2">730+ stocks</p><p class="text-xs font-semibold text-green-600">+0.5% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127981;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Industrial</h3><p class="text-xs text-gray-400 mb-2">490+ stocks</p><p class="text-xs font-semibold text-red-500">-0.2% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127959;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Real Estate</h3><p class="text-xs text-gray-400 mb-2">280+ stocks</p><p class="text-xs font-semibold text-green-600">+0.9% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127807;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Materials</h3><p class="text-xs text-gray-400 mb-2">310+ stocks</p><p class="text-xs font-semibold text-green-600">+1.3% today</p></div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="title-font text-3xl text-gray-900 mb-2">Professional Tools for Every Trader</h2>
+            <p class="text-gray-500 text-sm">Institutional-grade features, built for everyone</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-5">
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-bolt text-blue-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Instant Execution</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Market, limit, stop-loss, and trailing stop orders executed in under 10ms. Never miss a price target again.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-chart-area text-green-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Advanced Charting</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">TradingView-powered charts with 100+ technical indicators, drawing tools, and multi-timeframe analysis.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-shield-alt text-purple-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Segregated Funds</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Your capital is held in segregated accounts with 256-bit encryption and two-factor authentication.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-newspaper text-orange-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Live Market News</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Real-time earnings, analyst upgrades, and economic events integrated directly into your dashboard.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-percentage text-red-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Zero Commission</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Trade US equities with absolutely zero commissions. No account minimums. No hidden fees, ever.</p>
+            </div>
+            <div class="feature-card">
+                <div class="w-11 h-11 bg-cyan-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-mobile-alt text-cyan-600"></i></div>
+                <h3 class="font-semibold text-gray-900 mb-2">Trade Anywhere</h3>
+                <p class="text-gray-500 text-sm leading-relaxed">Full-featured web and mobile experience. Manage your portfolio and place orders from any device.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 px-4">
+    <div class="max-w-2xl mx-auto text-center">
+        <h2 class="title-font text-3xl text-gray-900 mb-4">Start Trading Stocks Today</h2>
+        <p class="text-gray-500 mb-8">Open your account in minutes. No minimums. No commissions.</p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-base font-semibold">Open Free Account <i class="fas fa-arrow-right ml-2"></i></a>
+            <a href="{% url 'login' %}" class="px-10 py-4 rounded-xl text-base font-semibold border border-gray-200 text-gray-700 hover:border-gray-400 transition inline-block">Login</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

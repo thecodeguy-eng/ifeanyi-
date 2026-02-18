@@ -1,0 +1,140 @@
+<div class="dashboard-topbar">
+    <button id="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars text-sm"></i>
+    </button>
+    <div class="mobile-nav-scroll">
+        <a href="{% url 'dashboard' %}"    class="mobile-nav-pill {% if active_page == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="{% url 'trading' %}"      class="mobile-nav-pill {% if active_page == 'trading' %}active{% endif %}">
+            <i class="fas fa-exchange-alt"></i> Trade
+        </a>
+        <a href="{% url 'trading_bot' %}"  class="mobile-nav-pill {% if active_page == 'trading_bot' %}active{% endif %}">
+            <i class="fas fa-robot"></i> Bots
+        </a>
+        <a href="{% url 'copy_trading' %}" class="mobile-nav-pill {% if active_page == 'copy_trading' %}active{% endif %}">
+            <i class="fas fa-users"></i> Copy
+        </a>
+        <a href="{% url 'portfolio' %}"    class="mobile-nav-pill {% if active_page == 'portfolio' %}active{% endif %}">
+            <i class="fas fa-briefcase"></i> Portfolio
+        </a>
+        <a href="{% url 'transactions' %}" class="mobile-nav-pill {% if active_page == 'transactions' %}active{% endif %}">
+            <i class="fas fa-list"></i> History
+        </a>
+        <a href="{% url 'deposit' %}"      class="mobile-nav-pill {% if active_page == 'deposit' %}active{% endif %}">
+            <i class="fas fa-plus"></i> Deposit
+        </a>
+    </div>
+</div>
+
+{# ── Sidebar overlay (mobile) ─────────────────────────────────────────────── #}
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+{# ── Opens .dashboard-wrapper — template is responsible for closing </div> ── #}
+<div class="dashboard-wrapper">
+
+<aside class="sidebar" id="main-sidebar">
+
+    {# User block #}
+    <div class="sidebar-user">
+        <div class="sidebar-avatar">
+            {{ user.legal_first_name|first|upper }}{{ user.legal_last_name|first|upper }}
+        </div>
+        <div class="sidebar-user-info">
+            <p>{{ user.legal_first_name }} {{ user.legal_last_name }}</p>
+            <span>{{ user.email }}</span>
+        </div>
+    </div>
+
+    {# Overview #}
+    <p class="sidebar-section-label">Overview</p>
+    <nav class="sidebar-nav">
+        <a href="{% url 'dashboard' %}"    class="sidebar-link {% if active_page == 'dashboard' %}active{% endif %}">
+            <i class="fas fa-home sidebar-icon"></i> Dashboard
+        </a>
+        <a href="{% url 'portfolio' %}"    class="sidebar-link {% if active_page == 'portfolio' %}active{% endif %}">
+            <i class="fas fa-briefcase sidebar-icon"></i> Portfolio
+        </a>
+        <a href="{% url 'transactions' %}" class="sidebar-link {% if active_page == 'transactions' %}active{% endif %}">
+            <i class="fas fa-receipt sidebar-icon"></i> Transactions
+        </a>
+    </nav>
+
+    {# Trading #}
+    <p class="sidebar-section-label">Trading</p>
+    <nav class="sidebar-nav">
+        <a href="{% url 'trading' %}"      class="sidebar-link {% if active_page == 'trading' %}active{% endif %}">
+            <i class="fas fa-exchange-alt sidebar-icon"></i> Live Trading
+        </a>
+        <a href="{% url 'trading_bot' %}"  class="sidebar-link {% if active_page == 'trading_bot' %}active{% endif %}">
+            <i class="fas fa-robot sidebar-icon"></i> Trading Bots
+        </a>
+        <a href="{% url 'copy_trading' %}" class="sidebar-link {% if active_page == 'copy_trading' %}active{% endif %}">
+            <i class="fas fa-users sidebar-icon"></i> Copy Trading
+        </a>
+    </nav>
+
+    {# Funds #}
+    <p class="sidebar-section-label">Funds</p>
+    <nav class="sidebar-nav">
+        <a href="{% url 'deposit' %}"      class="sidebar-link {% if active_page == 'deposit' %}active{% endif %}">
+            <i class="fas fa-arrow-circle-down sidebar-icon"></i> Deposit
+        </a>
+        {% if withdrawal_enabled %}
+        <a href="{% url 'withdrawal' %}"   class="sidebar-link {% if active_page == 'withdrawal' %}active{% endif %}">
+            <i class="fas fa-arrow-circle-up sidebar-icon"></i> Withdraw
+        </a>
+        {% else %}
+        <span class="sidebar-link-disabled">
+            <i class="fas fa-lock sidebar-icon"></i> Withdraw
+            <span class="sidebar-locked-badge">Locked</span>
+        </span>
+        {% endif %}
+        <a href="{% url 'payment_page' %}" class="sidebar-link {% if active_page == 'payment' %}active{% endif %}">
+            <i class="fas fa-credit-card sidebar-icon"></i> Payment
+        </a>
+    </nav>
+
+    {# Account #}
+    <p class="sidebar-section-label">Account</p>
+    <nav class="sidebar-nav" style="padding-bottom:0.75rem;">
+        <a href="{% url 'logout' %}" class="sidebar-link" style="color:#dc2626;">
+            <i class="fas fa-sign-out-alt sidebar-icon" style="color:#dc2626;"></i> Sign Out
+        </a>
+    </nav>
+
+    {# Push balance card to bottom #}
+    <div style="flex:1;"></div>
+
+    {# Mini balance card #}
+    <div class="sidebar-balance-card">
+        <p class="label">Account Balance</p>
+        <p class="amount">${{ user.account_balance|floatformat:2 }}</p>
+        <p class="currency">{{ user.preferred_currency }}</p>
+    </div>
+
+    {# CTA buttons #}
+    <div class="sidebar-cta">
+        <a href="{% url 'deposit' %}" class="sidebar-deposit-btn">
+            <i class="fas fa-plus"></i> Deposit Funds
+        </a>
+        {% if withdrawal_enabled %}
+        <a href="{% url 'withdrawal' %}" class="sidebar-withdraw-btn">
+            <i class="fas fa-minus"></i> Withdraw
+        </a>
+        {% else %}
+        <span class="sidebar-withdraw-btn disabled">
+            <i class="fas fa-lock"></i> Withdraw Locked
+        </span>
+        {% endif %}
+    </div>
+
+</aside>
+
+{# toggleSidebar is defined here so it's always available when the include is used #}
+<script>
+function toggleSidebar() {
+    document.getElementById('main-sidebar').classList.toggle('open');
+    document.getElementById('sidebar-overlay').classList.toggle('open');
+}
+</script>

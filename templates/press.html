@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Press - Influxfinancetrading{% endblock %}
+{% block extra_css %}
+<style>
+.press-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+.press-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.07); transform: translateY(-2px); }
+.media-logo { height: 28px; object-fit: contain; filter: grayscale(1); opacity: .5; transition: all .2s; }
+.media-logo:hover { filter: grayscale(0); opacity: 1; }
+</style>
+{% endblock %}
+{% block content %}
+
+<section class="py-20 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="text-center mb-14">
+            <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-3">Press &amp; Media</p>
+            <h1 class="title-font text-4xl md:text-5xl text-gray-900 mb-4">Influxfinancetrading in the News</h1>
+            <p class="text-gray-500 text-lg max-w-2xl mx-auto">Press resources, announcements, and media kit for journalists and content creators covering our platform.</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-8 mb-12">
+            <h2 class="font-semibold text-gray-900 mb-6 text-center">As Seen In</h2>
+            <div class="flex flex-wrap justify-center items-center gap-10">
+                <div class="text-gray-400 font-bold text-xl tracking-tight">Forbes</div>
+                <div class="text-gray-400 font-bold text-xl tracking-tight">TechCrunch</div>
+                <div class="text-gray-400 font-bold text-xl tracking-tight">Bloomberg</div>
+                <div class="text-gray-400 font-bold text-xl tracking-tight">CoinDesk</div>
+                <div class="text-gray-400 font-bold text-xl tracking-tight">Reuters</div>
+                <div class="text-gray-400 font-bold text-xl tracking-tight">The Block</div>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-5 mb-14">
+            <div class="press-card">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs font-semibold bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full">Forbes</span>
+                    <span class="text-xs text-gray-400">March 2025</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">"The Trading Platform Democratizing Access to Global Markets"</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">Forbes profiles how Influxfinancetrading is bringing institutional-grade trading tools to retail investors across 195 countries.</p>
+                <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <div class="press-card">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs font-semibold bg-green-50 text-green-600 px-2.5 py-1 rounded-full">TechCrunch</span>
+                    <span class="text-xs text-gray-400">January 2025</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">"AI Trading Bots Are Changing How Retail Investors Approach Crypto"</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">TechCrunch explores how platforms like Influxfinancetrading are using AI to level the playing field for everyday traders.</p>
+                <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <div class="press-card">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs font-semibold bg-orange-50 text-orange-600 px-2.5 py-1 rounded-full">Bloomberg</span>
+                    <span class="text-xs text-gray-400">November 2024</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">"Copy Trading Platforms See Record Growth Amid Crypto Bull Run"</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">Bloomberg reports on surging interest in social trading as Influxfinancetrading's copy trading feature passes 50,000 active subscriptions.</p>
+                <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+            <div class="press-card">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs font-semibold bg-purple-50 text-purple-600 px-2.5 py-1 rounded-full">CoinDesk</span>
+                    <span class="text-xs text-gray-400">September 2024</span>
+                </div>
+                <h3 class="font-semibold text-gray-900 mb-2">"Multi-Asset Platforms Are the Future of Retail Trading"</h3>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">CoinDesk highlights Influxfinancetrading's expansion into forex and options markets alongside its established crypto offering.</p>
+                <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white border border-gray-200 rounded-2xl p-8">
+                <h2 class="font-semibold text-gray-900 mb-4">Press Kit</h2>
+                <p class="text-gray-500 text-sm mb-5 leading-relaxed">Download our official media kit including logos, brand guidelines, executive headshots, and company fact sheet.</p>
+                <div class="space-y-3">
+                    <a href="#" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-gray-400 transition">
+                        <div class="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center"><i class="fas fa-image text-blue-600 text-sm"></i></div>
+                        <div><p class="text-sm font-medium text-gray-900">Brand Logos &amp; Assets</p><p class="text-xs text-gray-400">PNG, SVG formats</p></div>
+                        <i class="fas fa-download text-gray-400 text-xs ml-auto"></i>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-gray-400 transition">
+                        <div class="w-9 h-9 bg-green-50 rounded-lg flex items-center justify-center"><i class="fas fa-file-pdf text-green-600 text-sm"></i></div>
+                        <div><p class="text-sm font-medium text-gray-900">Company Fact Sheet</p><p class="text-xs text-gray-400">PDF, 2 pages</p></div>
+                        <i class="fas fa-download text-gray-400 text-xs ml-auto"></i>
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 border border-gray-200 rounded-xl hover:border-gray-400 transition">
+                        <div class="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center"><i class="fas fa-user-tie text-purple-600 text-sm"></i></div>
+                        <div><p class="text-sm font-medium text-gray-900">Executive Bios &amp; Photos</p><p class="text-xs text-gray-400">ZIP archive</p></div>
+                        <i class="fas fa-download text-gray-400 text-xs ml-auto"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="bg-white border border-gray-200 rounded-2xl p-8">
+                <h2 class="font-semibold text-gray-900 mb-4">Media Inquiries</h2>
+                <p class="text-gray-500 text-sm mb-5 leading-relaxed">For press interviews, editorial requests, or media inquiries, contact our communications team directly.</p>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                        <i class="fas fa-envelope text-gray-400"></i>
+                        <div><p class="font-medium text-gray-900">press@influxfinancetrading.com</p><p class="text-xs text-gray-400">Response within 4 hours</p></div>
+                    </div>
+                    <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                        <i class="fas fa-clock text-gray-400"></i>
+                        <div><p class="font-medium text-gray-900">Availability</p><p class="text-xs text-gray-400">Monday–Friday, 9am–6pm UTC</p></div>
+                    </div>
+                </div>
+                <a href="{% url 'contact' %}" class="btn-primary w-full text-center py-3 rounded-xl text-sm font-semibold mt-5 block">Contact Press Team</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
