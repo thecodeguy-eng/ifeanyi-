@@ -19,18 +19,15 @@
     /* ── Video Hero ─────────────────────────────────────────────────────── */
     .hero-video-section {
         position: relative;
-        min-height: 100dvh;          /* dynamic viewport — excludes mobile browser chrome */
-        min-height: 100vh;           /* fallback */
-        width: 100%;
+        min-height: 100vh;
         display: flex;
         align-items: center;
         overflow: hidden;
         background: #060d1a;
-        box-sizing: border-box;
     }
     .hero-video-bg {
         position: absolute;
-        top: 0; left: 0;
+        inset: 0;
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -38,37 +35,14 @@
         opacity: 0.5;
         z-index: 0;
         pointer-events: none;
-        display: block;
     }
     .hero-overlay {
         position: absolute;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: linear-gradient(160deg, rgba(6,13,26,0.92) 0%, rgba(6,13,26,0.55) 55%, rgba(6,13,26,0.80) 100%);
+        inset: 0;
+        background: linear-gradient(135deg, rgba(6,13,26,0.88) 0%, rgba(6,13,26,0.5) 55%, rgba(6,13,26,0.75) 100%);
         z-index: 1;
     }
-    .hero-content {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-    }
-    /* ── Mobile hero ─────────────────────────────────────────────────────── */
-    @media (max-width: 767px) {
-        .hero-video-section {
-            min-height: 100dvh;
-            min-height: -webkit-fill-available;
-            align-items: flex-start;
-        }
-        .hero-h1 { font-size: 2.5rem !important; line-height: 1.15 !important; }
-        .hero-p  { font-size: 1rem !important; }
-        .hero-cta-btns { flex-direction: column !important; }
-        .hero-cta-btns a { width: 100% !important; text-align: center; justify-content: center; }
-        .hero-stat-pills {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0.6rem !important;
-        }
-        .stat-pill { justify-content: center; }
-    }
+    .hero-content { position: relative; z-index: 2; }
 
     @keyframes fadeUp {
         from { opacity:0; transform:translateY(28px); }
@@ -217,8 +191,8 @@
     /* ── CTA dark ───────────────────────────────────────────────────────── */
     .cta-dark {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        border-radius: 16px;
-        padding: 3rem 1.5rem;
+        border-radius: 20px;
+        padding: 5rem 2rem;
         text-align: center;
         position: relative;
         overflow: hidden;
@@ -244,18 +218,6 @@
 
     /* ── Misc ───────────────────────────────────────────────────────────── */
     html { scroll-behavior: smooth; }
-
-    /* ── Global mobile safety ────────────────────────────────────────────── */
-    @media (max-width: 640px) {
-        .section-title { font-size: 1.5rem; }
-        .cta-dark { border-radius: 12px; padding: 2.5rem 1.25rem; }
-        .step-img-wrap { height: 145px; }
-        .market-card, .step-card, .trust-card, .testimonial-card {
-            padding: 1.25rem;
-        }
-        /* prevent horizontal scroll from any element */
-        section, div { max-width: 100%; }
-    }
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
@@ -267,10 +229,9 @@
         background: rgba(255,255,255,0.07);
         border: 1px solid rgba(255,255,255,0.13);
         border-radius: 99px;
-        padding: 0.45rem 1rem;
+        padding: 0.4rem 1rem;
         font-size: 0.78rem;
         color: rgba(255,255,255,0.72);
-        white-space: nowrap;
     }
     .stat-pill strong { color: #fff; }
 
@@ -339,22 +300,22 @@
     </video>
     <div class="hero-overlay"></div>
 
-    <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20 md:py-28">
+    <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-28">
         <div class="max-w-2xl">
             <div class="fade-up fade-up-1 inline-flex items-center gap-2 mb-6">
                 <span class="live-dot"></span>
                 <span class="text-xs font-semibold text-green-400 tracking-widest uppercase">Live Markets Open</span>
             </div>
 
-            <h1 class="fade-up fade-up-2 hero-h1 title-font text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
+            <h1 class="fade-up fade-up-2 title-font text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
                 Trading for anyone.<br>Anywhere. Anytime.
             </h1>
 
-            <p class="fade-up fade-up-3 hero-p text-gray-300 text-lg leading-relaxed mb-8 max-w-lg">
+            <p class="fade-up fade-up-3 text-gray-300 text-lg leading-relaxed mb-8 max-w-lg">
                 Trade Stocks, Options, Crypto and more on global financial markets — all in one place with 24/7 trading and worldwide support.
             </p>
 
-            <div class="fade-up fade-up-4 hero-cta-btns flex flex-col sm:flex-row gap-3 mb-12">
+            <div class="fade-up fade-up-4 flex flex-col sm:flex-row gap-3 mb-12">
                 <a href="{% url 'register' %}"
                    class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg text-sm font-semibold"
                    style="background:#0d9488; color:#fff; transition:background .2s;"
@@ -369,7 +330,7 @@
                 </a>
             </div>
 
-            <div class="fade-up fade-up-4 hero-stat-pills flex flex-wrap gap-3">
+            <div class="fade-up fade-up-4 flex flex-wrap gap-3">
                 <div class="stat-pill"><strong>$2.5B+</strong> Daily Volume</div>
                 <div class="stat-pill"><strong>150K+</strong> Active Traders</div>
                 <div class="stat-pill"><strong>50+</strong> Markets</div>
@@ -410,15 +371,15 @@
 <!-- ══════════════════════════════════════════════════════════
      HOW IT WORKS — 3 Steps
 ══════════════════════════════════════════════════════════ -->
-<section id="how-it-works" class="py-12 md:py-20 bg-white">
+<section id="how-it-works" class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8 md:mb-14">
+        <div class="text-center mb-14">
             <span class="section-label">Simple Process</span>
             <h2 class="section-title">Start trading in 3 steps</h2>
             <p class="section-sub max-w-xl mx-auto">Get set up in minutes. No experience required — our platform guides you every step of the way.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid md:grid-cols-3 gap-6">
             <!-- Step 1 -->
             <div class="step-card">
                 <div class="step-img-wrap">
@@ -514,14 +475,14 @@
 <!-- ══════════════════════════════════════════════════════════
      MARKETS
 ══════════════════════════════════════════════════════════ -->
-<section id="markets" class="py-12 md:py-20" style="background:#f8f9fb;">
+<section id="markets" class="py-20" style="background:#f8f9fb;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8 md:mb-14">
+        <div class="text-center mb-14">
             <span class="section-label">Global Markets</span>
             <h2 class="section-title">Trade Stocks, Options, Forex and More</h2>
             <p class="section-sub">Access global markets with professional tools and competitive spreads</p>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <div class="market-card">
                 <div class="market-icon">🌍</div>
                 <h3 class="title-font text-lg text-gray-900 mb-2">Forex</h3>
@@ -565,88 +526,187 @@
 <!-- ══════════════════════════════════════════════════════════
      FEATURE — Fast deposits & withdrawals
 ══════════════════════════════════════════════════════════ -->
+<style>
+    .platform-logo-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.85rem 0.5rem;
+        background: #fff;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 14px;
+        transition: all 0.2s ease;
+    }
+    .platform-logo-card:hover {
+        border-color: #9ca3af;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+        transform: translateY(-2px);
+    }
+    .platform-logo-card img {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+        border-radius: 8px;
+        display: block;
+    }
+    .platform-logo-card .plat-label {
+        font-size: 0.64rem;
+        font-weight: 600;
+        color: #4b5563;
+        text-align: center;
+        line-height: 1.2;
+    }
+    .platform-logo-card .plat-fallback {
+        display: none;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+        font-size: 0.85rem;
+        color: #fff;
+    }
+    .trusted-divider {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .trusted-divider::before, .trusted-divider::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: #e5e7eb;
+    }
+    .trusted-divider span {
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #9ca3af;
+        white-space: nowrap;
+    }
+</style>
 <section class="py-12 md:py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+
+            <!-- LEFT — text + trusted platforms -->
             <div>
                 <span class="section-label">Payments</span>
-                <h1 class="section-title">Fast, hassle-free deposits<br>and withdrawals</h1>
+                <h2 class="section-title">Fast, hassle-free deposits<br>and withdrawals</h2>
                 <p class="text-gray-500 leading-relaxed mb-6 text-sm">10+ global payment methods. Deposit instantly starting from just $1 (USD). Withdraw in minutes.*</p>
-                <!-- <ul class="space-y-3 mb-8">
-                    <li class="flex items-start gap-3 text-sm text-gray-700">
-                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
-                        Instant crypto deposits — BTC, ETH, USDT, SOL and more
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-gray-700">
-                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
-                        Withdrawals processed and confirmed within 10–30 minutes
-                    </li>
-                    <li class="flex items-start gap-3 text-sm text-gray-700">
-                        <span class="w-5 h-5 rounded-full bg-teal-50 flex items-center justify-center flex-shrink-0 mt-0.5"><i class="fas fa-check text-teal-600 text-xs"></i></span>
-                        No hidden fees, no minimum withdrawal limits
-                    </li>
-                </ul> -->
-                <!-- <div class="flex flex-wrap gap-2.5">
-                    <div class="payment-badge">₿ Bitcoin</div>
-                    <div class="payment-badge">Ξ Ethereum</div>
-                    <div class="payment-badge">₮ USDT</div>
-                    <div class="payment-badge">◎ Solana</div>
-                    <div class="payment-badge"><i class="fab fa-cc-visa text-blue-600"></i> Visa</div>
-                    <div class="payment-badge"><i class="fab fa-cc-mastercard text-red-600"></i> Mastercard</div>
+
+                <!-- Trusted Platforms -->
+                <div class="trusted-divider"><span>Trusted platforms &amp; currencies</span></div>
+
+                <div class="grid grid-cols-5 gap-2.5">
+
+                    <!-- Bitcoin -->
+                    <div class="platform-logo-card">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/btc.png"
+                             alt="Bitcoin"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#F7931A;">₿</div>
+                        <span class="plat-label">Bitcoin</span>
+                    </div>
+
+                    <!-- Ethereum -->
+                    <div class="platform-logo-card">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/eth.png"
+                             alt="Ethereum"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#627EEA;">Ξ</div>
+                        <span class="plat-label">Ethereum</span>
+                    </div>
+
+                    <!-- USDT -->
+                    <div class="platform-logo-card">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/usdt.png"
+                             alt="USDT"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#26A17B;">₮</div>
+                        <span class="plat-label">USDT</span>
+                    </div>
+
+                    <!-- Solana -->
+                    <div class="platform-logo-card">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/sol.png"
+                             alt="Solana"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#9945FF;">◎</div>
+                        <span class="plat-label">Solana</span>
+                    </div>
+
+                    <!-- BNB -->
+                    <div class="platform-logo-card">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/bnb.png"
+                             alt="BNB"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#F3BA2F;color:#1a1a1a;font-size:0.55rem;">BNB</div>
+                        <span class="plat-label">BNB</span>
+                    </div>
+
+                    <!-- Revolut -->
+                    <div class="platform-logo-card">
+                        <img src="https://logo.clearbit.com/revolut.com"
+                             alt="Revolut"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#191C1F;">R</div>
+                        <span class="plat-label">Revolut</span>
+                    </div>
+
+                    <!-- Cash App -->
+                    <div class="platform-logo-card">
+                        <img src="https://logo.clearbit.com/cash.app"
+                             alt="Cash App"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#00D632;">$</div>
+                        <span class="plat-label">Cash App</span>
+                    </div>
+
+                    <!-- Coinbase -->
+                    <div class="platform-logo-card">
+                        <img src="https://logo.clearbit.com/coinbase.com"
+                             alt="Coinbase"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#0052FF;">C</div>
+                        <span class="plat-label">Coinbase</span>
+                    </div>
+
+                    <!-- Binance -->
+                    <div class="platform-logo-card">
+                        <img src="https://logo.clearbit.com/binance.com"
+                             alt="Binance"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#F3BA2F;color:#1a1a1a;font-size:0.55rem;">BIN</div>
+                        <span class="plat-label">Binance</span>
+                    </div>
+
+                    <!-- MoonPay -->
+                    <div class="platform-logo-card">
+                        <img src="https://logo.clearbit.com/moonpay.com"
+                             alt="MoonPay"
+                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <div class="plat-fallback" style="background:#7B2EF8;font-size:0.55rem;">MP</div>
+                        <span class="plat-label">MoonPay</span>
+                    </div>
+
                 </div>
-            </div> -->
-            <!-- Deposit UI mockup -->
-            <!-- <div class="relative">
-                <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-xl">
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                            <i class="fas fa-shield-alt text-green-500"></i>
-                        </div>
-                        <div>
-                            <div class="font-semibold text-gray-900 text-sm">Secure Deposit</div>
-                            <div class="text-xs text-gray-400">Funds credited instantly</div>
-                        </div>
-                        <span class="ml-auto text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">● Live</span>
-                    </div>
-                    <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 mb-4 text-center">
-                        <div class="text-xs text-gray-400 mb-1">You are depositing</div>
-                        <div class="title-font text-4xl text-gray-900">$1,000<span class="text-gray-400">.00</span></div>
-                        <div class="text-xs text-gray-400 mt-1">USD</div>
-                    </div>
-                    <p class="text-xs text-gray-400 mb-3">Select payment method</p>
-                    <div class="grid grid-cols-4 gap-2 mb-4">
-                        <div class="p-2 border-2 border-orange-400 bg-orange-50 rounded-xl text-center cursor-pointer">
-                            <div class="text-lg">₿</div><div class="text-xs font-bold text-gray-700 mt-0.5">BTC</div>
-                        </div>
-                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
-                            <div class="text-lg">Ξ</div><div class="text-xs font-bold text-gray-700 mt-0.5">ETH</div>
-                        </div>
-                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
-                            <div class="text-lg">₮</div><div class="text-xs font-bold text-gray-700 mt-0.5">USDT</div>
-                        </div>
-                        <div class="p-2 border border-gray-200 rounded-xl text-center cursor-pointer hover:border-gray-400">
-                            <div class="text-lg">◎</div><div class="text-xs font-bold text-gray-700 mt-0.5">SOL</div>
-                        </div>
-                    </div>
-                    <a href="{% url 'deposit' %}" class="block w-full text-center py-3 rounded-xl text-sm font-semibold text-white" style="background:#111827;">
-                        Deposit Now <i class="fas fa-arrow-right ml-1"></i>
-                    </a>
-                    <div class="flex items-center justify-center gap-2 mt-3 text-xs text-gray-400">
-                        <i class="fas fa-lock"></i> 256-bit SSL encrypted · Instant confirmation
-                    </div>
-                </div>
-                <div class="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
-                    ✓ Funds Received Instantly
-                </div>
-            </div> -->
+                <p class="text-xs text-gray-400 mt-3">* Withdrawal times vary by method. Crypto withdrawals are typically fastest.</p>
+            </div>
+
         </div>
     </div>
 </section>
 
+
 <!-- ══════════════════════════════════════════════════════════
      LIVE CHART — Tabs
 ══════════════════════════════════════════════════════════ -->
-<section class="py-12 md:py-20" style="background:#f8f9fb;">
+<section class="py-20" style="background:#f8f9fb;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-10">
             <span class="section-label">Platform</span>
@@ -655,8 +715,8 @@
         </div>
 
         <div class="tab-group max-w-lg mx-auto justify-center flex">
-            <!-- <button class="tab-btn active" onclick="switchTab(this,'platforms')">Live Chart</button> -->
-            <button class="tab-btn" onclick="switchTab(this,'bots')">Bots</button>
+            <button class="tab-btn active" onclick="switchTab(this,'bots')">Bots</button>
+            <!-- <button class="tab-btn" onclick="switchTab(this,'bots')">Bots</button> -->
             <button class="tab-btn" onclick="switchTab(this,'social')">Social</button>
         </div>
 
@@ -664,7 +724,7 @@
             <div id="tradingview_chart" class="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style="height:500px;"></div>
         </div>
         <div id="tab-bots" class="tab-content hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
                     <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-robot text-2xl text-purple-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">AI Trading Bots</h3>
@@ -683,7 +743,7 @@
             </div>
         </div>
         <div id="tab-social" class="tab-content hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
                     <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-2xl text-green-600"></i></div>
                     <h3 class="title-font text-base text-gray-900 mb-2">Copy Trading</h3>
@@ -707,14 +767,14 @@
 <!-- ══════════════════════════════════════════════════════════
      WHY CHOOSE US
 ══════════════════════════════════════════════════════════ -->
-<section class="py-12 md:py-20 bg-white">
+<section class="py-20 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8 md:mb-14">
+        <div class="text-center mb-14">
             <span class="section-label">Why Us</span>
             <h2 class="section-title">Trading for an edge</h2>
             <p class="section-sub">Everything you need to trade with confidence and clarity</p>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             <div class="trust-card">
                 <div class="trust-icon bg-blue-50"><i class="fas fa-server text-blue-600"></i></div>
                 <h3 class="title-font text-base text-gray-900 mb-2">Dependable</h3>
@@ -742,14 +802,14 @@
 <!-- ══════════════════════════════════════════════════════════
      TESTIMONIALS
 ══════════════════════════════════════════════════════════ -->
-<section class="py-12 md:py-20" style="background:#f8f9fb;">
+<section class="py-20" style="background:#f8f9fb;">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-8 md:mb-14">
+        <div class="text-center mb-14">
             <span class="section-label">Testimonials</span>
             <h2 class="section-title">What our traders say</h2>
             <p class="section-sub">Join 150,000+ satisfied traders from around the world</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="grid md:grid-cols-3 gap-5">
             <div class="testimonial-card">
                 <div class="flex items-center gap-1 text-yellow-400 mb-3">
                     <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
@@ -777,7 +837,7 @@
                 <p class="text-gray-600 text-sm leading-relaxed mb-4">"24/7 support actually means 24/7 here. Got help at 3am on a Sunday. The bots are accurate and the dashboard is clean and easy to understand."</p>
                 <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
                     <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700 flex-shrink-0">KO</div>
-                    <div><div class="text-sm font-semibold text-gray-900">Kofi O.</div><div class="text-xs text-gray-400">Stocks Trader · Canada</div></div>
+                    <div><div class="text-sm font-semibold text-gray-900">Kofi O.</div><div class="text-xs text-gray-400">Stocks Trader · Ghana</div></div>
                 </div>
             </div>
         </div>
@@ -787,7 +847,7 @@
 <!-- ══════════════════════════════════════════════════════════
      CTA — dark
 ══════════════════════════════════════════════════════════ -->
-<section class="py-12 md:py-20 bg-white">
+<section class="py-20 bg-white">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="cta-dark">
             <div class="relative z-10">

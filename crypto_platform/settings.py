@@ -79,9 +79,9 @@ else:
     }
 
 # Cloudinary configuration
-CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='')
-CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY', default='')
-CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET', default='')
+CLOUDINARY_CLOUD_NAME = config('CLOUDINARY_CLOUD_NAME', default='dlhoghfmo')
+CLOUDINARY_API_KEY = config('CLOUDINARY_API_KEY', default='145834641749112')
+CLOUDINARY_API_SECRET = config('CLOUDINARY_API_SECRET', default='61eWii_lIB4hBAlKqvy29ar5E7s')
 
 if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY:
     cloudinary.config( 
