@@ -2,158 +2,534 @@
 {% block title %}Forex Trading - Influxfinancetrading{% endblock %}
 {% block extra_css %}
 <style>
-.hero-forex { background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%); }
-.glass-chip { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; }
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Hero ── */
+.hero-forex {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+}
+
+.hero-forex .hero-inner {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 4rem 1rem 5rem;
+  text-align: center;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  border-radius: 9999px;
+  padding: .35rem 1rem;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(255,255,255,.2);
+  background: rgba(255,255,255,.1);
+  color: #fff;
+}
+
+.badge-dot {
+  width: .5rem;
+  height: .5rem;
+  background: #6ee7b7;
+  border-radius: 9999px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .6; transform: scale(.85); }
+}
+
+.hero-title {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(2.2rem, 6vw, 3.75rem);
+  line-height: 1.15;
+  color: #fff;
+  margin: 0 0 1rem;
+}
+
+.hero-title span { color: #6ee7b7; }
+
+.hero-sub {
+  color: rgba(255,255,255,.65);
+  font-size: clamp(.9rem, 2.5vw, 1.05rem);
+  max-width: 38rem;
+  margin: 0 auto 2.25rem;
+  line-height: 1.7;
+}
+
+/* CTA Buttons */
+.hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .75rem;
+  margin-bottom: 3rem;
+}
+
+.btn-white {
+  padding: .85rem 2rem;
+  background: #fff;
+  color: #111827;
+  font-weight: 700;
+  font-size: .875rem;
+  border-radius: .75rem;
+  text-decoration: none;
+  transition: background .15s, transform .15s;
+  display: inline-block;
+}
+.btn-white:hover { background: #f3f4f6; transform: translateY(-1px); }
+
+.btn-ghost {
+  padding: .85rem 2rem;
+  background: rgba(255,255,255,.1);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  font-weight: 700;
+  font-size: .875rem;
+  border-radius: .75rem;
+  text-decoration: none;
+  transition: background .15s, transform .15s;
+  display: inline-block;
+}
+.btn-ghost:hover { background: rgba(255,255,255,.2); transform: translateY(-1px); }
+
+/* Stats grid */
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: .75rem;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .hero-stats { grid-template-columns: repeat(4, 1fr); }
+}
+
+.glass-chip {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: .875rem;
+  padding: 1rem;
+  text-align: center;
+}
+
+.glass-chip .stat-val {
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(1.1rem, 4vw, 1.4rem);
+  line-height: 1;
+}
+
+.glass-chip .stat-label {
+  color: rgba(255,255,255,.5);
+  font-size: .68rem;
+  margin-top: .35rem;
+}
+
+/* ── Rates Table Section ── */
+.section-rates {
+  padding: 3.5rem 1rem;
+}
+
+.section-rates .inner {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+  font-family: 'Georgia', serif;
+  font-size: clamp(1.25rem, 4vw, 1.6rem);
+  color: #111827;
+  margin: 0;
+}
+
+.section-header p {
+  color: #6b7280;
+  font-size: .8rem;
+  margin: .2rem 0 0;
+}
+
+/* Scrollable table wrapper on small screens */
+.table-wrapper {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .875rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rates-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px; /* prevents table from squishing too hard */
+}
+
+.rates-table thead tr {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.rates-table th {
+  padding: .75rem 1.1rem;
+  text-align: left;
+  font-size: .68rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+
 .pair-row { border-bottom: 1px solid #f1f5f9; transition: background .15s; }
 .pair-row:hover { background: #f8fafc; }
 .pair-row:last-child { border-bottom: none; }
-.feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+
+.pair-row td {
+  padding: .875rem 1.1rem;
+  font-size: .875rem;
+  white-space: nowrap;
+}
+
+.pair-name { font-weight: 700; color: #111827; }
+.pair-price { color: #374151; font-family: 'Courier New', monospace; }
+.pair-change-up { color: #16a34a; font-weight: 700; }
+.pair-change-dn { color: #dc2626; font-weight: 700; }
+
+.spread-pill {
+  background: #f0fdf4;
+  color: #16a34a;
+  padding: .2rem .55rem;
+  border-radius: 9999px;
+  font-size: .68rem;
+  font-weight: 700;
+  display: inline-block;
+}
+
+/* Trade now button (section header) */
+.btn-primary {
+  padding: .65rem 1.25rem;
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  font-size: .8rem;
+  border-radius: .6rem;
+  text-decoration: none;
+  transition: background .15s, transform .15s;
+  display: inline-block;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: #047857; transform: translateY(-1px); }
+
+/* ── Features Section ── */
+.section-features {
+  padding: 3.5rem 1rem;
+  background: #f9fafb;
+}
+
+.section-features .inner { max-width: 64rem; margin: 0 auto; }
+
+.section-center { text-align: center; margin-bottom: 2.5rem; }
+.section-center h2 {
+  font-family: 'Georgia', serif;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: #111827;
+  margin: 0 0 .4rem;
+}
+.section-center p { color: #6b7280; font-size: .85rem; margin: 0; }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 480px) {
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (min-width: 900px) {
+  .features-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+.feature-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: .875rem;
+  padding: 1.5rem;
+  transition: box-shadow .2s, transform .2s;
+}
 .feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.07); transform: translateY(-2px); }
-.spread-pill { background: #f0fdf4; color: #16a34a; padding: .2rem .65rem; border-radius: 99px; font-size: .7rem; font-weight: 600; }
+
+.icon-wrap {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: .75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.feature-card h3 { font-size: .95rem; font-weight: 700; color: #111827; margin: 0 0 .4rem; }
+.feature-card p  { font-size: .8rem; color: #6b7280; margin: 0; line-height: 1.65; }
+
+/* ── CTA Bottom ── */
+.section-cta {
+  padding: 4rem 1rem;
+  text-align: center;
+}
+.section-cta h2 {
+  font-family: 'Georgia', serif;
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  color: #111827;
+  margin: 0 0 .75rem;
+}
+.section-cta p { color: #6b7280; font-size: .9rem; margin: 0 0 2rem; }
+
+.cta-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .75rem;
+}
+
+.btn-cta-primary {
+  padding: 1rem 2.25rem;
+  background: #059669;
+  color: #fff;
+  font-weight: 700;
+  font-size: .95rem;
+  border-radius: .875rem;
+  text-decoration: none;
+  transition: background .15s, transform .15s;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+}
+.btn-cta-primary:hover { background: #047857; transform: translateY(-1px); }
+
+.btn-cta-outline {
+  padding: 1rem 2.25rem;
+  background: transparent;
+  color: #374151;
+  font-weight: 700;
+  font-size: .95rem;
+  border-radius: .875rem;
+  border: 1px solid #d1d5db;
+  text-decoration: none;
+  transition: border-color .15s, transform .15s;
+  display: inline-block;
+}
+.btn-cta-outline:hover { border-color: #6b7280; transform: translateY(-1px); }
+
+/* ── Utility ── */
+@media (max-width: 480px) {
+  .section-header { flex-direction: column; align-items: flex-start; }
+  .hero-cta a { width: 100%; text-align: center; }
+  .cta-buttons a { width: 100%; text-align: center; justify-content: center; }
+}
 </style>
 {% endblock %}
+
 {% block content %}
 
-<div class="hero-forex py-24 px-4 text-white">
-    <div class="max-w-6xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold mb-6 border border-white/20 bg-white/10">
-            <span class="w-2 h-2 bg-green-300 rounded-full animate-pulse"></span>
-            50+ Currency Pairs Available
-        </div>
-        <h1 class="title-font text-5xl md:text-6xl mb-5 leading-tight">Trade the World's<br><span class="text-emerald-300">Largest Market</span></h1>
-        <p class="text-white/70 text-lg max-w-2xl mx-auto mb-10">Access forex markets with tight spreads, deep liquidity, and leverage up to 1:500. Trade major, minor, and exotic pairs 24 hours a day, 5 days a week.</p>
-        <div class="flex flex-wrap justify-center gap-4 mb-16">
-            <a href="{% url 'register' %}" class="px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition text-sm">Start Trading Forex</a>
-            <a href="{% url 'login' %}" class="px-8 py-3.5 bg-white/10 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/20 transition text-sm">Go to Dashboard</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto">
-            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">$6.6T</p><p class="text-white/50 text-xs mt-1">Daily Volume</p></div>
-            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">0.0 pips</p><p class="text-white/50 text-xs mt-1">Min Spread</p></div>
-            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">1:500</p><p class="text-white/50 text-xs mt-1">Max Leverage</p></div>
-            <div class="glass-chip p-4 text-center"><p class="text-white font-bold text-2xl">24/5</p><p class="text-white/50 text-xs mt-1">Market Hours</p></div>
-        </div>
+<!-- ── HERO ── -->
+<div class="hero-forex">
+  <div class="hero-inner">
+
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      50+ Currency Pairs Available
     </div>
+
+    <h1 class="hero-title">
+      Trade the World's<br>
+      <span>Largest Market</span>
+    </h1>
+
+    <p class="hero-sub">
+      Access forex markets with tight spreads, deep liquidity, and leverage up to 1:500.
+      Trade major, minor, and exotic pairs 24 hours a day, 5 days a week.
+    </p>
+
+    <div class="hero-cta">
+      <a href="{% url 'register' %}" class="btn-white">Start Trading Forex</a>
+      <a href="{% url 'login' %}"    class="btn-ghost">Go to Dashboard</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="glass-chip"><p class="stat-val">$6.6T</p><p class="stat-label">Daily Volume</p></div>
+      <div class="glass-chip"><p class="stat-val">0.0 pips</p><p class="stat-label">Min Spread</p></div>
+      <div class="glass-chip"><p class="stat-val">1:500</p><p class="stat-label">Max Leverage</p></div>
+      <div class="glass-chip"><p class="stat-val">24/5</p><p class="stat-label">Market Hours</p></div>
+    </div>
+
+  </div>
 </div>
 
-<section class="py-16 px-4">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h2 class="title-font text-2xl text-gray-900">Live Forex Rates</h2>
-                <p class="text-gray-500 text-sm mt-1">Major and minor pairs - spreads from 0.0 pips</p>
-            </div>
-            <a href="{% url 'register' %}" class="btn-primary px-5 py-2.5 rounded-lg text-sm">Trade Now</a>
-        </div>
-        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <table class="w-full">
-                <thead>
-                    <tr class="border-b border-gray-100">
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Pair</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Bid</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Ask</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Spread</th>
-                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Change</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">EUR/USD</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.08742</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.08745</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.3</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-green-600">+0.12%</td>
-                    </tr>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">GBP/USD</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.26890</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.26894</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.4</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-red-500">-0.08%</td>
-                    </tr>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">USD/JPY</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">149.820</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">149.824</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.4</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-green-600">+0.21%</td>
-                    </tr>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">USD/CHF</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">0.89124</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">0.89128</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.4</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-red-500">-0.05%</td>
-                    </tr>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">AUD/USD</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">0.65380</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">0.65384</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.4</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-green-600">+0.18%</td>
-                    </tr>
-                    <tr class="pair-row">
-                        <td class="px-5 py-3.5 font-semibold text-gray-900 text-sm">USD/CAD</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.36245</td>
-                        <td class="px-5 py-3.5 text-sm text-gray-700 font-mono">1.36250</td>
-                        <td class="px-5 py-3.5"><span class="spread-pill">0.5</span></td>
-                        <td class="px-5 py-3.5 text-sm font-semibold text-red-500">-0.03%</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+<!-- ── LIVE RATES ── -->
+<section class="section-rates">
+  <div class="inner">
+
+    <div class="section-header">
+      <div>
+        <h2>Live Forex Rates</h2>
+        <p>Major and minor pairs — spreads from 0.0 pips</p>
+      </div>
+      <a href="{% url 'register' %}" class="btn-primary">Trade Now</a>
     </div>
+
+    <div class="table-wrapper">
+      <table class="rates-table">
+        <thead>
+          <tr>
+            <th>Pair</th>
+            <th>Bid</th>
+            <th>Ask</th>
+            <th>Spread</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="pair-row">
+            <td class="pair-name">EUR/USD</td>
+            <td class="pair-price">1.08742</td>
+            <td class="pair-price">1.08745</td>
+            <td><span class="spread-pill">0.3</span></td>
+            <td class="pair-change-up">+0.12%</td>
+          </tr>
+          <tr class="pair-row">
+            <td class="pair-name">GBP/USD</td>
+            <td class="pair-price">1.26890</td>
+            <td class="pair-price">1.26894</td>
+            <td><span class="spread-pill">0.4</span></td>
+            <td class="pair-change-dn">−0.08%</td>
+          </tr>
+          <tr class="pair-row">
+            <td class="pair-name">USD/JPY</td>
+            <td class="pair-price">149.820</td>
+            <td class="pair-price">149.824</td>
+            <td><span class="spread-pill">0.4</span></td>
+            <td class="pair-change-up">+0.21%</td>
+          </tr>
+          <tr class="pair-row">
+            <td class="pair-name">USD/CHF</td>
+            <td class="pair-price">0.89124</td>
+            <td class="pair-price">0.89128</td>
+            <td><span class="spread-pill">0.4</span></td>
+            <td class="pair-change-dn">−0.05%</td>
+          </tr>
+          <tr class="pair-row">
+            <td class="pair-name">AUD/USD</td>
+            <td class="pair-price">0.65380</td>
+            <td class="pair-price">0.65384</td>
+            <td><span class="spread-pill">0.4</span></td>
+            <td class="pair-change-up">+0.18%</td>
+          </tr>
+          <tr class="pair-row">
+            <td class="pair-name">USD/CAD</td>
+            <td class="pair-price">1.36245</td>
+            <td class="pair-price">1.36250</td>
+            <td><span class="spread-pill">0.5</span></td>
+            <td class="pair-change-dn">−0.03%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
 </section>
 
-<section class="py-16 px-4 bg-gray-50">
-    <div class="max-w-6xl mx-auto">
-        <div class="text-center mb-12">
-            <h2 class="title-font text-3xl text-gray-900 mb-2">Why Trade Forex With Us?</h2>
-            <p class="text-gray-500 text-sm">Professional forex trading infrastructure for every level</p>
-        </div>
-        <div class="grid md:grid-cols-3 gap-5">
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-emerald-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-water text-emerald-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">Deep Liquidity</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Institutional liquidity from tier-1 banks ensures tight spreads and seamless order fills at any size.</p>
-            </div>
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-sliders-h text-blue-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">Flexible Leverage</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Choose leverage from 1:1 to 1:500 depending on your strategy and risk tolerance across all pairs.</p>
-            </div>
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-purple-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-clock text-purple-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">24/5 Markets</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Trade around major session opens — London, New York, Tokyo, and Sydney — five days a week.</p>
-            </div>
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-globe text-orange-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">50+ Pairs</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Majors, minors, and exotic pairs. Trade emerging market currencies alongside the G10 with ease.</p>
-            </div>
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-robot text-red-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">Automated Forex Bots</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Deploy our AI trading bots on your chosen forex pairs and earn consistent daily returns automatically.</p>
-            </div>
-            <div class="feature-card">
-                <div class="w-11 h-11 bg-cyan-50 rounded-xl flex items-center justify-center mb-4"><i class="fas fa-chart-bar text-cyan-600"></i></div>
-                <h3 class="font-semibold text-gray-900 mb-2">Economic Calendar</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Built-in economic calendar with impact ratings. Stay ahead of NFP, FOMC, and other high-impact events.</p>
-            </div>
-        </div>
+<!-- ── FEATURES ── -->
+<section class="section-features">
+  <div class="inner">
+
+    <div class="section-center">
+      <h2>Why Trade Forex With Us?</h2>
+      <p>Professional forex trading infrastructure for every level</p>
     </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#ecfdf5;">
+          <i class="fas fa-water" style="color:#059669;"></i>
+        </div>
+        <h3>Deep Liquidity</h3>
+        <p>Institutional liquidity from tier-1 banks ensures tight spreads and seamless order fills at any size.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#eff6ff;">
+          <i class="fas fa-sliders-h" style="color:#2563eb;"></i>
+        </div>
+        <h3>Flexible Leverage</h3>
+        <p>Choose leverage from 1:1 to 1:500 depending on your strategy and risk tolerance across all pairs.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#faf5ff;">
+          <i class="fas fa-clock" style="color:#7c3aed;"></i>
+        </div>
+        <h3>24/5 Markets</h3>
+        <p>Trade around major session opens — London, New York, Tokyo, and Sydney — five days a week.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#fff7ed;">
+          <i class="fas fa-globe" style="color:#ea580c;"></i>
+        </div>
+        <h3>50+ Pairs</h3>
+        <p>Majors, minors, and exotic pairs. Trade emerging market currencies alongside the G10 with ease.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#fef2f2;">
+          <i class="fas fa-robot" style="color:#dc2626;"></i>
+        </div>
+        <h3>Automated Forex Bots</h3>
+        <p>Deploy our AI trading bots on your chosen forex pairs and earn consistent daily returns automatically.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon-wrap" style="background:#ecfeff;">
+          <i class="fas fa-chart-bar" style="color:#0891b2;"></i>
+        </div>
+        <h3>Economic Calendar</h3>
+        <p>Built-in economic calendar with impact ratings. Stay ahead of NFP, FOMC, and other high-impact events.</p>
+      </div>
+
+    </div>
+  </div>
 </section>
 
-<section class="py-20 px-4">
-    <div class="max-w-2xl mx-auto text-center">
-        <h2 class="title-font text-3xl text-gray-900 mb-4">Trade Forex Smarter</h2>
-        <p class="text-gray-500 mb-8">Join thousands of forex traders. Start with as little as $50.</p>
-        <div class="flex flex-wrap justify-center gap-3">
-            <a href="{% url 'register' %}" class="btn-primary px-10 py-4 rounded-xl text-base font-semibold">Open Account <i class="fas fa-arrow-right ml-2"></i></a>
-            <a href="{% url 'login' %}" class="px-10 py-4 rounded-xl text-base font-semibold border border-gray-200 text-gray-700 hover:border-gray-400 transition inline-block">Login</a>
-        </div>
-    </div>
+<!-- ── BOTTOM CTA ── -->
+<section class="section-cta">
+  <h2>Trade Forex Smarter</h2>
+  <p>Join thousands of forex traders. Start with as little as $50.</p>
+  <div class="cta-buttons">
+    <a href="{% url 'register' %}" class="btn-cta-primary">
+      Open Account <i class="fas fa-arrow-right"></i>
+    </a>
+    <a href="{% url 'login' %}" class="btn-cta-outline">Login</a>
+  </div>
 </section>
 
 {% endblock %}
