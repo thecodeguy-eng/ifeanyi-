@@ -4,12 +4,11 @@ from . import admin_views
 
 urlpatterns = [
 
-    # PASSWORD RESET - ADD THESE NEW PATHS
+    # PASSWORD RESET
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('verify-reset-code/', views.verify_reset_code, name='verify_reset_code'),
     path('reset-password/', views.reset_password, name='reset_password'),
     path('resend-reset-code/', views.resend_reset_code, name='resend_reset_code'),
-
 
     # Home
     path('', views.home, name='home'),
@@ -36,7 +35,12 @@ urlpatterns = [
     # Copy Trading
     path('copy-trading/', views.copy_trading, name='copy_trading'),
     path('copy-trading/<int:trader_id>/', views.copy_trader_detail, name='copy_trader_detail'),
-    
+
+    # ── Investment Plans ──────────────────────────────────────────────────────
+    path('investments/', views.investment_plans, name='investment_plans'),
+    path('investments/<int:plan_id>/', views.investment_plan_detail, name='investment_plan_detail'),
+    path('investments/my/', views.my_investments, name='my_investments'),
+
     # Deposit & Withdrawal
     path('deposit/', views.deposit, name='deposit'),
     path('withdrawal/', views.withdrawal, name='withdrawal'),
@@ -53,9 +57,6 @@ urlpatterns = [
     path('chat/send-message/', views.send_support_message, name='send_support_message'),
     path('chat/get-messages/', views.get_chat_messages, name='get_chat_messages'),
     path('chat/clear/', views.clear_support_chat, name='clear_support_chat'),
-
-
-
 
     # Products
     path('products/stocks/', views.stocks, name='stocks'),
@@ -75,8 +76,8 @@ urlpatterns = [
     path('legal/cookie-policy/', views.cookie_policy, name='cookie_policy'),
     path('legal/disclaimer/', views.disclaimer, name='disclaimer'),
 
-    # ADMIN_URL
-    
+    # ── ADMIN ────────────────────────────────────────────────────────────────
+
     # Dashboard
     path('custom-admin/', admin_views.admin_dashboard, name='admin_dashboard'),
     
@@ -96,6 +97,12 @@ urlpatterns = [
     
     # Bot Plans Management
     path('custom-admin/bot-plans/', admin_views.admin_bot_plans_list, name='admin_bot_plans_list'),
+
+    # ── Investment Plans Management ───────────────────────────────────────────
+    path('custom-admin/investment-plans/', admin_views.admin_investment_plans_list, name='admin_investment_plans_list'),
+    path('custom-admin/investment-plans/create/', admin_views.admin_investment_plan_create, name='admin_investment_plan_create'),
+    path('custom-admin/investment-plans/<int:plan_id>/edit/', admin_views.admin_investment_plan_edit, name='admin_investment_plan_edit'),
+    path('custom-admin/investment-plans/<int:plan_id>/toggle/', admin_views.admin_investment_plan_toggle, name='admin_investment_plan_toggle'),
     
     # Support Chats
     path('custom-admin/support/', admin_views.admin_support_chats, name='admin_support_chats'),

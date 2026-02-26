@@ -158,6 +158,7 @@ class Transaction(models.Model):
         ('PROFIT', 'Profit'),
         ('COMMISSION', 'Commission'),
         ('BONUS', 'Bonus'),
+        ('INVESTMENT', 'Investment Plan'),
     ]
     
     STATUS_CHOICES = [
@@ -253,8 +254,6 @@ class PlatformSettings(models.Model):
         return f"Platform Settings - Updated: {self.updated_at}"
     
 
-# Add these models to your existing models.py file
-
 class SupportChat(models.Model):
     """Support chat sessions"""
     STATUS_CHOICES = [
@@ -285,7 +284,7 @@ class SupportMessage(models.Model):
     
     chat = models.ForeignKey(SupportChat, on_delete=models.CASCADE, related_name='messages')
     sender_type = models.CharField(max_length=10, choices=SENDER_TYPES)
-    sender_name = models.CharField(max_length=100)  # Username or Support Agent name
+    sender_name = models.CharField(max_length=100)
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -305,9 +304,9 @@ class UserActivity(models.Model):
     user_agent = models.TextField(null=True, blank=True)
     page_url = models.CharField(max_length=500)
     page_title = models.CharField(max_length=200, null=True, blank=True)
-    action_type = models.CharField(max_length=50, default='PAGE_VIEW')  # PAGE_VIEW, LOGIN, LOGOUT, DEPOSIT, etc.
+    action_type = models.CharField(max_length=50, default='PAGE_VIEW')
     timestamp = models.DateTimeField(auto_now_add=True)
-    duration = models.IntegerField(null=True, blank=True)  # Time spent on page in seconds
+    duration = models.IntegerField(null=True, blank=True)
     
     class Meta:
         db_table = 'user_activities'
@@ -330,7 +329,7 @@ class AdminUser(models.Model):
         ('ADMIN', 'Admin'),
         ('MODERATOR', 'Moderator'),
     ], default='ADMIN')
-    permissions = models.JSONField(default=dict)  # Custom permissions
+    permissions = models.JSONField(default=dict)
     last_login = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -370,7 +369,7 @@ class SystemLog(models.Model):
 class PasswordResetCode(models.Model):
     """Password reset codes for users"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reset_codes')
-    code = models.CharField(max_length=6)  # 6-digit code
+    code = models.CharField(max_length=6)
     email = models.EmailField()
     is_used = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -384,18 +383,114 @@ class PasswordResetCode(models.Model):
         return f"{self.email} - {self.code} - {'Used' if self.is_used else 'Active'}"
     
     def is_valid(self):
-        """Check if code is still valid"""
         return not self.is_used and timezone.now() < self.expires_at
     
     @staticmethod
     def generate_code():
-        """Generate a random 6-digit code"""
         return ''.join([str(random.randint(0, 9)) for _ in range(6)])
     
     def save(self, *args, **kwargs):
-        if not self.pk:  # Only on creation
+        if not self.pk:
             if not self.code:
                 self.code = self.generate_code()
             if not self.expires_at:
-                self.expires_at = timezone.now() + timedelta(minutes=15)  # Code valid for 15 minutes
+                self.expires_at = timezone.now() + timedelta(minutes=15)
         super().save(*args, **kwargs)
+
+
+# ── Investment Plans ──────────────────────────────────────────────────────────
+
+class InvestmentPlan(models.Model):
+    """
+    User-selectable investment plans (like a managed fund / yield product).
+    Users invest a lump sum for a fixed duration and earn a guaranteed ROI.
+    """
+    PLAN_TIER_CHOICES = [
+        ('STARTER',  'Starter'),
+        ('SILVER',   'Silver'),
+        ('GOLD',     'Gold'),
+        ('PLATINUM', 'Platinum'),
+        ('DIAMOND',  'Diamond'),
+    ]
+
+    RISK_LEVEL_CHOICES = [
+        ('LOW',    'Low'),
+        ('MEDIUM', 'Medium'),
+        ('HIGH',   'High'),
+    ]
+
+    name            = models.CharField(max_length=100)
+    tier            = models.CharField(max_length=20, choices=PLAN_TIER_CHOICES, unique=True)
+    description     = models.TextField(blank=True)
+    minimum_amount  = models.DecimalField(max_digits=20, decimal_places=2, validators=[MinValueValidator(Decimal('1'))])
+    maximum_amount  = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True,
+                                          help_text="Leave blank for unlimited")
+    roi_percentage  = models.DecimalField(max_digits=6, decimal_places=2,
+                                          help_text="Total ROI % paid at end of duration")
+    duration_days   = models.PositiveIntegerField(help_text="Plan duration in days")
+    risk_level      = models.CharField(max_length=10, choices=RISK_LEVEL_CHOICES, default='MEDIUM')
+    features        = models.JSONField(default=list,
+                                       help_text='List of feature strings, e.g. ["Daily reports", "Priority support"]')
+    is_active       = models.BooleanField(default=True)
+    is_featured     = models.BooleanField(default=False, help_text="Highlight this plan on the plans page")
+    created_at      = models.DateTimeField(auto_now_add=True)
+    updated_at      = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'investment_plans'
+        ordering = ['minimum_amount']
+
+    def __str__(self):
+        return f"{self.name} ({self.tier}) – {self.roi_percentage}% in {self.duration_days}d"
+
+    @property
+    def daily_roi(self):
+        """Approximate daily ROI percentage."""
+        return round(self.roi_percentage / self.duration_days, 4)
+
+    @property
+    def maturity_multiplier(self):
+        """Return-on-investment multiplier (e.g. 1.15 for 15% ROI)."""
+        return Decimal('1') + (self.roi_percentage / Decimal('100'))
+
+
+class UserInvestment(models.Model):
+    """
+    A user's active or completed investment in an InvestmentPlan.
+    """
+    STATUS_CHOICES = [
+        ('ACTIVE',    'Active'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+    ]
+
+    user            = models.ForeignKey(User, on_delete=models.CASCADE, related_name='investments')
+    plan            = models.ForeignKey(InvestmentPlan, on_delete=models.CASCADE, related_name='subscriptions')
+    amount_invested = models.DecimalField(max_digits=20, decimal_places=2)
+    expected_return = models.DecimalField(max_digits=20, decimal_places=2)  # amount_invested × maturity_multiplier
+    profit_amount   = models.DecimalField(max_digits=20, decimal_places=2)  # expected_return − amount_invested
+    status          = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    start_date      = models.DateTimeField(auto_now_add=True)
+    end_date        = models.DateTimeField()   # start_date + plan.duration_days
+    completed_at    = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'user_investments'
+        ordering = ['-start_date']
+
+    def __str__(self):
+        return f"{self.user.username} – {self.plan.name} – ${self.amount_invested} [{self.status}]"
+
+    @property
+    def days_remaining(self):
+        if self.status != 'ACTIVE':
+            return 0
+        delta = self.end_date - timezone.now()
+        return max(0, delta.days)
+
+    @property
+    def progress_percentage(self):
+        """How far through the plan the user is (0-100)."""
+        total = (self.end_date - self.start_date).days or 1
+        elapsed = (timezone.now() - self.start_date).days
+        return min(100, max(0, int(elapsed / total * 100)))

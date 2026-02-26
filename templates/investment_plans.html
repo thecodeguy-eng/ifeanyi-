@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% block title %}Investment Plans – Influxfinancetrading{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Plan card ─────────────────────────────────────────── */
+.plan-card {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    transition: box-shadow .22s ease, border-color .22s ease, transform .22s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+.plan-card:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,.08);
+    border-color: #93c5fd;
+    transform: translateY(-2px);
+}
+.plan-card.featured {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37,99,235,.15);
+}
+
+/* ── Tier badge ────────────────────────────────────────── */
+.tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .28rem .75rem;
+    border-radius: 99px;
+}
+.tier-STARTER  { background: #f0fdf4; color: #16a34a; }
+.tier-SILVER   { background: #f8fafc; color: #475569; }
+.tier-GOLD     { background: #fffbeb; color: #b45309; }
+.tier-PLATINUM { background: #eff6ff; color: #1d4ed8; }
+.tier-DIAMOND  { background: #fdf4ff; color: #9333ea; }
+
+/* ── ROI big number ────────────────────────────────────── */
+.roi-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #1d4ed8, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ── Feature list ──────────────────────────────────────── */
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+    font-size: .8rem;
+    color: #374151;
+    margin-bottom: .4rem;
+}
+.feature-item i { color: #22c55e; margin-top: 2px; flex-shrink: 0; }
+
+/* ── Risk pill ─────────────────────────────────────────── */
+.risk-LOW    { background: #dcfce7; color: #166534; }
+.risk-MEDIUM { background: #fef9c3; color: #92400e; }
+.risk-HIGH   { background: #fee2e2; color: #991b1b; }
+
+/* ── My active investments mini-card ──────────────────── */
+.active-inv-card {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 100%);
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    color: #fff;
+}
+.progress-bar-wrap { background: rgba(255,255,255,.2); border-radius: 99px; height: 6px; overflow: hidden; }
+.progress-bar-fill { background: #22d3ee; height: 100%; border-radius: 99px; transition: width .4s ease; }
+
+/* ── Enroll button ─────────────────────────────────────── */
+.enroll-btn {
+    display: block;
+    text-align: center;
+    width: 100%;
+    padding: .75rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: .875rem;
+    background: #1d4ed8;
+    color: #fff;
+    text-decoration: none;
+    transition: background .18s;
+    margin-top: auto;
+}
+.enroll-btn:hover { background: #1e40af; }
+.enroll-btn.featured-btn {
+    background: linear-gradient(135deg, #2563eb, #06b6d4);
+}
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/_dashboard_sidebar.html' with active_page='investment_plans' %}
+
+<main class="dashboard-main">
+<section class="py-6 px-4 sm:px-6">
+<div class="max-w-6xl mx-auto">
+
+    <!-- Page header -->
+    <div class="mb-8">
+        <h1 class="title-font text-2xl text-gray-900 mb-1">Investment Plans</h1>
+        <p class="text-gray-400 text-sm">Choose a plan, invest funds, and earn guaranteed returns at maturity.</p>
+    </div>
+
+    <!-- Active investments summary (if any) -->
+    {% if user_active_investments %}
+    <div class="mb-8">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Your Active Investments</h2>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for inv in user_active_investments %}
+            <div class="active-inv-card">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold opacity-70">{{ inv.plan.name }}</span>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">{{ inv.days_remaining }}d left</span>
+                </div>
+                <p class="text-xl font-bold mb-0.5">${{ inv.amount_invested|floatformat:2 }}</p>
+                <p class="text-xs opacity-70 mb-3">→ ${{ inv.expected_return|floatformat:2 }} at maturity</p>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar-fill" style="width:{{ inv.progress_percentage }}%"></div>
+                </div>
+                <p class="text-xs opacity-60 mt-1">{{ inv.progress_percentage }}% complete</p>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="{% url 'my_investments' %}" class="inline-block mt-3 text-xs text-blue-600 font-medium hover:underline">
+            View all my investments →
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Plans grid -->
+    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        {% for plan in plans %}
+        <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
+
+            {% if plan.is_featured %}
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow">
+                    ⭐ Most Popular
+                </span>
+            </div>
+            {% endif %}
+
+            <!-- Tier & risk -->
+            <div class="flex items-center justify-between mb-4">
+                <span class="tier-badge tier-{{ plan.tier }}">
+                    {% if plan.tier == 'STARTER' %}<i class="fas fa-seedling"></i>
+                    {% elif plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
+                    {% elif plan.tier == 'GOLD' %}<i class="fas fa-star"></i>
+                    {% elif plan.tier == 'PLATINUM' %}<i class="fas fa-gem"></i>
+                    {% elif plan.tier == 'DIAMOND' %}<i class="fas fa-crown"></i>
+                    {% endif %}
+                    {{ plan.tier }}
+                </span>
+                <span class="tier-badge risk-{{ plan.risk_level }}">{{ plan.risk_level }} Risk</span>
+            </div>
+
+            <!-- Plan name -->
+            <h3 class="title-font text-lg text-gray-900 mb-1">{{ plan.name }}</h3>
+            {% if plan.description %}
+            <p class="text-xs text-gray-400 mb-4 leading-relaxed">{{ plan.description }}</p>
+            {% endif %}
+
+            <!-- ROI display -->
+            <div class="flex items-end gap-2 mb-1">
+                <span class="roi-display">{{ plan.roi_percentage }}%</span>
+                <span class="text-gray-400 text-sm mb-2">ROI</span>
+            </div>
+            <p class="text-xs text-gray-400 mb-4">Over {{ plan.duration_days }} days &nbsp;·&nbsp; ~{{ plan.daily_roi }}%/day</p>
+
+            <!-- Min / Max -->
+            <div class="flex gap-3 mb-4">
+                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+                    <p class="text-xs text-gray-400">Min</p>
+                    <p class="font-bold text-sm text-gray-800">${{ plan.minimum_amount|floatformat:0 }}</p>
+                </div>
+                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+                    <p class="text-xs text-gray-400">Max</p>
+                    <p class="font-bold text-sm text-gray-800">
+                        {% if plan.maximum_amount %}${{ plan.maximum_amount|floatformat:0 }}{% else %}Unlimited{% endif %}
+                    </p>
+                </div>
+                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+                    <p class="text-xs text-gray-400">Duration</p>
+                    <p class="font-bold text-sm text-gray-800">{{ plan.duration_days }}d</p>
+                </div>
+            </div>
+
+            <!-- Features -->
+            {% if plan.features %}
+            <div class="mb-5">
+                {% for feature in plan.features %}
+                <div class="feature-item"><i class="fas fa-check-circle"></i> {{ feature }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <!-- CTA -->
+            <a href="{% url 'investment_plan_detail' plan.id %}" 
+               class="enroll-btn {% if plan.is_featured %}featured-btn{% endif %}">
+                Invest Now
+            </a>
+
+        </div>
+        {% empty %}
+        <div class="col-span-full text-center py-16">
+            <i class="fas fa-chart-pie text-4xl text-gray-300 mb-4 block"></i>
+            <p class="text-gray-400">No investment plans are available at the moment. Check back soon.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Info strip -->
+    <div class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5 flex gap-4">
+        <i class="fas fa-info-circle text-blue-400 text-lg mt-0.5 flex-shrink-0"></i>
+        <div class="text-sm text-blue-700 leading-relaxed">
+            <strong>How it works:</strong> Select a plan, enter the amount you wish to invest (within the plan's limits), and confirm.
+            Funds are deducted from your account balance immediately. At the end of the plan duration, your principal plus
+            the stated ROI will be credited back to your account balance automatically.
+        </div>
+    </div>
+
+</div>
+</section>
+</main>
+
+</div>{# closes .dashboard-wrapper #}
+{% endblock %}

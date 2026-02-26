@@ -1,0 +1,141 @@
+{% extends 'custom_admin/base.html' %}
+{% block title %}{% if plan %}Edit{% else %}Create{% endif %} Investment Plan – Admin{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+
+    <div class="flex items-center gap-3 mb-6">
+        <a href="{% url 'admin_investment_plans_list' %}" class="text-gray-400 hover:text-gray-600 transition">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div>
+            <h1 class="text-xl font-bold text-gray-900">
+                {% if plan %}Edit Plan: {{ plan.name }}{% else %}Create Investment Plan{% endif %}
+            </h1>
+            <p class="text-sm text-gray-500">Fill in the details below</p>
+        </div>
+    </div>
+
+    <form method="post" class="bg-white border border-gray-200 rounded-xl p-6 space-y-5">
+        {% csrf_token %}
+
+        <div class="grid sm:grid-cols-2 gap-4">
+            <!-- Name -->
+            <div class="sm:col-span-2">
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Plan Name <span class="text-red-500">*</span></label>
+                <input type="text" name="name" value="{{ plan.name|default:'' }}" required
+                    placeholder="e.g. Growth Starter"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Tier -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Tier <span class="text-red-500">*</span></label>
+                <select name="tier" required
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    {% for val, label in tier_choices %}
+                    <option value="{{ val }}" {% if plan.tier == val %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Risk -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Risk Level <span class="text-red-500">*</span></label>
+                <select name="risk_level" required
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <option value="LOW"    {% if plan.risk_level == 'LOW'    %}selected{% endif %}>Low</option>
+                    <option value="MEDIUM" {% if plan.risk_level == 'MEDIUM' %}selected{% endif %}>Medium</option>
+                    <option value="HIGH"   {% if plan.risk_level == 'HIGH'   %}selected{% endif %}>High</option>
+                </select>
+            </div>
+
+            <!-- ROI -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Total ROI % <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <input type="number" name="roi_percentage" value="{{ plan.roi_percentage|default:'' }}"
+                        step="0.01" min="0.01" required placeholder="15.00"
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2.5 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">%</span>
+                </div>
+            </div>
+
+            <!-- Duration -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Duration (days) <span class="text-red-500">*</span></label>
+                <input type="number" name="duration_days" value="{{ plan.duration_days|default:'' }}"
+                    min="1" required placeholder="30"
+                    class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+
+            <!-- Minimum -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Minimum Amount ($) <span class="text-red-500">*</span></label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                    <input type="number" name="minimum_amount" value="{{ plan.minimum_amount|default:'' }}"
+                        step="0.01" min="1" required placeholder="100"
+                        class="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+
+            <!-- Maximum -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Maximum Amount ($) <span class="text-gray-400 text-xs font-normal">Optional – leave blank for unlimited</span></label>
+                <div class="relative">
+                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                    <input type="number" name="maximum_amount" value="{{ plan.maximum_amount|default:'' }}"
+                        step="0.01" min="1" placeholder="Unlimited"
+                        class="w-full border border-gray-200 rounded-lg pl-7 pr-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Description</label>
+            <textarea name="description" rows="2" placeholder="Short description shown on the plan card…"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none">{{ plan.description|default:'' }}</textarea>
+        </div>
+
+        <!-- Features (one per line) -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Features <span class="text-gray-400 text-xs font-normal">One per line</span></label>
+            <textarea name="features_text" rows="4"
+                placeholder="Daily profit reports&#10;Priority customer support&#10;Portfolio analytics&#10;Dedicated account manager"
+                class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none font-mono">{% for f in plan.features %}{{ f }}
+{% endfor %}</textarea>
+            <p class="text-xs text-gray-400 mt-1">Each line becomes one feature bullet on the plan card.</p>
+        </div>
+
+        <!-- Toggles -->
+        <div class="flex flex-wrap gap-6">
+            <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" name="is_active" value="1"
+                    {% if plan.is_active or not plan %}checked{% endif %}
+                    class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                <span class="text-sm font-semibold text-gray-700">Active (visible to users)</span>
+            </label>
+            <label class="flex items-center gap-2.5 cursor-pointer">
+                <input type="checkbox" name="is_featured" value="1"
+                    {% if plan.is_featured %}checked{% endif %}
+                    class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500">
+                <span class="text-sm font-semibold text-gray-700">Featured (highlight badge)</span>
+            </label>
+        </div>
+
+        <!-- Submit -->
+        <div class="flex gap-3 pt-2">
+            <button type="submit"
+                class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+                {% if plan %}<i class="fas fa-save mr-1.5"></i>Save Changes{% else %}<i class="fas fa-plus mr-1.5"></i>Create Plan{% endif %}
+            </button>
+            <a href="{% url 'admin_investment_plans_list' %}"
+               class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-2.5 rounded-lg text-sm transition">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

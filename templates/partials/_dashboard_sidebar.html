@@ -3,25 +3,28 @@
         <i class="fas fa-bars text-sm"></i>
     </button>
     <div class="mobile-nav-scroll">
-        <a href="{% url 'dashboard' %}"    class="mobile-nav-pill {% if active_page == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard' %}"          class="mobile-nav-pill {% if active_page == 'dashboard' %}active{% endif %}">
             <i class="fas fa-home"></i> Home
         </a>
-        <a href="{% url 'trading' %}"      class="mobile-nav-pill {% if active_page == 'trading' %}active{% endif %}">
+        <a href="{% url 'trading' %}"            class="mobile-nav-pill {% if active_page == 'trading' %}active{% endif %}">
             <i class="fas fa-exchange-alt"></i> Trade
         </a>
-        <a href="{% url 'trading_bot' %}"  class="mobile-nav-pill {% if active_page == 'trading_bot' %}active{% endif %}">
+        <a href="{% url 'trading_bot' %}"        class="mobile-nav-pill {% if active_page == 'trading_bot' %}active{% endif %}">
             <i class="fas fa-robot"></i> Bots
         </a>
-        <a href="{% url 'copy_trading' %}" class="mobile-nav-pill {% if active_page == 'copy_trading' %}active{% endif %}">
+        <a href="{% url 'copy_trading' %}"       class="mobile-nav-pill {% if active_page == 'copy_trading' %}active{% endif %}">
             <i class="fas fa-users"></i> Copy
         </a>
-        <a href="{% url 'portfolio' %}"    class="mobile-nav-pill {% if active_page == 'portfolio' %}active{% endif %}">
+        <a href="{% url 'investment_plans' %}"   class="mobile-nav-pill {% if active_page == 'investment_plans' or active_page == 'my_investments' %}active{% endif %}">
+            <i class="fas fa-chart-pie"></i> Invest
+        </a>
+        <a href="{% url 'portfolio' %}"          class="mobile-nav-pill {% if active_page == 'portfolio' %}active{% endif %}">
             <i class="fas fa-briefcase"></i> Portfolio
         </a>
-        <a href="{% url 'transactions' %}" class="mobile-nav-pill {% if active_page == 'transactions' %}active{% endif %}">
+        <a href="{% url 'transactions' %}"       class="mobile-nav-pill {% if active_page == 'transactions' %}active{% endif %}">
             <i class="fas fa-list"></i> History
         </a>
-        <a href="{% url 'deposit' %}"      class="mobile-nav-pill {% if active_page == 'deposit' %}active{% endif %}">
+        <a href="{% url 'deposit' %}"            class="mobile-nav-pill {% if active_page == 'deposit' %}active{% endif %}">
             <i class="fas fa-plus"></i> Deposit
         </a>
     </div>
@@ -71,6 +74,17 @@
         </a>
         <a href="{% url 'copy_trading' %}" class="sidebar-link {% if active_page == 'copy_trading' %}active{% endif %}">
             <i class="fas fa-users sidebar-icon"></i> Copy Trading
+        </a>
+    </nav>
+
+    {# Invest #}
+    <p class="sidebar-section-label">Invest</p>
+    <nav class="sidebar-nav">
+        <a href="{% url 'investment_plans' %}" class="sidebar-link {% if active_page == 'investment_plans' %}active{% endif %}">
+            <i class="fas fa-chart-pie sidebar-icon"></i> Investment Plans
+        </a>
+        <a href="{% url 'my_investments' %}"   class="sidebar-link {% if active_page == 'my_investments' %}active{% endif %}">
+            <i class="fas fa-layer-group sidebar-icon"></i> My Investments
         </a>
     </nav>
 

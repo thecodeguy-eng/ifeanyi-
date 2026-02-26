@@ -14,7 +14,8 @@ from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
     Trade, PlatformSettings, SupportChat, SupportMessage,
-    UserActivity, AdminUser, SystemLog
+    UserActivity, AdminUser, SystemLog,
+    InvestmentPlan, UserInvestment,
 )
 
 
@@ -380,6 +381,108 @@ def admin_bot_plans_list(request):
     return render(request, 'custom_admin/bot_plans_list.html', context)
 
 
+# ── Investment Plans Admin Views ──────────────────────────────────────────────
+
+@user_passes_test(is_admin)
+def admin_investment_plans_list(request):
+    """List all investment plans with key stats."""
+    plans = InvestmentPlan.objects.prefetch_related('subscriptions').order_by('minimum_amount')
+
+    total_investments = UserInvestment.objects.count()
+    total_invested    = UserInvestment.objects.aggregate(
+        total=Sum('amount_invested')
+    )['total'] or Decimal('0')
+    active_count      = plans.filter(is_active=True).count()
+
+    context = {
+        'plans':             plans,
+        'active_count':      active_count,
+        'total_investments': total_investments,
+        'total_invested':    total_invested,
+    }
+    return render(request, 'custom_admin/investment_plans_list.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_investment_plan_create(request):
+    """Create a new investment plan."""
+    if request.method == 'POST':
+        _save_investment_plan(request, plan=None)
+        messages.success(request, 'Investment plan created successfully.')
+        return redirect('admin_investment_plans_list')
+
+    context = {
+        'plan':         None,
+        'tier_choices': InvestmentPlan.PLAN_TIER_CHOICES,
+    }
+    return render(request, 'custom_admin/investment_plan_form.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_investment_plan_edit(request, plan_id):
+    """Edit an existing investment plan."""
+    plan = get_object_or_404(InvestmentPlan, id=plan_id)
+
+    if request.method == 'POST':
+        _save_investment_plan(request, plan=plan)
+        messages.success(request, f'Plan "{plan.name}" updated successfully.')
+        return redirect('admin_investment_plans_list')
+
+    context = {
+        'plan':         plan,
+        'tier_choices': InvestmentPlan.PLAN_TIER_CHOICES,
+    }
+    return render(request, 'custom_admin/investment_plan_form.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_investment_plan_toggle(request, plan_id):
+    """Toggle active/inactive status of an investment plan."""
+    if request.method == 'POST':
+        plan = get_object_or_404(InvestmentPlan, id=plan_id)
+        plan.is_active = not plan.is_active
+        plan.save()
+        status = 'activated' if plan.is_active else 'deactivated'
+        messages.success(request, f'Plan "{plan.name}" {status}.')
+    return redirect('admin_investment_plans_list')
+
+
+def _save_investment_plan(request, plan):
+    """Parse POST data and create/update an InvestmentPlan."""
+    data = request.POST
+
+    # Parse features: one per line
+    raw_features = data.get('features_text', '')
+    features = [line.strip() for line in raw_features.splitlines() if line.strip()]
+
+    # Parse maximum_amount (optional)
+    max_raw = data.get('maximum_amount', '').strip()
+    maximum_amount = Decimal(max_raw) if max_raw else None
+
+    fields = dict(
+        name           = data.get('name', '').strip(),
+        tier           = data.get('tier', 'STARTER'),
+        description    = data.get('description', '').strip(),
+        minimum_amount = Decimal(data.get('minimum_amount', '0')),
+        maximum_amount = maximum_amount,
+        roi_percentage = Decimal(data.get('roi_percentage', '0')),
+        duration_days  = int(data.get('duration_days', 1)),
+        risk_level     = data.get('risk_level', 'MEDIUM'),
+        features       = features,
+        is_active      = bool(data.get('is_active')),
+        is_featured    = bool(data.get('is_featured')),
+    )
+
+    if plan is None:
+        InvestmentPlan.objects.create(**fields)
+    else:
+        for attr, val in fields.items():
+            setattr(plan, attr, val)
+        plan.save()
+
+
+# ── Support Chats ─────────────────────────────────────────────────────────────
+
 @user_passes_test(is_admin)
 def admin_support_chats(request):
     """Manage support chats"""
@@ -439,9 +542,6 @@ def admin_chat_detail(request, chat_id):
 @user_passes_test(is_admin)
 def admin_activities_list(request):
     """View all user activities"""
-    from datetime import timedelta
-    from django.db.models import Count
-    
     user_filter = request.GET.get('user', '')
     action_type = request.GET.get('action', 'all')
     
@@ -476,6 +576,7 @@ def admin_activities_list(request):
     }
     
     return render(request, 'custom_admin/activities_list.html', context)
+
 
 @user_passes_test(is_admin)
 def admin_settings(request):

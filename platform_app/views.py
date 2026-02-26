@@ -8,7 +8,7 @@ from django.db.models import Sum, Q
 from decimal import Decimal
 import json
 import requests
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from django.utils import timezone
 from .email_service import send_password_reset_code
@@ -16,7 +16,8 @@ from .email_service import send_password_reset_code
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode
+    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
+    InvestmentPlan, UserInvestment,
 )
 
 # Set up logging
@@ -623,6 +624,134 @@ def copy_trader_detail(request, trader_id):
     context = {'trader': trader}
     return render(request, 'copy_trader_detail.html', context)
 
+
+# ── Investment Plans ──────────────────────────────────────────────────────────
+
+@login_required
+def investment_plans(request):
+    """List all available investment plans."""
+    plans = InvestmentPlan.objects.filter(is_active=True).order_by('minimum_amount')
+    user_active_investments = UserInvestment.objects.filter(
+        user=request.user, status='ACTIVE'
+    ).select_related('plan')
+
+    context = {
+        'plans': plans,
+        'user_active_investments': user_active_investments,
+        'withdrawal_enabled': request.user.withdrawal_approved,
+        'active_page': 'investment_plans',
+    }
+    return render(request, 'investment_plans.html', context)
+
+
+@login_required
+def investment_plan_detail(request, plan_id):
+    """Detail page for a single investment plan with enroll form."""
+    plan = get_object_or_404(InvestmentPlan, id=plan_id, is_active=True)
+
+    if request.method == 'POST':
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+        except Exception:
+            return JsonResponse({'success': False, 'message': 'Invalid amount.'})
+
+        # Validate minimum
+        if amount < plan.minimum_amount:
+            return JsonResponse({
+                'success': False,
+                'message': f'Minimum investment for this plan is ${plan.minimum_amount:,.2f}.'
+            })
+
+        # Validate maximum
+        if plan.maximum_amount and amount > plan.maximum_amount:
+            return JsonResponse({
+                'success': False,
+                'message': f'Maximum investment for this plan is ${plan.maximum_amount:,.2f}.'
+            })
+
+        # Check balance
+        if request.user.account_balance < amount:
+            return JsonResponse({
+                'success': False,
+                'message': 'Insufficient account balance. Please deposit funds first.'
+            })
+
+        # Deduct balance
+        request.user.account_balance -= amount
+        request.user.save()
+
+        # Calculate returns
+        expected_return = (amount * plan.maturity_multiplier).quantize(Decimal('0.01'))
+        profit_amount   = (expected_return - amount).quantize(Decimal('0.01'))
+        end_date        = timezone.now() + timedelta(days=plan.duration_days)
+
+        # Create investment record
+        investment = UserInvestment.objects.create(
+            user=request.user,
+            plan=plan,
+            amount_invested=amount,
+            expected_return=expected_return,
+            profit_amount=profit_amount,
+            end_date=end_date,
+            status='ACTIVE',
+        )
+
+        # Record transaction
+        Transaction.objects.create(
+            user=request.user,
+            transaction_type='INVESTMENT',
+            amount=amount,
+            currency=request.user.preferred_currency,
+            status='COMPLETED',
+            description=f'Investment in {plan.name} plan (#{investment.id})',
+        )
+
+        logger.info(f"User {request.user.username} invested ${amount} in plan {plan.name}")
+
+        return JsonResponse({
+            'success': True,
+            'message': (
+                f'Successfully invested ${amount:,.2f} in the {plan.name} plan! '
+                f'Expected return: ${expected_return:,.2f} in {plan.duration_days} days.'
+            ),
+            'redirect': '/investments/my/'
+        })
+
+    context = {
+        'plan': plan,
+        'user': request.user,
+        'withdrawal_enabled': request.user.withdrawal_approved,
+        'active_page': 'investment_plans',
+    }
+    return render(request, 'investment_detail.html', context)
+
+
+@login_required
+def my_investments(request):
+    """User's investment portfolio."""
+    investments = UserInvestment.objects.filter(
+        user=request.user
+    ).select_related('plan').order_by('-start_date')
+
+    total_invested = sum(
+        i.amount_invested for i in investments if i.status != 'CANCELLED'
+    )
+    total_earned = sum(
+        i.profit_amount for i in investments if i.status == 'COMPLETED'
+    )
+    active_count = sum(1 for i in investments if i.status == 'ACTIVE')
+
+    context = {
+        'investments': investments,
+        'total_invested': total_invested,
+        'total_earned': total_earned,
+        'active_count': active_count,
+        'withdrawal_enabled': request.user.withdrawal_approved,
+        'active_page': 'my_investments',
+    }
+    return render(request, 'my_investments.html', context)
+
+
 # Deposit
 @login_required
 def deposit(request):
@@ -823,7 +952,7 @@ def get_or_create_active_chat(request):
     )
     
     # Get all messages
-    messages = chat.messages.all().values(
+    chat_messages = chat.messages.all().values(
         'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
     )
     
@@ -832,7 +961,7 @@ def get_or_create_active_chat(request):
     
     return JsonResponse({
         'chat_id': chat.id,
-        'messages': list(messages),
+        'messages': list(chat_messages),
         'created': created,
         'chat_status': chat.status
     })
@@ -856,15 +985,15 @@ def send_support_message(request):
             )
             
             # Create user message
-            message = SupportMessage.objects.create(
+            SupportMessage.objects.create(
                 chat=chat,
                 sender_type='USER',
                 sender_name=request.user.username,
                 message=message_text,
-                is_read=False  # Will be marked read when admin views
+                is_read=False
             )
             
-            # Optional: Auto-reply for immediate response (you can remove this if not needed)
+            # Optional: Auto-reply for immediate response
             auto_reply = get_auto_reply(message_text)
             if auto_reply:
                 SupportMessage.objects.create(
@@ -876,13 +1005,13 @@ def send_support_message(request):
                 )
             
             # Get all messages
-            messages = chat.messages.all().values(
+            chat_messages = chat.messages.all().values(
                 'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
             )
             
             return JsonResponse({
                 'success': True,
-                'messages': list(messages)
+                'messages': list(chat_messages)
             })
             
         except Exception as e:
@@ -907,13 +1036,13 @@ def get_chat_messages(request):
         # Mark support messages as read
         chat.messages.filter(sender_type='SUPPORT', is_read=False).update(is_read=True)
         
-        messages = chat.messages.all().values(
+        chat_messages = chat.messages.all().values(
             'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
         )
         
         return JsonResponse({
             'chat_id': chat.id,
-            'messages': list(messages),
+            'messages': list(chat_messages),
             'chat_status': chat.status
         })
         
@@ -948,14 +1077,14 @@ def clear_support_chat(request):
                 is_read=False
             )
             
-            messages = new_chat.messages.all().values(
+            chat_messages = new_chat.messages.all().values(
                 'id', 'sender_type', 'sender_name', 'message', 'created_at', 'is_read'
             )
             
             return JsonResponse({
                 'success': True,
                 'chat_id': new_chat.id,
-                'messages': list(messages)
+                'messages': list(chat_messages)
             })
             
         except Exception as e:
@@ -981,11 +1110,14 @@ def get_auto_reply(message):
     elif any(word in message_lower for word in ['copy trading', 'copy trade', 'follow trader']):
         return "Copy Trading allows you to automatically copy trades from professional traders. Visit the Copy Trading section to browse top traders and their performance metrics."
     
+    elif any(word in message_lower for word in ['invest', 'investment', 'plan']):
+        return "We offer investment plans ranging from Starter to Diamond tier with guaranteed ROI over fixed durations. Visit the Investment Plans section to browse available options."
+
     elif any(word in message_lower for word in ['verification', 'verify', 'kyc']):
         return "Account verification is handled by our admin team. Your account will be reviewed within 24 hours. You will receive an email notification once approved."
     
     elif any(word in message_lower for word in ['help', 'support', 'assistance']):
-        return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, or any other features. Our support team will respond shortly if you need personalized assistance."
+        return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, investment plans, or any other features. Our support team will respond shortly if you need personalized assistance."
     
     elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
         return "Hello! Thank you for contacting Influxfinancetrading support. How can I assist you today?"
@@ -1036,7 +1168,6 @@ def contact(request):
         message    = request.POST.get('message', '').strip()
 
         if all([first_name, last_name, email, subject, message]):
-            # Log the contact request
             logger.info(
                 f"Contact form submitted: {first_name} {last_name} <{email}> — {subject}"
             )

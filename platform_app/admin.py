@@ -5,7 +5,8 @@ from django import forms
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode
+    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
+    InvestmentPlan, UserInvestment,
 )
 
 
@@ -27,6 +28,7 @@ class PasswordResetCodeAdmin(admin.ModelAdmin):
     
     def has_add_permission(self, request):
         return False  # Codes are created programmatically
+
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
@@ -108,10 +110,8 @@ class CopyTraderAdmin(admin.ModelAdmin):
     has_image.short_description = 'Profile Image'
     
     def save_model(self, request, obj, form, change):
-        """Custom save to handle image uploads"""
         super().save_model(request, obj, form, change)
         self.message_user(request, f'Trader {obj.name} saved successfully!')
-        
 
 
 @admin.register(CopyTradingSubscription)
@@ -189,6 +189,129 @@ class PlatformSettingsAdmin(admin.ModelAdmin):
     
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+# ── Investment Plans ──────────────────────────────────────────────────────────
+
+class UserInvestmentInline(admin.TabularInline):
+    model = UserInvestment
+    extra = 0
+    readonly_fields = ['user', 'amount_invested', 'expected_return', 'profit_amount',
+                       'status', 'start_date', 'end_date', 'completed_at']
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
+@admin.register(InvestmentPlan)
+class InvestmentPlanAdmin(admin.ModelAdmin):
+    list_display = ['name', 'tier', 'roi_percentage', 'duration_days', 'minimum_amount',
+                    'maximum_amount_display', 'risk_level', 'subscriber_count',
+                    'is_featured', 'is_active', 'created_at']
+    list_filter = ['tier', 'risk_level', 'is_active', 'is_featured', 'created_at']
+    search_fields = ['name', 'tier', 'description']
+    list_editable = ['is_active', 'is_featured']
+    inlines = [UserInvestmentInline]
+
+    fieldsets = (
+        ('Plan Identity', {
+            'fields': ('name', 'tier', 'description', 'risk_level')
+        }),
+        ('Financial Details', {
+            'fields': ('minimum_amount', 'maximum_amount', 'roi_percentage', 'duration_days')
+        }),
+        ('Features & Visibility', {
+            'fields': ('features', 'is_active', 'is_featured')
+        }),
+    )
+
+    def maximum_amount_display(self, obj):
+        if obj.maximum_amount:
+            return f'${obj.maximum_amount:,.2f}'
+        return format_html('<span style="color:#9ca3af;">Unlimited</span>')
+    maximum_amount_display.short_description = 'Max Amount'
+
+    def subscriber_count(self, obj):
+        count = obj.subscriptions.count()
+        active = obj.subscriptions.filter(status='ACTIVE').count()
+        return format_html(
+            '<span style="font-weight:600;">{}</span> '
+            '<span style="color:#6b7280;font-size:.85em;">({} active)</span>',
+            count, active
+        )
+    subscriber_count.short_description = 'Subscribers'
+
+
+@admin.register(UserInvestment)
+class UserInvestmentAdmin(admin.ModelAdmin):
+    list_display = ['user', 'plan', 'amount_invested', 'expected_return',
+                    'profit_amount', 'status', 'start_date', 'end_date', 'days_left']
+    list_filter = ['status', 'plan', 'start_date']
+    search_fields = ['user__username', 'user__email', 'plan__name']
+    readonly_fields = ['user', 'plan', 'amount_invested', 'expected_return',
+                       'profit_amount', 'start_date', 'end_date', 'completed_at']
+    raw_id_fields = ['user']
+
+    actions = ['mark_completed', 'mark_cancelled']
+
+    def days_left(self, obj):
+        if obj.status == 'ACTIVE':
+            days = obj.days_remaining
+            if days == 0:
+                return format_html('<span style="color:#ef4444;font-weight:600;">Due today</span>')
+            return format_html('<span style="color:#2563eb;">{} day{}</span>', days, 's' if days != 1 else '')
+        elif obj.status == 'COMPLETED':
+            return format_html('<span style="color:#16a34a;">✓ Done</span>')
+        return format_html('<span style="color:#9ca3af;">—</span>')
+    days_left.short_description = 'Days Left'
+
+    def mark_completed(self, request, queryset):
+        from django.utils import timezone
+        updated = 0
+        for inv in queryset.filter(status='ACTIVE'):
+            # Credit principal + profit back to user
+            inv.user.account_balance += inv.expected_return
+            inv.user.total_profit += inv.profit_amount
+            inv.user.save()
+
+            inv.status = 'COMPLETED'
+            inv.completed_at = timezone.now()
+            inv.save()
+
+            # Record profit transaction
+            Transaction.objects.create(
+                user=inv.user,
+                transaction_type='PROFIT',
+                amount=inv.expected_return,
+                currency=inv.user.preferred_currency,
+                status='COMPLETED',
+                description=f'Investment matured: {inv.plan.name} — principal + {inv.plan.roi_percentage}% ROI',
+            )
+            updated += 1
+
+        self.message_user(
+            request,
+            f'{updated} investment(s) marked as completed and funds credited to users.'
+        )
+    mark_completed.short_description = 'Mark selected as completed & credit funds'
+
+    def mark_cancelled(self, request, queryset):
+        updated = 0
+        for inv in queryset.filter(status='ACTIVE'):
+            # Refund principal only
+            inv.user.account_balance += inv.amount_invested
+            inv.user.save()
+
+            inv.status = 'CANCELLED'
+            inv.save()
+            updated += 1
+
+        self.message_user(
+            request,
+            f'{updated} investment(s) cancelled and principal refunded to users.'
+        )
+    mark_cancelled.short_description = 'Cancel selected & refund principal'
 
 
 # ============================================
@@ -271,7 +394,6 @@ class SupportChatAdmin(admin.ModelAdmin):
     last_message_preview.short_description = 'Last Message'
     
     def display_chat_history(self, obj):
-        """Display formatted chat history"""
         if obj.pk:
             messages = obj.messages.order_by('created_at')
             html = '<div style="background: #f9fafb; padding: 20px; border-radius: 10px; max-height: 500px; overflow-y: auto;">'
@@ -298,13 +420,10 @@ class SupportChatAdmin(admin.ModelAdmin):
     display_chat_history.short_description = 'Chat Conversation'
     
     def save_model(self, request, obj, form, change):
-        """Handle admin reply submission"""
         super().save_model(request, obj, form, change)
         
-        # Check if admin entered a reply
         admin_reply = form.cleaned_data.get('admin_reply')
         if admin_reply and admin_reply.strip():
-            # Create the message
             SupportMessage.objects.create(
                 chat=obj,
                 sender_type='SUPPORT',
@@ -313,10 +432,7 @@ class SupportChatAdmin(admin.ModelAdmin):
                 is_read=False
             )
             
-            # Mark all user messages as read
             obj.messages.filter(sender_type='USER', is_read=False).update(is_read=True)
-            
-            # Update chat timestamp
             obj.save()
             
             self.message_user(request, f'Reply sent to {obj.user.username} successfully!', level='success')
