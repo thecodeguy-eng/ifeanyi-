@@ -5,16 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Influxfinancetrading{% endblock %}</title>
 
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzlrIBXP5-dkiWjh0bcjIWNhHaz5bheGWhxECQ6K63zf-QpqEUH-eJ4dAv_bMPbZXmMFVJ4Nt34fXPU7Q3U-2_LrrQ7v2ZDzaO_zy37L0-EwV1doIhDV4UwlNZrn6ypAYSn2oOdP2uJPwJJDEv-4WfEhBBj9JcFPz8Q4XQSWyPMCDcTshEyaTU0417BzE/s320/Image_fx%20(35).png">
     
-    <!-- TailwindCSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts - keeping Syne for body as in the original, clean sans-serif -->
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
@@ -31,47 +25,76 @@
             --success: #10b981;
             --danger: #ef4444;
         }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { -webkit-text-size-adjust: 100%; }
+
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text-main);
+            /* FIX: never clip horizontal content accidentally */
             overflow-x: hidden;
-            position: relative;
-            top: 0 !important;
+            min-width: 320px;
+            top: 0 !important;   /* override Google Translate */
         }
 
-        /* Typography */
-        .title-font {
-            font-family: 'Syne', sans-serif;
-            font-weight: 700;
-        }
+        .title-font { font-family: 'Syne', sans-serif; font-weight: 700; }
 
-        /* ── Navigation ──────────────────────────────────────────── */
+        /* ══════════════════════════════════════════
+           NAVIGATION
+        ══════════════════════════════════════════ */
         nav {
             background: #fff;
             border-bottom: 1px solid var(--border);
         }
 
-        /* Logo text shrinks gracefully */
+        /* FIX: nav inner row must never overflow on small screens */
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            gap: 8px;
+            /* prevent children from pushing layout wider than viewport */
+            min-width: 0;
+        }
+
+        /* Logo */
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-shrink: 0;
+            text-decoration: none;
+            min-width: 0;
+        }
+        .nav-logo img { height: 32px; width: 32px; object-fit: contain; flex-shrink: 0; }
         .nav-logo-text {
-            font-size: .8rem;
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: .82rem;
+            color: #111827;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 130px;
+            /* FIX: constrain on small screens */
+            max-width: 120px;
         }
-        @media (min-width: 1024px) {
-            .nav-logo-text { max-width: none; font-size: .875rem; }
-        }
+        @media (min-width: 480px)  { .nav-logo-text { max-width: 160px; font-size: .875rem; } }
+        @media (min-width: 1024px) { .nav-logo-text { max-width: none; } }
 
-        /* Base link */
+        /* Desktop centre links */
+        .nav-centre {
+            display: none;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            justify-content: center;
+        }
+        @media (min-width: 1024px) { .nav-centre { display: flex; } }
+
         .nav-link {
             position: relative;
             color: var(--text-main);
@@ -100,10 +123,8 @@
         }
         .nav-link:hover::after { width: 100%; }
 
-        /* ── Desktop Dropdowns ───────────────────────────────────── */
-        .nav-item {
-            position: relative;
-        }
+        /* Desktop Dropdowns */
+        .nav-item { position: relative; }
         .nav-dropdown {
             position: absolute;
             top: calc(100% + 10px);
@@ -128,7 +149,7 @@
             transform: translateX(-50%) translateY(0);
             pointer-events: auto;
         }
-        /* Bridging gap so hover doesn't drop */
+        /* Bridge gap so hover doesn't drop */
         .nav-item::after {
             content: '';
             position: absolute;
@@ -157,15 +178,42 @@
             flex-shrink: 0;
         }
         .nav-dd-divider { height: 1px; background: #f1f5f9; margin: 4px 6px; }
-        /* Caret indicator */
-        .nav-caret {
-            font-size: .6rem;
-            color: #9ca3af;
-            transition: transform .2s;
-        }
+        .nav-caret { font-size: .6rem; color: #9ca3af; transition: transform .2s; }
         .nav-item:hover .nav-caret { transform: rotate(180deg); }
 
-        /* ── Mobile Drawer ───────────────────────────────────────── */
+        /* Right cluster */
+        .nav-right {
+            display: flex;
+            align-items: center;
+            /* FIX: gap shrinks a bit on small screens */
+            gap: 6px;
+            flex-shrink: 0;
+        }
+        @media (min-width: 480px) { .nav-right { gap: 8px; } }
+
+        .nav-auth-desktop {
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        @media (min-width: 1024px) { .nav-auth-desktop { display: flex; } }
+
+        /* Hamburger */
+        .mob-menu-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 38px; height: 38px;
+            border-radius: 9px;
+            background: none; border: 1.5px solid #e5e7eb;
+            cursor: pointer; transition: all .2s;
+            color: #374151;
+            flex-shrink: 0;
+        }
+        .mob-menu-btn:hover { border-color: #9ca3af; background: #f9fafb; }
+        @media (min-width: 1024px) { .mob-menu-btn { display: none; } }
+
+        /* ══════════════════════════════════════════
+           MOBILE DRAWER
+        ══════════════════════════════════════════ */
         #mobile-menu {
             background: #fff;
             border-top: 1px solid var(--border);
@@ -173,70 +221,50 @@
             overflow: hidden;
             transition: max-height .35s cubic-bezier(.4,0,.2,1);
         }
-        #mobile-menu.open { max-height: 100vh; overflow-y: auto; }
+        #mobile-menu.open {
+            max-height: 100dvh;   /* FIX: use dvh so it fits viewport */
+            overflow-y: auto;
+        }
 
         .mob-section-label {
-            font-size: .68rem;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            color: #9ca3af;
+            font-size: .68rem; font-weight: 700; letter-spacing: .08em;
+            text-transform: uppercase; color: #9ca3af;
             padding: 12px 16px 4px;
         }
         .mob-link {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: flex; align-items: center; gap: 10px;
             padding: 10px 16px;
-            font-size: .875rem;
-            font-weight: 500;
-            color: #374151;
-            text-decoration: none;
-            border-radius: 8px;
+            font-size: .875rem; font-weight: 500; color: #374151;
+            text-decoration: none; border-radius: 8px;
             margin: 0 8px;
             transition: background .15s;
         }
         .mob-link:hover, .mob-link:active { background: #f3f4f6; color: #111827; }
         .mob-link .mob-icon {
-            width: 28px; height: 28px;
-            border-radius: 8px;
+            width: 28px; height: 28px; border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
-            font-size: .7rem;
-            flex-shrink: 0;
+            font-size: .7rem; flex-shrink: 0;
         }
-        /* Accordion for mobile sub-sections */
+
+        /* Mobile accordions */
         .mob-accordion-btn {
-            width: 100%;
             display: flex; align-items: center; justify-content: space-between;
             padding: 10px 16px;
-            margin: 0 8px;
+            /* FIX: use calc to stay within padded container */
             width: calc(100% - 16px);
-            font-size: .875rem;
-            font-weight: 600;
-            color: #111827;
-            background: none; border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: inherit;
+            margin: 0 8px;
+            font-size: .875rem; font-weight: 600; color: #111827;
+            background: none; border: none; border-radius: 8px;
+            cursor: pointer; font-family: inherit;
             transition: background .15s;
         }
         .mob-accordion-btn:hover { background: #f9fafb; }
-        .mob-accordion-btn .mob-acc-caret {
-            font-size: .6rem;
-            color: #9ca3af;
-            transition: transform .25s;
-        }
-        .mob-accordion-btn[aria-expanded="true"] .mob-acc-caret {
-            transform: rotate(180deg);
-        }
-        .mob-accordion-panel {
-            overflow: hidden;
-            max-height: 0;
-            transition: max-height .3s cubic-bezier(.4,0,.2,1);
-        }
+        .mob-acc-caret { font-size: .6rem; color: #9ca3af; transition: transform .25s; }
+        .mob-accordion-btn[aria-expanded="true"] .mob-acc-caret { transform: rotate(180deg); }
+        .mob-accordion-panel { overflow: hidden; max-height: 0; transition: max-height .3s cubic-bezier(.4,0,.2,1); }
         .mob-accordion-panel.open { max-height: 400px; }
         .mob-divider { height: 1px; background: #f1f5f9; margin: 6px 16px; }
-        /* Auth buttons in mobile */
+
         .mob-auth-login {
             display: block; text-align: center; margin: 6px 8px 0;
             padding: 11px 16px; border-radius: 10px;
@@ -262,473 +290,281 @@
         }
         .mob-auth-logout:hover { background: #fee2e2; }
 
-        /* Hamburger button */
-        .mob-menu-btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 38px; height: 38px;
-            border-radius: 9px;
-            background: none; border: 1.5px solid #e5e7eb;
-            cursor: pointer; transition: all .2s;
-            color: #374151;
-            flex-shrink: 0;
-        }
-        .mob-menu-btn:hover { border-color: #9ca3af; background: #f9fafb; }
-
-        /* Buttons */
+        /* ══════════════════════════════════════════
+           BUTTONS
+        ══════════════════════════════════════════ */
         .btn-primary {
-            background: var(--primary);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.875rem;
-            padding: 0.6rem 1.5rem;
-            border-radius: 6px;
+            background: var(--primary); color: #fff;
+            font-weight: 600; font-size: .875rem;
+            padding: .55rem 1.4rem; border-radius: 6px;
             border: 1.5px solid var(--primary);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
+            cursor: pointer; transition: all .2s;
+            text-decoration: none; display: inline-block;
+            white-space: nowrap;
         }
-
-        .btn-primary:hover {
-            background: #374151;
-            border-color: #374151;
-        }
+        .btn-primary:hover { background: #374151; border-color: #374151; }
 
         .btn-outline {
-            background: transparent;
-            color: var(--primary);
-            font-weight: 600;
-            font-size: 0.875rem;
-            padding: 0.6rem 1.5rem;
-            border-radius: 6px;
+            background: transparent; color: var(--primary);
+            font-weight: 600; font-size: .875rem;
+            padding: .55rem 1.4rem; border-radius: 6px;
             border: 1.5px solid var(--border);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
+            cursor: pointer; transition: all .2s;
+            text-decoration: none; display: inline-block;
+            white-space: nowrap;
         }
+        .btn-outline:hover { border-color: var(--primary); }
 
-        .btn-outline:hover {
-            border-color: var(--primary);
-        }
-
-        /* Login button style like the reference */
         .btn-login {
-            background: transparent;
-            color: var(--text-main);
-            font-weight: 500;
-            font-size: 0.875rem;
-            padding: 0.5rem 1.25rem;
-            border-radius: 6px;
+            background: transparent; color: var(--text-main);
+            font-weight: 500; font-size: .875rem;
+            padding: .5rem 1.2rem; border-radius: 6px;
             border: 1.5px solid var(--text-main);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            display: inline-block;
+            cursor: pointer; transition: all .2s;
+            text-decoration: none; display: inline-block;
+            white-space: nowrap;
         }
+        .btn-login:hover { background: var(--text-main); color: #fff; }
 
-        .btn-login:hover {
-            background: var(--text-main);
-            color: #fff;
+        /* ══════════════════════════════════════════
+           LANGUAGE SELECTOR
+        ══════════════════════════════════════════ */
+        .lang-selector { position: relative; }
+        .lang-btn {
+            display: flex; align-items: center; gap: 5px;
+            padding: .4rem .65rem;
+            background: transparent;
+            border: 1px solid var(--border); border-radius: 6px;
+            color: var(--text-muted); cursor: pointer;
+            transition: all .2s; font-size: .78rem; font-weight: 500;
+            white-space: nowrap;
         }
+        .lang-btn:hover { border-color: #9ca3af; color: var(--text-main); }
+        /* FIX: hide language label text on very small screens */
+        .lang-label { display: none; }
+        @media (min-width: 480px) { .lang-label { display: inline; } }
 
-        /* Cards */
+        .lang-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            /* FIX: anchor right on mobile so it doesn't clip off-screen */
+            right: 0; left: auto;
+            background: #fff;
+            border: 1px solid var(--border); border-radius: 10px;
+            padding: 6px;
+            min-width: 190px; max-height: 340px; overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,.13);
+            z-index: 9999;
+            opacity: 0; visibility: hidden;
+            transform: translateY(-8px);
+            transition: all .2s ease;
+        }
+        .lang-dropdown.active { opacity: 1; visibility: visible; transform: translateY(0); }
+        .lang-dropdown::-webkit-scrollbar { width: 4px; }
+        .lang-dropdown::-webkit-scrollbar-track { background: #f1f5f9; }
+        .lang-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .lang-option {
+            display: flex; align-items: center; gap: 8px;
+            padding: 7px 10px; cursor: pointer;
+            transition: background .15s; color: var(--text-main);
+            font-size: .83rem; border-radius: 6px;
+        }
+        .lang-option:hover { background: #f3f4f6; }
+        .lang-option.active { background: #eff6ff; color: var(--accent); font-weight: 600; }
+
+        /* ══════════════════════════════════════════
+           CARDS
+        ══════════════════════════════════════════ */
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border);
             border-radius: 12px;
-            transition: box-shadow 0.2s ease, border-color 0.2s ease;
+            transition: box-shadow .2s, border-color .2s;
         }
+        .card:hover { box-shadow: 0 4px 20px rgba(0,0,0,.06); border-color: #d1d5db; }
 
-        .card:hover {
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-            border-color: #d1d5db;
-        }
-
-        /* Language Selector */
-        .lang-selector {
-            position: relative;
-        }
-
-        .lang-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            padding: 0.4rem 0.75rem;
-            background: transparent;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .lang-btn:hover {
-            border-color: #9ca3af;
-            color: var(--text-main);
-        }
-
-        .lang-dropdown {
-            position: absolute;
-            top: calc(100% + 0.5rem);
-            left: 0;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.5rem;
-            min-width: 200px;
-            max-height: 350px;
-            overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            z-index: 9999;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-8px);
-            transition: all 0.2s ease;
-        }
-
-        .lang-dropdown.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .lang-dropdown::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        .lang-dropdown::-webkit-scrollbar-track {
-            background: #f1f5f9;
-        }
-
-        .lang-dropdown::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-
-        .lang-option {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            color: var(--text-main);
-            font-size: 0.85rem;
-            border-radius: 6px;
-        }
-
-        .lang-option:hover {
-            background: #f3f4f6;
-        }
-
-        .lang-option.active {
-            background: #eff6ff;
-            color: var(--accent);
-            font-weight: 600;
-        }
-
-        /* Hide Google Translate Widget */
-        .goog-te-banner-frame,
-        .goog-te-balloon-frame,
-        #goog-gt-tt,
-        #google_translate_element {
-            display: none !important;
-        }
-
-        body {
-            top: 0 !important;
-        }
-
-        /* Message Alerts */
+        /* ══════════════════════════════════════════
+           ALERTS
+        ══════════════════════════════════════════ */
         .alert-container {
             position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
+            top: 1.25rem;
+            /* FIX: full-width safe zone on mobile */
+            right: 1rem; left: 1rem;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            display: flex; flex-direction: column; gap: 10px;
+            pointer-events: none;
         }
-
+        @media (min-width: 480px) {
+            .alert-container { left: auto; width: 320px; }
+        }
         .alert {
-            background: #ffffff;
-            border: 1px solid;
-            border-radius: 10px;
-            padding: 1rem 1.25rem;
-            min-width: 280px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            animation: slideIn 0.35s ease;
+            background: #fff; border: 1px solid;
+            border-radius: 10px; padding: 14px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,.1);
+            animation: slideIn .35s ease;
+            pointer-events: auto;
         }
-
-        .alert-success {
-            border-color: #bbf7d0;
-            border-left: 4px solid var(--success);
-        }
-
-        .alert-error {
-            border-color: #fecaca;
-            border-left: 4px solid var(--danger);
-        }
-
-        .alert-info {
-            border-color: #bfdbfe;
-            border-left: 4px solid var(--accent);
-        }
-
-        .alert-warning {
-            border-color: #fde68a;
-            border-left: 4px solid #f59e0b;
-        }
+        .alert-success  { border-color: #bbf7d0; border-left: 4px solid var(--success); }
+        .alert-error    { border-color: #fecaca; border-left: 4px solid var(--danger); }
+        .alert-info     { border-color: #bfdbfe; border-left: 4px solid var(--accent); }
+        .alert-warning  { border-color: #fde68a; border-left: 4px solid #f59e0b; }
 
         @keyframes slideIn {
-            from {
-                transform: translateX(300px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
+            from { transform: translateX(100%); opacity: 0; }
+            to   { transform: translateX(0);    opacity: 1; }
         }
 
-        /* Mobile Menu — see nav CSS above */
-
-        /* Chat Support */
+        /* ══════════════════════════════════════════
+           CHAT
+        ══════════════════════════════════════════ */
         #chat-fab {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            background: var(--primary);
-            color: #ffffff;
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            width: 52px; height: 52px;
+            background: var(--primary); color: #fff;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: flex; align-items: center; justify-content: center;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(17, 24, 39, 0.25);
-            transition: all 0.25s ease;
-            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(17,24,39,.25);
+            transition: all .25s; z-index: 1000;
         }
-
-        #chat-fab:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 28px rgba(17, 24, 39, 0.35);
-        }
+        #chat-fab:hover { transform: scale(1.05); box-shadow: 0 6px 28px rgba(17,24,39,.35); }
 
         #chat-window {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 380px;
-            height: 560px;
-            background: #ffffff;
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            /* FIX: safe sizing on all screens */
+            bottom: 1rem; right: 1rem;
+            width: min(380px, calc(100vw - 2rem));
+            height: min(560px, calc(100dvh - 80px));
+            background: #fff;
+            border: 1px solid var(--border); border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,.15);
             z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
+            opacity: 0; visibility: hidden;
             transform: translateY(20px);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            transition: all .3s ease;
+            display: flex; flex-direction: column; overflow: hidden;
         }
-
-        #chat-window.active {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
+        #chat-window.active { opacity: 1; visibility: visible; transform: translateY(0); }
 
         .chat-header {
-            background: var(--primary);
-            color: #ffffff;
-            padding: 1.25rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: 600;
-            font-size: 0.9rem;
+            background: var(--primary); color: #fff;
+            padding: 1.1rem 1.25rem;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: .875rem;
+            flex-shrink: 0;
         }
-
         #chat-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
+            flex: 1; overflow-y: auto;
+            padding: 1.1rem;
+            display: flex; flex-direction: column; gap: 10px;
         }
+        #chat-body::-webkit-scrollbar { width: 4px; }
+        #chat-body::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
 
-        #chat-body::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        #chat-body::-webkit-scrollbar-track {
-            background: #f9fafb;
-        }
-
-        #chat-body::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 4px;
-        }
-
-        .chat-message {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-
-        .chat-message.user {
-            align-items: flex-end;
-        }
-
+        .chat-message { display: flex; flex-direction: column; gap: 3px; }
+        .chat-message.user { align-items: flex-end; }
         .message-bubble {
-            padding: 0.65rem 1rem;
-            max-width: 80%;
-            word-wrap: break-word;
-            font-size: 0.875rem;
-            line-height: 1.5;
+            padding: .6rem .9rem;
+            max-width: 80%; word-wrap: break-word;
+            font-size: .85rem; line-height: 1.5;
         }
-
-        .chat-message.user .message-bubble {
-            background: var(--primary);
-            color: #ffffff;
-            border-radius: 16px 16px 4px 16px;
-        }
-
-        .chat-message.support .message-bubble {
-            background: #f3f4f6;
-            color: var(--text-main);
-            border-radius: 16px 16px 16px 4px;
-        }
-
+        .chat-message.user    .message-bubble { background: var(--primary); color: #fff; border-radius: 16px 16px 4px 16px; }
+        .chat-message.support .message-bubble { background: #f3f4f6; color: var(--text-main); border-radius: 16px 16px 16px 4px; }
         .chat-footer {
-            padding: 1rem;
+            padding: .9rem 1rem;
             border-top: 1px solid var(--border);
-            display: flex;
-            gap: 0.5rem;
+            display: flex; gap: 8px;
+            flex-shrink: 0;
         }
-
         #chat-input {
-            flex: 1;
-            background: #f9fafb;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-main);
-            padding: 0.65rem 1rem;
-            outline: none;
-            transition: all 0.2s ease;
-            font-size: 0.875rem;
-            font-family: 'DM Sans', sans-serif;
+            flex: 1; background: #f9fafb;
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text-main); padding: .6rem .9rem;
+            outline: none; transition: all .2s;
+            font-size: .875rem; font-family: 'DM Sans', sans-serif;
+            /* FIX: prevent iOS zoom on focus */
+            font-size: max(.875rem, 16px);
         }
+        #chat-input:focus { border-color: #9ca3af; background: #fff; }
+        #chat-input::placeholder { color: var(--text-light); }
 
-        #chat-input:focus {
-            border-color: #9ca3af;
-            background: #ffffff;
-        }
+        /* ══════════════════════════════════════════
+           FOOTER
+        ══════════════════════════════════════════ */
+        footer { background: #fff; border-top: 1px solid var(--border); }
 
-        #chat-input::placeholder {
-            color: var(--text-light);
-        }
-
-        /* Footer */
-        footer {
-            background: #ffffff;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            #chat-window {
-                width: calc(100% - 2rem);
-                height: calc(100vh - 4rem);
-                right: 1rem;
-                bottom: 1rem;
-            }
-
-            .alert { min-width: 240px; }
-            .alert-container { right: 1rem; left: 1rem; }
-        }
-
-        /* ─── Dashboard Sidebar Layout (shared by all authenticated pages) ─── */
+        /* ══════════════════════════════════════════
+           DASHBOARD SIDEBAR LAYOUT
+        ══════════════════════════════════════════ */
         .dashboard-wrapper { display: flex; min-height: calc(100vh - 64px); }
 
         .sidebar {
             width: 260px; min-width: 260px;
-            background: #ffffff;
+            background: #fff;
             border-right: 1px solid var(--border);
             display: flex; flex-direction: column;
             position: sticky; top: 64px;
             height: calc(100vh - 64px);
             overflow-y: auto; z-index: 40;
-            transition: transform 0.3s ease;
+            transition: transform .3s ease;
         }
         .sidebar::-webkit-scrollbar { width: 4px; }
         .sidebar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 4px; }
 
         .sidebar-user {
-            padding: 1.25rem 1rem 1rem;
+            padding: 1.1rem 1rem .9rem;
             border-bottom: 1px solid #f3f4f6;
-            display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0;
+            display: flex; align-items: center; gap: .75rem; flex-shrink: 0;
         }
         .sidebar-avatar {
             width: 38px; height: 38px; border-radius: 10px;
-            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            background: linear-gradient(135deg,#1d4ed8,#3b82f6);
             display: flex; align-items: center; justify-content: center;
-            color: #fff; font-weight: 700; font-size: 0.9rem;
+            color: #fff; font-weight: 700; font-size: .9rem;
             font-family: 'Syne', sans-serif; flex-shrink: 0;
         }
         .sidebar-user-info p {
-            font-size: 0.8rem; font-weight: 600; color: #111827;
+            font-size: .8rem; font-weight: 600; color: #111827;
             line-height: 1.2; white-space: nowrap; overflow: hidden;
             text-overflow: ellipsis; max-width: 160px; margin: 0;
         }
-        .sidebar-user-info span { font-size: 0.7rem; color: #9ca3af; }
+        .sidebar-user-info span { font-size: .7rem; color: #9ca3af; }
 
         .sidebar-section-label {
-            padding: 1rem 1rem 0.35rem; margin: 0;
-            font-size: 0.65rem; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase; color: #9ca3af;
+            padding: 1rem 1rem .35rem; margin: 0;
+            font-size: .65rem; font-weight: 700;
+            letter-spacing: .08em; text-transform: uppercase; color: #9ca3af;
         }
-        .sidebar-nav { padding: 0 0.5rem; display: flex; flex-direction: column; gap: 1px; }
-
+        .sidebar-nav { padding: 0 .5rem; display: flex; flex-direction: column; gap: 1px; }
         .sidebar-link {
-            display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.65rem 0.85rem; border-radius: 8px;
-            font-size: 0.875rem; font-weight: 500; color: #374151;
-            text-decoration: none; transition: all 0.15s ease;
+            display: flex; align-items: center; gap: .75rem;
+            padding: .65rem .85rem; border-radius: 8px;
+            font-size: .875rem; font-weight: 500; color: #374151;
+            text-decoration: none; transition: all .15s;
         }
         .sidebar-link:hover { background: #f9fafb; color: #111827; }
         .sidebar-link.active { background: #eff6ff; color: #1d4ed8; font-weight: 600; }
         .sidebar-link.active .sidebar-icon { color: #1d4ed8; }
-
         .sidebar-icon {
             width: 17px; text-align: center; color: #6b7280;
-            font-size: 0.85rem; flex-shrink: 0; transition: color 0.15s;
+            font-size: .85rem; flex-shrink: 0; transition: color .15s;
         }
         .sidebar-link:hover .sidebar-icon { color: #374151; }
-
         .sidebar-link-disabled {
-            display: flex; align-items: center; gap: 0.75rem;
-            padding: 0.65rem 0.85rem; border-radius: 8px;
-            font-size: 0.875rem; font-weight: 500; color: #9ca3af;
-            opacity: 0.6; cursor: not-allowed;
+            display: flex; align-items: center; gap: .75rem;
+            padding: .65rem .85rem; border-radius: 8px;
+            font-size: .875rem; font-weight: 500; color: #9ca3af;
+            opacity: .6; cursor: not-allowed;
         }
         .sidebar-locked-badge {
-            font-size: 0.6rem; margin-left: auto;
+            font-size: .6rem; margin-left: auto;
             background: #f3f4f6; color: #6b7280;
             border-radius: 4px; padding: 2px 6px; font-weight: 600;
         }
         .sidebar-balance-card {
-            margin: 0 0.75rem 0.75rem;
-            background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+            margin: 0 .75rem .75rem;
+            background: linear-gradient(135deg,#1d4ed8 0%,#2563eb 100%);
             border-radius: 12px; padding: 1rem;
         }
         .sidebar-balance-card .label {
@@ -740,24 +576,23 @@
             font-weight: 700; font-size: 1.4rem; line-height: 1; margin: 0;
         }
         .sidebar-balance-card .currency { color: rgba(255,255,255,.55); font-size: .7rem; margin: .3rem 0 0; }
-
         .sidebar-cta {
-            padding: 0.85rem 0.75rem 1rem;
+            padding: .85rem .75rem 1rem;
             border-top: 1px solid #f3f4f6;
-            display: flex; flex-direction: column; gap: 0.5rem; flex-shrink: 0;
+            display: flex; flex-direction: column; gap: .5rem; flex-shrink: 0;
         }
         .sidebar-deposit-btn {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.6rem 1rem; background: #111827; color: #fff;
-            border-radius: 8px; font-size: 0.8rem; font-weight: 600;
-            text-decoration: none; transition: background 0.2s;
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            padding: .6rem 1rem; background: #111827; color: #fff;
+            border-radius: 8px; font-size: .8rem; font-weight: 600;
+            text-decoration: none; transition: background .2s;
         }
         .sidebar-deposit-btn:hover { background: #374151; }
         .sidebar-withdraw-btn {
-            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.6rem 1rem; background: #fff; color: #dc2626;
+            display: flex; align-items: center; justify-content: center; gap: .5rem;
+            padding: .6rem 1rem; background: #fff; color: #dc2626;
             border: 1px solid #fecaca; border-radius: 8px;
-            font-size: 0.8rem; font-weight: 600; text-decoration: none; transition: background 0.2s;
+            font-size: .8rem; font-weight: 600; text-decoration: none; transition: background .2s;
         }
         .sidebar-withdraw-btn:hover { background: #fef2f2; }
         .sidebar-withdraw-btn.disabled {
@@ -767,10 +602,11 @@
 
         .dashboard-main { flex: 1; min-width: 0; overflow: hidden; }
 
+        /* Mobile topbar (shown when sidebar collapses) */
         .dashboard-topbar {
             display: none; background: #fff;
             border-bottom: 1px solid var(--border);
-            padding: 0.75rem 1rem; align-items: center; gap: 0.75rem;
+            padding: .75rem 1rem; align-items: center; gap: .75rem;
             position: sticky; top: 64px; z-index: 39;
         }
         #sidebar-toggle {
@@ -778,95 +614,86 @@
             width: 36px; height: 36px; display: flex; align-items: center;
             justify-content: center; cursor: pointer; color: #374151; flex-shrink: 0;
         }
-        .mobile-nav-scroll { display: flex; gap: 0.4rem; overflow-x: auto; scrollbar-width: none; flex: 1; }
+        .mobile-nav-scroll { display: flex; gap: .4rem; overflow-x: auto; scrollbar-width: none; flex: 1; }
         .mobile-nav-scroll::-webkit-scrollbar { display: none; }
         .mobile-nav-pill {
-            display: flex; align-items: center; gap: 0.4rem;
-            padding: 0.45rem 0.85rem; border-radius: 99px;
-            font-size: 0.75rem; font-weight: 500; white-space: nowrap;
+            display: flex; align-items: center; gap: .4rem;
+            padding: .45rem .85rem; border-radius: 99px;
+            font-size: .75rem; font-weight: 500; white-space: nowrap;
             color: #374151; text-decoration: none;
             border: 1px solid var(--border); background: #fff;
-            transition: all 0.15s; flex-shrink: 0;
+            transition: all .15s; flex-shrink: 0;
         }
-        .mobile-nav-pill:hover, .mobile-nav-pill.active {
-            background: #111827; color: #fff; border-color: #111827;
-        }
+        .mobile-nav-pill:hover, .mobile-nav-pill.active { background: #111827; color: #fff; border-color: #111827; }
+
         .sidebar-overlay {
             display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.35); z-index: 45;
+            background: rgba(0,0,0,.35); z-index: 45;
         }
 
+        /* FIX: sidebar becomes off-canvas drawer on tablet/mobile */
         @media (max-width: 1024px) {
             .sidebar {
                 position: fixed; top: 0; left: 0; height: 100vh;
                 transform: translateX(-100%); z-index: 50;
-                box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+                box-shadow: 4px 0 20px rgba(0,0,0,.1);
             }
             .sidebar.open { transform: translateX(0); }
             .sidebar-overlay.open { display: block; }
             .dashboard-topbar { display: flex; }
         }
-        /* ─── End Dashboard Sidebar Layout ──────────────────────────────── */
+
+        /* ══════════════════════════════════════════
+           HIDE GOOGLE TRANSLATE WIDGET
+        ══════════════════════════════════════════ */
+        .goog-te-banner-frame,
+        .goog-te-balloon-frame,
+        #goog-gt-tt,
+        #google_translate_element { display: none !important; }
     </style>
     
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navigation -->
+
+    <!-- ══════════════════════════════════════════
+         NAVIGATION
+    ══════════════════════════════════════════ -->
     <nav class="sticky top-0 z-50" id="main-nav">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16 gap-3">
+            <div class="nav-inner">
 
-                <!-- ── Logo ──────────────────────────────────────────── -->
-                <a href="/" class="flex items-center gap-2 flex-shrink-0">
-                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzlrIBXP5-dkiWjh0bcjIWNhHaz5bheGWhxECQ6K63zf-QpqEUH-eJ4dAv_bMPbZXmMFVJ4Nt34fXPU7Q3U-2_LrrQ7v2ZDzaO_zy37L0-EwV1doIhDV4UwlNZrn6ypAYSn2oOdP2uJPwJJDEv-4WfEhBBj9JcFPz8Q4XQSWyPMCDcTshEyaTU0417BzE/s320/Image_fx%20(35).png" alt="Logo" class="h-8 w-8 object-contain flex-shrink-0">
-                    <span class="title-font nav-logo-text text-gray-900">Influxfinancetrading</span>
+                <!-- Logo -->
+                <a href="/" class="nav-logo">
+                    <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjzlrIBXP5-dkiWjh0bcjIWNhHaz5bheGWhxECQ6K63zf-QpqEUH-eJ4dAv_bMPbZXmMFVJ4Nt34fXPU7Q3U-2_LrrQ7v2ZDzaO_zy37L0-EwV1doIhDV4UwlNZrn6ypAYSn2oOdP2uJPwJJDEv-4WfEhBBj9JcFPz8Q4XQSWyPMCDcTshEyaTU0417BzE/s320/Image_fx%20(35).png" alt="Logo">
+                    <span class="nav-logo-text">Influxfinancetrading</span>
                 </a>
 
-                <!-- ── Desktop Nav (centre/right) ─────────────────────── -->
-                <div class="hidden lg:flex items-center gap-5 flex-1 justify-center">
-
+                <!-- Desktop centre links -->
+                <div class="nav-centre">
                     <a href="/" class="nav-link">Home</a>
 
-                    <!-- Products -->
                     <div class="nav-item">
                         <button class="nav-link" type="button">
                             Products <i class="fas fa-chevron-down nav-caret"></i>
                         </button>
                         <div class="nav-dropdown">
-                            <a href="{% url 'stocks' %}">
-                                <span class="nav-dd-icon bg-blue-50"><i class="fas fa-chart-bar text-blue-600"></i></span>Stocks
-                            </a>
-                            <a href="{% url 'crypto' %}">
-                                <span class="nav-dd-icon bg-purple-50"><i class="fab fa-bitcoin text-purple-600"></i></span>Crypto
-                            </a>
-                            <a href="{% url 'forex' %}">
-                                <span class="nav-dd-icon bg-green-50"><i class="fas fa-exchange-alt text-green-600"></i></span>Forex
-                            </a>
-                            <a href="{% url 'options' %}">
-                                <span class="nav-dd-icon bg-orange-50"><i class="fas fa-layer-group text-orange-600"></i></span>Options
-                            </a>
+                            <a href="{% url 'stocks' %}"><span class="nav-dd-icon bg-blue-50"><i class="fas fa-chart-bar text-blue-600"></i></span>Stocks</a>
+                            <a href="{% url 'crypto' %}"><span class="nav-dd-icon bg-purple-50"><i class="fab fa-bitcoin text-purple-600"></i></span>Crypto</a>
+                            <a href="{% url 'forex' %}"><span class="nav-dd-icon bg-green-50"><i class="fas fa-exchange-alt text-green-600"></i></span>Forex</a>
+                            <a href="{% url 'options' %}"><span class="nav-dd-icon bg-orange-50"><i class="fas fa-layer-group text-orange-600"></i></span>Options</a>
                         </div>
                     </div>
 
-                    <!-- Company -->
                     <div class="nav-item">
                         <button class="nav-link" type="button">
                             Company <i class="fas fa-chevron-down nav-caret"></i>
                         </button>
                         <div class="nav-dropdown">
-                            <a href="{% url 'about' %}">
-                                <span class="nav-dd-icon bg-gray-100"><i class="fas fa-building text-gray-600"></i></span>About Us
-                            </a>
-                            <a href="{% url 'contact' %}">
-                                <span class="nav-dd-icon bg-blue-50"><i class="fas fa-envelope text-blue-600"></i></span>Contact
-                            </a>
-                            <a href="{% url 'careers' %}">
-                                <span class="nav-dd-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></span>Careers
-                            </a>
-                            <a href="{% url 'press' %}">
-                                <span class="nav-dd-icon bg-violet-50"><i class="fas fa-newspaper text-violet-600"></i></span>Press
-                            </a>
+                            <a href="{% url 'about' %}"><span class="nav-dd-icon bg-gray-100"><i class="fas fa-building text-gray-600"></i></span>About Us</a>
+                            <a href="{% url 'contact' %}"><span class="nav-dd-icon bg-blue-50"><i class="fas fa-envelope text-blue-600"></i></span>Contact</a>
+                            <a href="{% url 'careers' %}"><span class="nav-dd-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></span>Careers</a>
+                            <a href="{% url 'press' %}"><span class="nav-dd-icon bg-violet-50"><i class="fas fa-newspaper text-violet-600"></i></span>Press</a>
                         </div>
                     </div>
 
@@ -875,201 +702,109 @@
                     {% endif %}
                 </div>
 
-                <!-- ── Right side: lang + auth + hamburger ─────────────── -->
-                <div class="flex items-center gap-2 flex-shrink-0">
-
-                    <!-- Language selector (all sizes) -->
+                <!-- Right cluster -->
+                <div class="nav-right">
+                    <!-- Language selector -->
                     <div class="lang-selector">
-                        <button class="lang-btn" onclick="toggleLangDropdown()">
+                        <button class="lang-btn" onclick="toggleLangDropdown()" aria-label="Select language">
                             <span id="current-flag">🇬🇧</span>
-                            <span id="current-lang" class="hidden sm:inline">English</span>
-                            <i class="fas fa-chevron-down text-xs"></i>
+                            <span id="current-lang" class="lang-label">English</span>
+                            <i class="fas fa-chevron-down" style="font-size:.55rem;"></i>
                         </button>
                         <div id="lang-dropdown" class="lang-dropdown">
-                            <div class="lang-option active" onclick="changeLang('en', 'English', '🇬🇧', event)">
-                                <span>🇬🇧</span><span>English</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('es', 'Español', '🇪🇸', event)">
-                                <span>🇪🇸</span><span>Español</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('fr', 'Français', '🇫🇷', event)">
-                                <span>🇫🇷</span><span>Français</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('de', 'Deutsch', '🇩🇪', event)">
-                                <span>🇩🇪</span><span>Deutsch</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('it', 'Italiano', '🇮🇹', event)">
-                                <span>🇮🇹</span><span>Italiano</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('pt', 'Português', '🇵🇹', event)">
-                                <span>🇵🇹</span><span>Português</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ru', 'Русский', '🇷🇺', event)">
-                                <span>🇷🇺</span><span>Русский</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('zh-CN', '中文', '🇨🇳', event)">
-                                <span>🇨🇳</span><span>中文 (简体)</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('zh-TW', '中文', '🇹🇼', event)">
-                                <span>🇹🇼</span><span>中文 (繁體)</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ja', '日本語', '🇯🇵', event)">
-                                <span>🇯🇵</span><span>日本語</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ko', '한국어', '🇰🇷', event)">
-                                <span>🇰🇷</span><span>한국어</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ar', 'العربية', '🇸🇦', event)">
-                                <span>🇸🇦</span><span>العربية</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('hi', 'हिन्दी', '🇮🇳', event)">
-                                <span>🇮🇳</span><span>हिन्दी</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('bn', 'বাংলা', '🇧🇩', event)">
-                                <span>🇧🇩</span><span>বাংলা</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('tr', 'Türkçe', '🇹🇷', event)">
-                                <span>🇹🇷</span><span>Türkçe</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('nl', 'Nederlands', '🇳🇱', event)">
-                                <span>🇳🇱</span><span>Nederlands</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('pl', 'Polski', '🇵🇱', event)">
-                                <span>🇵🇱</span><span>Polski</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('uk', 'Українська', '🇺🇦', event)">
-                                <span>🇺🇦</span><span>Українська</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('sv', 'Svenska', '🇸🇪', event)">
-                                <span>🇸🇪</span><span>Svenska</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('da', 'Dansk', '🇩🇰', event)">
-                                <span>🇩🇰</span><span>Dansk</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('no', 'Norsk', '🇳🇴', event)">
-                                <span>🇳🇴</span><span>Norsk</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('fi', 'Suomi', '🇫🇮', event)">
-                                <span>🇫🇮</span><span>Suomi</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('cs', 'Čeština', '🇨🇿', event)">
-                                <span>🇨🇿</span><span>Čeština</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ro', 'Română', '🇷🇴', event)">
-                                <span>🇷🇴</span><span>Română</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('el', 'Ελληνικά', '🇬🇷', event)">
-                                <span>🇬🇷</span><span>Ελληνικά</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('th', 'ไทย', '🇹🇭', event)">
-                                <span>🇹🇭</span><span>ไทย</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('vi', 'Tiếng Việt', '🇻🇳', event)">
-                                <span>🇻🇳</span><span>Tiếng Việt</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('id', 'Bahasa Indonesia', '🇮🇩', event)">
-                                <span>🇮🇩</span><span>Bahasa Indonesia</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ms', 'Bahasa Melayu', '🇲🇾', event)">
-                                <span>🇲🇾</span><span>Bahasa Melayu</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('fil', 'Filipino', '🇵🇭', event)">
-                                <span>🇵🇭</span><span>Filipino</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('he', 'עברית', '🇮🇱', event)">
-                                <span>🇮🇱</span><span>עברית</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('fa', 'فارسی', '🇮🇷', event)">
-                                <span>🇮🇷</span><span>فارسی</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('ur', 'اردو', '🇵🇰', event)">
-                                <span>🇵🇰</span><span>اردو</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('sw', 'Kiswahili', '🇰🇪', event)">
-                                <span>🇰🇪</span><span>Kiswahili</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('hu', 'Magyar', '🇭🇺', event)">
-                                <span>🇭🇺</span><span>Magyar</span>
-                            </div>
-                            <div class="lang-option" onclick="changeLang('af', 'Afrikaans', '🇿🇦', event)">
-                                <span>🇿🇦</span><span>Afrikaans</span>
-                            </div>
+                            <div class="lang-option active" onclick="changeLang('en','English','🇬🇧',event)"><span>🇬🇧</span><span>English</span></div>
+                            <div class="lang-option" onclick="changeLang('es','Español','🇪🇸',event)"><span>🇪🇸</span><span>Español</span></div>
+                            <div class="lang-option" onclick="changeLang('fr','Français','🇫🇷',event)"><span>🇫🇷</span><span>Français</span></div>
+                            <div class="lang-option" onclick="changeLang('de','Deutsch','🇩🇪',event)"><span>🇩🇪</span><span>Deutsch</span></div>
+                            <div class="lang-option" onclick="changeLang('it','Italiano','🇮🇹',event)"><span>🇮🇹</span><span>Italiano</span></div>
+                            <div class="lang-option" onclick="changeLang('pt','Português','🇵🇹',event)"><span>🇵🇹</span><span>Português</span></div>
+                            <div class="lang-option" onclick="changeLang('ru','Русский','🇷🇺',event)"><span>🇷🇺</span><span>Русский</span></div>
+                            <div class="lang-option" onclick="changeLang('zh-CN','中文','🇨🇳',event)"><span>🇨🇳</span><span>中文 (简体)</span></div>
+                            <div class="lang-option" onclick="changeLang('zh-TW','中文','🇹🇼',event)"><span>🇹🇼</span><span>中文 (繁體)</span></div>
+                            <div class="lang-option" onclick="changeLang('ja','日本語','🇯🇵',event)"><span>🇯🇵</span><span>日本語</span></div>
+                            <div class="lang-option" onclick="changeLang('ko','한국어','🇰🇷',event)"><span>🇰🇷</span><span>한국어</span></div>
+                            <div class="lang-option" onclick="changeLang('ar','العربية','🇸🇦',event)"><span>🇸🇦</span><span>العربية</span></div>
+                            <div class="lang-option" onclick="changeLang('hi','हिन्दी','🇮🇳',event)"><span>🇮🇳</span><span>हिन्दी</span></div>
+                            <div class="lang-option" onclick="changeLang('bn','বাংলা','🇧🇩',event)"><span>🇧🇩</span><span>বাংলা</span></div>
+                            <div class="lang-option" onclick="changeLang('tr','Türkçe','🇹🇷',event)"><span>🇹🇷</span><span>Türkçe</span></div>
+                            <div class="lang-option" onclick="changeLang('nl','Nederlands','🇳🇱',event)"><span>🇳🇱</span><span>Nederlands</span></div>
+                            <div class="lang-option" onclick="changeLang('pl','Polski','🇵🇱',event)"><span>🇵🇱</span><span>Polski</span></div>
+                            <div class="lang-option" onclick="changeLang('uk','Українська','🇺🇦',event)"><span>🇺🇦</span><span>Українська</span></div>
+                            <div class="lang-option" onclick="changeLang('sv','Svenska','🇸🇪',event)"><span>🇸🇪</span><span>Svenska</span></div>
+                            <div class="lang-option" onclick="changeLang('da','Dansk','🇩🇰',event)"><span>🇩🇰</span><span>Dansk</span></div>
+                            <div class="lang-option" onclick="changeLang('no','Norsk','🇳🇴',event)"><span>🇳🇴</span><span>Norsk</span></div>
+                            <div class="lang-option" onclick="changeLang('fi','Suomi','🇫🇮',event)"><span>🇫🇮</span><span>Suomi</span></div>
+                            <div class="lang-option" onclick="changeLang('cs','Čeština','🇨🇿',event)"><span>🇨🇿</span><span>Čeština</span></div>
+                            <div class="lang-option" onclick="changeLang('ro','Română','🇷🇴',event)"><span>🇷🇴</span><span>Română</span></div>
+                            <div class="lang-option" onclick="changeLang('el','Ελληνικά','🇬🇷',event)"><span>🇬🇷</span><span>Ελληνικά</span></div>
+                            <div class="lang-option" onclick="changeLang('th','ไทย','🇹🇭',event)"><span>🇹🇭</span><span>ไทย</span></div>
+                            <div class="lang-option" onclick="changeLang('vi','Tiếng Việt','🇻🇳',event)"><span>🇻🇳</span><span>Tiếng Việt</span></div>
+                            <div class="lang-option" onclick="changeLang('id','Bahasa Indonesia','🇮🇩',event)"><span>🇮🇩</span><span>Bahasa Indonesia</span></div>
+                            <div class="lang-option" onclick="changeLang('ms','Bahasa Melayu','🇲🇾',event)"><span>🇲🇾</span><span>Bahasa Melayu</span></div>
+                            <div class="lang-option" onclick="changeLang('fil','Filipino','🇵🇭',event)"><span>🇵🇭</span><span>Filipino</span></div>
+                            <div class="lang-option" onclick="changeLang('he','עברית','🇮🇱',event)"><span>🇮🇱</span><span>עברית</span></div>
+                            <div class="lang-option" onclick="changeLang('fa','فارسی','🇮🇷',event)"><span>🇮🇷</span><span>فارسی</span></div>
+                            <div class="lang-option" onclick="changeLang('ur','اردو','🇵🇰',event)"><span>🇵🇰</span><span>اردو</span></div>
+                            <div class="lang-option" onclick="changeLang('sw','Kiswahili','🇰🇪',event)"><span>🇰🇪</span><span>Kiswahili</span></div>
+                            <div class="lang-option" onclick="changeLang('hu','Magyar','🇭🇺',event)"><span>🇭🇺</span><span>Magyar</span></div>
+                            <div class="lang-option" onclick="changeLang('af','Afrikaans','🇿🇦',event)"><span>🇿🇦</span><span>Afrikaans</span></div>
                         </div>
                     </div>
-                </div>
 
                     <!-- Desktop auth buttons -->
-                    <div class="hidden lg:flex items-center gap-2">
+                    <div class="nav-auth-desktop">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'logout' %}" class="btn-login text-sm px-4 py-2">Logout</a>
+                            <a href="{% url 'logout' %}" class="btn-login">Logout</a>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn-login text-sm px-4 py-2">Login</a>
-                            <a href="{% url 'register' %}" class="btn-primary text-sm px-4 py-2">Sign Up</a>
+                            <a href="{% url 'login' %}" class="btn-login">Login</a>
+                            <a href="{% url 'register' %}" class="btn-primary">Sign Up</a>
                         {% endif %}
                     </div>
 
-                    <!-- Hamburger (tablet + mobile only) -->
-                    <button class="mob-menu-btn lg:hidden" id="mob-menu-btn" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
+                    <!-- Hamburger -->
+                    <button class="mob-menu-btn" id="mob-menu-btn"
+                            aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-menu">
                         <i class="fas fa-bars text-sm" id="mob-menu-icon"></i>
                     </button>
                 </div>
 
-            </div>
-        </div><!-- /max-w -->
+            </div><!-- /nav-inner -->
+        </div>
 
-        <!-- ── Mobile / Tablet Drawer ─────────────────────────────────── -->
+        <!-- Mobile Drawer -->
         <div id="mobile-menu" role="navigation" aria-label="Mobile menu">
             <div class="py-2 pb-4">
 
-                <!-- Home -->
                 <a href="/" class="mob-link">
                     <span class="mob-icon bg-gray-100"><i class="fas fa-home text-gray-600"></i></span>Home
                 </a>
 
                 <!-- Products accordion -->
                 <button class="mob-accordion-btn" aria-expanded="false" onclick="toggleMobAccordion(this)">
-                    <span class="flex items-center gap-2">
-                        <span class="mob-icon bg-blue-50" style="width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;"><i class="fas fa-th text-blue-600 text-xs"></i></span>
-                        Products
+                    <span style="display:flex;align-items:center;gap:8px;">
+                        <span class="mob-icon bg-blue-50"><i class="fas fa-th text-blue-600" style="font-size:.7rem;"></i></span>Products
                     </span>
                     <i class="fas fa-chevron-down mob-acc-caret"></i>
                 </button>
                 <div class="mob-accordion-panel">
-                    <a href="{% url 'stocks' %}" class="mob-link">
-                        <span class="mob-icon bg-blue-50"><i class="fas fa-chart-bar text-blue-600"></i></span>Stocks
-                    </a>
-                    <a href="{% url 'crypto' %}" class="mob-link">
-                        <span class="mob-icon bg-purple-50"><i class="fab fa-bitcoin text-purple-600"></i></span>Crypto
-                    </a>
-                    <a href="{% url 'forex' %}" class="mob-link">
-                        <span class="mob-icon bg-green-50"><i class="fas fa-exchange-alt text-green-600"></i></span>Forex
-                    </a>
-                    <a href="{% url 'options' %}" class="mob-link">
-                        <span class="mob-icon bg-orange-50"><i class="fas fa-layer-group text-orange-600"></i></span>Options
-                    </a>
+                    <a href="{% url 'stocks' %}" class="mob-link"><span class="mob-icon bg-blue-50"><i class="fas fa-chart-bar text-blue-600"></i></span>Stocks</a>
+                    <a href="{% url 'crypto' %}" class="mob-link"><span class="mob-icon bg-purple-50"><i class="fab fa-bitcoin text-purple-600"></i></span>Crypto</a>
+                    <a href="{% url 'forex' %}" class="mob-link"><span class="mob-icon bg-green-50"><i class="fas fa-exchange-alt text-green-600"></i></span>Forex</a>
+                    <a href="{% url 'options' %}" class="mob-link"><span class="mob-icon bg-orange-50"><i class="fas fa-layer-group text-orange-600"></i></span>Options</a>
                 </div>
 
                 <!-- Company accordion -->
                 <button class="mob-accordion-btn" aria-expanded="false" onclick="toggleMobAccordion(this)">
-                    <span class="flex items-center gap-2">
-                        <span class="mob-icon bg-gray-100" style="width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;"><i class="fas fa-building text-gray-600 text-xs"></i></span>
-                        Company
+                    <span style="display:flex;align-items:center;gap:8px;">
+                        <span class="mob-icon bg-gray-100"><i class="fas fa-building text-gray-600" style="font-size:.7rem;"></i></span>Company
                     </span>
                     <i class="fas fa-chevron-down mob-acc-caret"></i>
                 </button>
                 <div class="mob-accordion-panel">
-                    <a href="{% url 'about' %}" class="mob-link">
-                        <span class="mob-icon bg-gray-100"><i class="fas fa-building text-gray-600"></i></span>About Us
-                    </a>
-                    <a href="{% url 'contact' %}" class="mob-link">
-                        <span class="mob-icon bg-blue-50"><i class="fas fa-envelope text-blue-600"></i></span>Contact
-                    </a>
-                    <a href="{% url 'careers' %}" class="mob-link">
-                        <span class="mob-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></span>Careers
-                    </a>
-                    <a href="{% url 'press' %}" class="mob-link">
-                        <span class="mob-icon bg-violet-50"><i class="fas fa-newspaper text-violet-600"></i></span>Press
-                    </a>
+                    <a href="{% url 'about' %}" class="mob-link"><span class="mob-icon bg-gray-100"><i class="fas fa-building text-gray-600"></i></span>About Us</a>
+                    <a href="{% url 'contact' %}" class="mob-link"><span class="mob-icon bg-blue-50"><i class="fas fa-envelope text-blue-600"></i></span>Contact</a>
+                    <a href="{% url 'careers' %}" class="mob-link"><span class="mob-icon bg-green-50"><i class="fas fa-briefcase text-green-600"></i></span>Careers</a>
+                    <a href="{% url 'press' %}" class="mob-link"><span class="mob-icon bg-violet-50"><i class="fas fa-newspaper text-violet-600"></i></span>Press</a>
                 </div>
 
                 {% if user.is_authenticated %}
@@ -1078,7 +813,7 @@
                         <span class="mob-icon bg-indigo-50"><i class="fas fa-tachometer-alt text-indigo-600"></i></span>Dashboard
                     </a>
                     <div class="mob-divider"></div>
-                    <a href="{% url 'logout' %}" class="mob-auth-logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                    <a href="{% url 'logout' %}" class="mob-auth-logout"><i class="fas fa-sign-out-alt" style="margin-right:6px;"></i>Logout</a>
                 {% else %}
                     <div class="mob-divider"></div>
                     <a href="{% url 'login' %}" class="mob-auth-login">Login</a>
@@ -1086,8 +821,7 @@
                 {% endif %}
 
             </div>
-        </div><!-- /mobile-menu -->
-
+        </div>
     </nav>
 
     <!-- Messages -->
@@ -1095,21 +829,17 @@
     <div class="alert-container">
         {% for message in messages %}
         <div class="alert alert-{{ message.tags }}">
-            <div class="flex items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    {% if message.tags == 'success' %}
-                        <i class="fas fa-check-circle text-green-500"></i>
-                    {% elif message.tags == 'error' %}
-                        <i class="fas fa-exclamation-circle text-red-500"></i>
-                    {% elif message.tags == 'warning' %}
-                        <i class="fas fa-exclamation-triangle text-yellow-500"></i>
-                    {% else %}
-                        <i class="fas fa-info-circle text-blue-500"></i>
-                    {% endif %}
-                    <p class="text-sm font-medium text-gray-800">{{ message }}</p>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
+                    {% if message.tags == 'success' %}<i class="fas fa-check-circle" style="color:#10b981;"></i>
+                    {% elif message.tags == 'error' %}<i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>
+                    {% elif message.tags == 'warning' %}<i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i>
+                    {% else %}<i class="fas fa-info-circle" style="color:#3b82f6;"></i>{% endif %}
+                    <p style="font-size:.875rem;font-weight:500;color:#1f2937;margin:0;">{{ message }}</p>
                 </div>
-                <button onclick="this.parentElement.parentElement.remove()" class="text-gray-400 hover:text-gray-600 ml-2">
-                    <i class="fas fa-times text-sm"></i>
+                <button onclick="this.parentElement.parentElement.remove()"
+                        style="background:none;border:none;cursor:pointer;color:#9ca3af;padding:2px;line-height:1;">
+                    <i class="fas fa-times" style="font-size:.8rem;"></i>
                 </button>
             </div>
         </div>
@@ -1118,417 +848,264 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+    <main>{% block content %}{% endblock %}</main>
 
     <!-- Footer -->
     <footer class="py-14 mt-16">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
-                <!-- Company -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10 mb-10">
                 <div>
                     <h3 class="title-font text-base mb-4 text-gray-900">Influxfinancetrading</h3>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-5">
+                    <p style="color:#6b7280;font-size:.875rem;line-height:1.65;margin-bottom:1.2rem;">
                         Professional trading platform. Trade with confidence across global markets.
                     </p>
-                    <div class="flex gap-3">
-                        <a href="#" class="w-8 h-8 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all text-sm">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="w-8 h-8 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all text-sm">
-                            <i class="fab fa-facebook"></i>
-                        </a>
-                        <a href="#" class="w-8 h-8 border border-gray-200 rounded-lg flex items-center justify-center text-gray-400 hover:border-gray-400 hover:text-gray-600 transition-all text-sm">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
+                    <div style="display:flex;gap:10px;">
+                        <a href="#" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9ca3af;transition:all .2s;text-decoration:none;font-size:.875rem;"><i class="fab fa-twitter"></i></a>
+                        <a href="#" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9ca3af;transition:all .2s;text-decoration:none;font-size:.875rem;"><i class="fab fa-facebook"></i></a>
+                        <a href="#" style="width:32px;height:32px;border:1px solid #e5e7eb;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#9ca3af;transition:all .2s;text-decoration:none;font-size:.875rem;"><i class="fab fa-linkedin"></i></a>
                     </div>
                 </div>
-
-                <!-- Products -->
                 <div>
-                    <h4 class="font-semibold text-sm mb-4 text-gray-900">Products</h4>
-                    <ul class="space-y-2.5">
-                        <li><a href="{% url 'stocks' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Stocks</a></li>
-                        <li><a href="{% url 'crypto' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Crypto</a></li>
-                        <li><a href="{% url 'forex' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Forex</a></li>
-                        <li><a href="{% url 'options' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Options</a></li>
+                    <h4 style="font-weight:600;font-size:.875rem;margin-bottom:1rem;color:#111827;">Products</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+                        <li><a href="{% url 'stocks' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Stocks</a></li>
+                        <li><a href="{% url 'crypto' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Crypto</a></li>
+                        <li><a href="{% url 'forex' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Forex</a></li>
+                        <li><a href="{% url 'options' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Options</a></li>
                     </ul>
                 </div>
-
-                <!-- Company -->
                 <div>
-                    <h4 class="font-semibold text-sm mb-4 text-gray-900">Company</h4>
-                    <ul class="space-y-2.5">
-                        <li><a href="{% url 'about' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">About Us</a></li>
-                        <li><a href="{% url 'contact' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Contact</a></li>
-                        <li><a href="{% url 'careers' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Careers</a></li>
-                        <li><a href="{% url 'press' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Press</a></li>
+                    <h4 style="font-weight:600;font-size:.875rem;margin-bottom:1rem;color:#111827;">Company</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+                        <li><a href="{% url 'about' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">About Us</a></li>
+                        <li><a href="{% url 'contact' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Contact</a></li>
+                        <li><a href="{% url 'careers' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Careers</a></li>
+                        <li><a href="{% url 'press' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Press</a></li>
                     </ul>
                 </div>
-
-                <!-- Legal -->
                 <div>
-                    <h4 class="font-semibold text-sm mb-4 text-gray-900">Legal</h4>
-                    <ul class="space-y-2.5">
-                        <li><a href="{% url 'privacy_policy' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Privacy Policy</a></li>
-                        <li><a href="{% url 'terms_of_service' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Terms of Service</a></li>
-                        <li><a href="{% url 'cookie_policy' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Cookie Policy</a></li>
-                        <li><a href="{% url 'disclaimer' %}" class="text-gray-500 text-sm hover:text-gray-800 transition-colors">Disclaimer</a></li>
+                    <h4 style="font-weight:600;font-size:.875rem;margin-bottom:1rem;color:#111827;">Legal</h4>
+                    <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+                        <li><a href="{% url 'privacy_policy' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Privacy Policy</a></li>
+                        <li><a href="{% url 'terms_of_service' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Terms of Service</a></li>
+                        <li><a href="{% url 'cookie_policy' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Cookie Policy</a></li>
+                        <li><a href="{% url 'disclaimer' %}" style="color:#6b7280;font-size:.875rem;text-decoration:none;">Disclaimer</a></li>
                     </ul>
                 </div>
             </div>
-
-            <div class="border-t border-gray-100 pt-8">
-                <div class="flex flex-col md:flex-row justify-between items-center gap-3">
-                    <p class="text-gray-400 text-xs">
-                        © 2024 Influxfinancetrading. All rights reserved.
-                    </p>
-                    <p class="text-gray-400 text-xs flex items-center gap-1.5">
-                        <i class="fas fa-shield-alt text-gray-400"></i>
-                        Bank-Level Security · Licensed &amp; Regulated
-                    </p>
-                </div>
+            <div style="border-top:1px solid #f3f4f6;padding-top:2rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;">
+                <p style="color:#9ca3af;font-size:.75rem;">© 2024 Influxfinancetrading. All rights reserved.</p>
+                <p style="color:#9ca3af;font-size:.75rem;display:flex;align-items:center;gap:6px;">
+                    <i class="fas fa-shield-alt"></i> Bank-Level Security · Licensed &amp; Regulated
+                </p>
             </div>
         </div>
     </footer>
 
-    <!-- Chat Support (Only for authenticated users) -->
+    <!-- Chat (authenticated only) -->
     {% if user.is_authenticated %}
-    <!-- Chat FAB -->
-    <div id="chat-fab" onclick="toggleChat()">
-        <i class="fas fa-comments text-xl"></i>
+    <div id="chat-fab" onclick="toggleChat()" title="Support Chat">
+        <i class="fas fa-comments" style="font-size:1.2rem;"></i>
     </div>
-
-    <!-- Chat Window -->
     <div id="chat-window">
         <div class="chat-header">
             <div>
-                <div class="flex items-center gap-2">
-                    <i class="fas fa-headset"></i>
-                    <span>Support Chat</span>
-                </div>
-                <div class="text-xs mt-0.5 opacity-70">We typically reply in minutes</div>
+                <div style="display:flex;align-items:center;gap:8px;"><i class="fas fa-headset"></i><span>Support Chat</span></div>
+                <div style="font-size:.72rem;opacity:.7;margin-top:2px;">We typically reply in minutes</div>
             </div>
-            <div class="flex items-center gap-3">
-                <button onclick="clearChat()" class="opacity-70 hover:opacity-100 transition-opacity" title="New Chat">
-                    <i class="fas fa-redo text-sm"></i>
-                </button>
-                <button onclick="closeChat()" class="opacity-70 hover:opacity-100 transition-opacity">
-                    <i class="fas fa-times"></i>
-                </button>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button onclick="clearChat()" style="background:none;border:none;cursor:pointer;color:#fff;opacity:.7;" title="New Chat"><i class="fas fa-redo" style="font-size:.875rem;"></i></button>
+                <button onclick="closeChat()" style="background:none;border:none;cursor:pointer;color:#fff;opacity:.7;"><i class="fas fa-times"></i></button>
             </div>
         </div>
-        
         <div id="chat-body"></div>
-        
         <div class="chat-footer">
-            <input 
-                type="text" 
-                id="chat-input" 
-                placeholder="Type your message..."
-                onkeypress="if(event.key === 'Enter') sendMessage()"
-                autocomplete="off"
-            >
-            <button onclick="sendMessage()" class="px-4 py-2 rounded-lg text-sm font-semibold transition-all" style="background: var(--primary); color: #fff;">
+            <input type="text" id="chat-input" placeholder="Type your message…"
+                   onkeypress="if(event.key==='Enter')sendMessage()" autocomplete="off">
+            <button onclick="sendMessage()"
+                    style="padding:.55rem 1rem;border-radius:8px;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:.875rem;">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
     {% endif %}
 
-    <!-- Google Translate Element (Hidden) -->
-    <div id="google_translate_element" style="display: none;"></div>
-    
-    <!-- Google Translate Script -->
-    <script type="text/javascript">
+    <!-- Google Translate (hidden) -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script>
         function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
-                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,nl,pl,uk,sv,da,no,fi,cs,ro,el,th,vi,id,ms,fil,he,fa,ur,sw,hu,af,sq,az,ka,et,lv,lt,sk,sl,bg,hr,sr,is,kk,hy,mk,ne,si,my,km,lo,am,zu,ha,ig,yo',
+                includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,zh-TW,ja,ko,ar,hi,bn,tr,nl,pl,uk,sv,da,no,fi,cs,ro,el,th,vi,id,ms,fil,he,fa,ur,sw,hu,af',
                 autoDisplay: false
             }, 'google_translate_element');
         }
     </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    
-    <!-- Main JavaScript -->
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script>
-        // ── Mobile Menu Toggle ────────────────────────────────────
-        (function() {
-            const btn  = document.getElementById('mob-menu-btn');
-            const menu = document.getElementById('mobile-menu');
-            const icon = document.getElementById('mob-menu-icon');
-            if (!btn || !menu) return;
+    /* ── Mobile Menu ─────────────────────────────────────── */
+    (function () {
+        const btn  = document.getElementById('mob-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const icon = document.getElementById('mob-menu-icon');
+        if (!btn || !menu) return;
 
-            btn.addEventListener('click', function() {
-                const open = menu.classList.toggle('open');
-                btn.setAttribute('aria-expanded', open);
-                icon.className = open ? 'fas fa-times text-sm' : 'fas fa-bars text-sm';
-                // prevent body scroll when menu is open on small screens
-                document.body.style.overflow = open ? 'hidden' : '';
-            });
-
-            // Close on outside click / escape
-            document.addEventListener('click', function(e) {
-                if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) {
-                    menu.classList.remove('open');
-                    btn.setAttribute('aria-expanded', 'false');
-                    icon.className = 'fas fa-bars text-sm';
-                    document.body.style.overflow = '';
-                }
-            });
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && menu.classList.contains('open')) {
-                    menu.classList.remove('open');
-                    btn.setAttribute('aria-expanded', 'false');
-                    icon.className = 'fas fa-bars text-sm';
-                    document.body.style.overflow = '';
-                    btn.focus();
-                }
-            });
-
-            // Re-enable body scroll if viewport resizes to desktop
-            window.addEventListener('resize', function() {
-                if (window.innerWidth >= 1024) {
-                    menu.classList.remove('open');
-                    btn.setAttribute('aria-expanded', 'false');
-                    icon.className = 'fas fa-bars text-sm';
-                    document.body.style.overflow = '';
-                }
-            });
-        })();
-
-        // ── Mobile Accordion ─────────────────────────────────────────
-        function toggleMobAccordion(btn) {
-            const panel = btn.nextElementSibling;
-            const open  = btn.getAttribute('aria-expanded') === 'true';
-            // Close all other panels first
-            document.querySelectorAll('.mob-accordion-btn').forEach(function(b) {
-                if (b !== btn) {
-                    b.setAttribute('aria-expanded', 'false');
-                    const p = b.nextElementSibling;
-                    if (p) p.classList.remove('open');
-                }
-            });
-            btn.setAttribute('aria-expanded', !open);
-            if (panel) panel.classList.toggle('open', !open);
+        function close() {
+            menu.classList.remove('open');
+            btn.setAttribute('aria-expanded', 'false');
+            icon.className = 'fas fa-bars text-sm';
+            document.body.style.overflow = '';
         }
-
-        // Language Dropdown
-        function toggleLangDropdown() {
-            document.getElementById('lang-dropdown').classList.toggle('active');
-        }
-
-        function changeLang(code, name, flag, e) {
-            document.getElementById('current-lang').textContent = name;
-            document.getElementById('current-flag').textContent = flag;
-            document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('active'));
-            (e || event).target.closest('.lang-option').classList.add('active');
-            
-            const select = document.querySelector('.goog-te-combo');
-            if (select) {
-                select.value = code;
-                select.dispatchEvent(new Event('change'));
-            }
-            toggleLangDropdown();
-        }
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            const selector = document.querySelector('.lang-selector');
-            const dropdown = document.getElementById('lang-dropdown');
-            if (selector && !selector.contains(e.target)) {
-                dropdown?.classList.remove('active');
-            }
+        btn.addEventListener('click', function () {
+            const open = menu.classList.toggle('open');
+            btn.setAttribute('aria-expanded', open);
+            icon.className = open ? 'fas fa-times text-sm' : 'fas fa-bars text-sm';
+            document.body.style.overflow = open ? 'hidden' : '';
         });
+        document.addEventListener('click', function (e) {
+            if (menu.classList.contains('open') && !menu.contains(e.target) && !btn.contains(e.target)) close();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') close();
+        });
+        window.addEventListener('resize', function () {
+            if (window.innerWidth >= 1024) close();
+        });
+    })();
 
-        // Auto-hide messages after 5 seconds
-        setTimeout(function() {
-            document.querySelectorAll('.alert').forEach(function(alert) {
-                alert.style.transition = 'all 0.4s ease';
-                alert.style.transform = 'translateX(350px)';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 400);
+    /* ── Mobile Accordion ────────────────────────────────── */
+    function toggleMobAccordion(btn) {
+        const panel = btn.nextElementSibling;
+        const open  = btn.getAttribute('aria-expanded') === 'true';
+        document.querySelectorAll('.mob-accordion-btn').forEach(function (b) {
+            if (b !== btn) { b.setAttribute('aria-expanded','false'); b.nextElementSibling?.classList.remove('open'); }
+        });
+        btn.setAttribute('aria-expanded', !open);
+        panel?.classList.toggle('open', !open);
+    }
+
+    /* ── Language Dropdown ───────────────────────────────── */
+    function toggleLangDropdown() {
+        document.getElementById('lang-dropdown').classList.toggle('active');
+    }
+    function changeLang(code, name, flag, e) {
+        document.getElementById('current-lang').textContent = name;
+        document.getElementById('current-flag').textContent = flag;
+        document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));
+        e.target.closest('.lang-option').classList.add('active');
+        const sel = document.querySelector('.goog-te-combo');
+        if (sel) { sel.value = code; sel.dispatchEvent(new Event('change')); }
+        document.getElementById('lang-dropdown').classList.remove('active');
+    }
+    document.addEventListener('click', function (e) {
+        const sel = document.querySelector('.lang-selector');
+        if (sel && !sel.contains(e.target)) document.getElementById('lang-dropdown')?.classList.remove('active');
+    });
+
+    /* ── Auto-hide messages ──────────────────────────────── */
+    setTimeout(function () {
+        document.querySelectorAll('.alert').forEach(function (a) {
+            a.style.transition = 'all .4s ease';
+            a.style.transform  = 'translateX(110%)';
+            a.style.opacity    = '0';
+            setTimeout(() => a.remove(), 400);
+        });
+    }, 5000);
+
+    {% if user.is_authenticated %}
+    /* ── Chat ────────────────────────────────────────────── */
+    let chatOpen = false, currentChatId = null, messageInterval = null;
+
+    function toggleChat() {
+        chatOpen = !chatOpen;
+        const win = document.getElementById('chat-window');
+        const fab = document.getElementById('chat-fab');
+        if (chatOpen) { win.classList.add('active'); fab.style.display = 'none'; loadChat(); startPolling(); }
+        else          { win.classList.remove('active'); fab.style.display = 'flex'; stopPolling(); }
+    }
+    function closeChat() {
+        chatOpen = false;
+        document.getElementById('chat-window').classList.remove('active');
+        document.getElementById('chat-fab').style.display = 'flex';
+        stopPolling();
+    }
+    async function loadChat() {
+        try {
+            const r = await fetch('{% url "get_or_create_chat" %}');
+            const d = await r.json();
+            currentChatId = d.chat_id;
+            displayMessages(d.messages);
+        } catch(e) { console.error(e); }
+    }
+    function displayMessages(messages) {
+        const body = document.getElementById('chat-body');
+        if (!messages.length) {
+            body.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;padding:20px;color:#9ca3af;">
+                <i class="fas fa-comments" style="font-size:2rem;margin-bottom:10px;color:#d1d5db;"></i>
+                <p style="font-size:.875rem;font-weight:600;color:#4b5563;margin:0 0 4px;">Start a conversation</p>
+                <p style="font-size:.78rem;margin:0;">Our support team is here to help</p></div>`;
+            return;
+        }
+        body.innerHTML = messages.map(function(msg) {
+            const time   = new Date(msg.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+            const isUser = msg.sender_type === 'USER';
+            return `<div class="chat-message ${isUser?'user':'support'}">
+                ${!isUser ? `<div style="font-size:.72rem;color:#9ca3af;margin-bottom:2px;font-weight:500;">${msg.sender_name}</div>` : ''}
+                <div class="message-bubble">${msg.message}</div>
+                <div style="font-size:.7rem;color:#9ca3af;margin-top:2px;">${time}</div>
+            </div>`;
+        }).join('');
+        scrollToBottom();
+    }
+    async function sendMessage() {
+        const input = document.getElementById('chat-input');
+        const msg   = input.value.trim();
+        if (!msg) return;
+        try {
+            const r = await fetch('{% url "send_support_message" %}', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')},
+                body: JSON.stringify({message: msg})
             });
-        }, 5000);
-
-        {% if user.is_authenticated %}
-        // Chat Support Functions
-        let chatOpen = false;
-        let currentChatId = null;
-        let messageInterval = null;
-        
-        function toggleChat() {
-            chatOpen = !chatOpen;
-            const window = document.getElementById('chat-window');
-            const fab = document.getElementById('chat-fab');
-            
-            if (chatOpen) {
-                window.classList.add('active');
-                fab.style.display = 'none';
-                loadChat();
-                startPolling();
-            } else {
-                window.classList.remove('active');
-                fab.style.display = 'flex';
-                stopPolling();
-            }
+            const d = await r.json();
+            if (d.success) { input.value = ''; displayMessages(d.messages); }
+        } catch(e) { console.error(e); }
+    }
+    async function clearChat() {
+        if (!confirm('Clear this chat and start a new conversation?')) return;
+        try {
+            const r = await fetch('{% url "clear_support_chat" %}', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','X-CSRFToken':getCookie('csrftoken')}
+            });
+            const d = await r.json();
+            if (d.success) { currentChatId = d.chat_id; displayMessages(d.messages); }
+        } catch(e) { console.error(e); }
+    }
+    async function loadChatMessages() {
+        try {
+            const r = await fetch('{% url "get_chat_messages" %}');
+            const d = await r.json();
+            if (d.messages) displayMessages(d.messages);
+        } catch(e) {}
+    }
+    function startPolling() { messageInterval = setInterval(function(){ if(chatOpen) loadChatMessages(); }, 5000); }
+    function stopPolling()  { if(messageInterval){ clearInterval(messageInterval); messageInterval=null; } }
+    function scrollToBottom() { const b=document.getElementById('chat-body'); setTimeout(()=>{ b.scrollTop=b.scrollHeight; },80); }
+    function getCookie(name) {
+        let v=null;
+        if(document.cookie){
+            document.cookie.split(';').forEach(function(c){
+                c=c.trim();
+                if(c.startsWith(name+'=')) v=decodeURIComponent(c.slice(name.length+1));
+            });
         }
-        
-        function closeChat() {
-            chatOpen = false;
-            document.getElementById('chat-window').classList.remove('active');
-            document.getElementById('chat-fab').style.display = 'flex';
-            stopPolling();
-        }
-        
-        async function loadChat() {
-            try {
-                const response = await fetch('{% url "get_or_create_chat" %}');
-                const data = await response.json();
-                currentChatId = data.chat_id;
-                displayMessages(data.messages);
-            } catch (error) {
-                console.error('Error loading chat:', error);
-            }
-        }
-        
-        function displayMessages(messages) {
-            const body = document.getElementById('chat-body');
-            
-            if (messages.length === 0) {
-                body.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-full text-gray-400 text-center px-4">
-                        <i class="fas fa-comments text-4xl mb-3 text-gray-300"></i>
-                        <p class="text-sm font-semibold text-gray-600">Start a conversation</p>
-                        <p class="text-xs mt-1 text-gray-400">Our support team is here to help</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            body.innerHTML = messages.map(msg => {
-                const time = new Date(msg.created_at).toLocaleTimeString('en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                const isUser = msg.sender_type === 'USER';
-                
-                return `
-                    <div class="chat-message ${isUser ? 'user' : 'support'}">
-                        ${!isUser ? `<div class="text-xs text-gray-400 mb-1 font-medium">${msg.sender_name}</div>` : ''}
-                        <div class="message-bubble">
-                            ${msg.message}
-                        </div>
-                        <div class="text-xs text-gray-400 mt-1">${time}</div>
-                    </div>
-                `;
-            }).join('');
-            
-            scrollToBottom();
-        }
-        
-        async function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            
-            if (!message) return;
-            
-            try {
-                const response = await fetch('{% url "send_support_message" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({ message })
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    input.value = '';
-                    displayMessages(data.messages);
-                }
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
-        }
-        
-        async function clearChat() {
-            if (!confirm('Clear this chat and start a new conversation?')) return;
-            
-            try {
-                const response = await fetch('{% url "clear_support_chat" %}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    }
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentChatId = data.chat_id;
-                    displayMessages(data.messages);
-                }
-            } catch (error) {
-                console.error('Error clearing chat:', error);
-            }
-        }
-        
-        async function loadChatMessages() {
-            try {
-                const response = await fetch('{% url "get_chat_messages" %}');
-                const data = await response.json();
-                if (data.messages) {
-                    displayMessages(data.messages);
-                }
-            } catch (error) {
-                console.error('Error loading messages:', error);
-            }
-        }
-        
-        function startPolling() {
-            messageInterval = setInterval(() => {
-                if (chatOpen) loadChatMessages();
-            }, 5000);
-        }
-        
-        function stopPolling() {
-            if (messageInterval) {
-                clearInterval(messageInterval);
-                messageInterval = null;
-            }
-        }
-        
-        function scrollToBottom() {
-            const body = document.getElementById('chat-body');
-            setTimeout(() => {
-                body.scrollTop = body.scrollHeight;
-            }, 100);
-        }
-        
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-        }
-        {% endif %}
+        return v;
+    }
+    {% endif %}
     </script>
-    
+
     {% block extra_js %}{% endblock %}
 </body>
 </html>
