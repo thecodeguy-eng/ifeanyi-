@@ -4,43 +4,108 @@
 
 {% block extra_css %}
 <style>
+/* ── Hero card ─────────────────────────────────────────── */
 .detail-hero {
     background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 100%);
     border-radius: 16px;
     padding: 2rem;
     color: #fff;
+    /* FIX: prevent overflow on small screens */
+    min-width: 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
+
+@media (max-width: 480px) {
+    .detail-hero {
+        padding: 1.25rem 1rem;
+    }
+}
+
+/* ── ROI big number ────────────────────────────────────── */
 .roi-big {
     font-family: 'Syne', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
     line-height: 1;
     color: #22d3ee;
+    word-break: break-all;
 }
+
+@media (max-width: 400px) {
+    .roi-big {
+        font-size: 2.5rem;
+    }
+}
+
+/* ── Meta chips row ────────────────────────────────────── */
+.meta-chips-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .75rem;
+}
+
 .meta-chip {
     background: rgba(255,255,255,.15);
     border-radius: 8px;
-    padding: .5rem 1rem;
+    padding: .5rem .75rem;
     font-size: .8rem;
+    text-align: center;
+    min-width: 0;
 }
+
+.meta-chip p {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media (max-width: 360px) {
+    .meta-chips-row {
+        grid-template-columns: repeat(3, 1fr);
+        gap: .4rem;
+    }
+    .meta-chip {
+        padding: .4rem .3rem;
+        font-size: .7rem;
+    }
+    .meta-chip .font-bold {
+        font-size: .75rem;
+    }
+}
+
+/* ── Feature row ───────────────────────────────────────── */
 .feature-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: .75rem;
     padding: .65rem 0;
     border-bottom: 1px solid #f3f4f6;
     font-size: .875rem;
     color: #374151;
+    word-break: break-word;
 }
 .feature-row:last-child { border-bottom: none; }
-.feature-row i { color: #22c55e; width: 16px; text-align: center; }
+.feature-row i { color: #22c55e; width: 16px; text-align: center; flex-shrink: 0; margin-top: 2px; }
 
+/* ── Invest card ───────────────────────────────────────── */
 .invest-card {
     background: #fff;
     border: 1.5px solid #e5e7eb;
     border-radius: 16px;
     padding: 1.75rem;
+    box-sizing: border-box;
+    min-width: 0;
 }
+
+@media (max-width: 480px) {
+    .invest-card {
+        padding: 1.25rem 1rem;
+    }
+}
+
+/* ── Amount preview ────────────────────────────────────── */
 .amount-preview {
     background: #f0fdf4;
     border: 1px solid #bbf7d0;
@@ -50,6 +115,7 @@
 }
 .amount-preview.visible { display: block; }
 
+/* ── Tier / risk badges ────────────────────────────────── */
 .tier-STARTER  { background: #f0fdf4; color: #16a34a; }
 .tier-SILVER   { background: #f8fafc; color: #475569; }
 .tier-GOLD     { background: #fffbeb; color: #b45309; }
@@ -70,6 +136,67 @@
     text-transform: uppercase;
     padding: .28rem .75rem;
     border-radius: 99px;
+    white-space: nowrap;
+}
+
+/* ── Main layout grid ──────────────────────────────────── */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+    .detail-grid {
+        grid-template-columns: 3fr 2fr;
+    }
+}
+
+/* ── Sticky form (desktop only) ────────────────────────── */
+@media (min-width: 1024px) {
+    .invest-card-sticky {
+        position: sticky;
+        top: 1.5rem;
+    }
+}
+
+/* ── Quick fill buttons ────────────────────────────────── */
+.quick-fill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+
+/* ── ROI display row ───────────────────────────────────── */
+.roi-row {
+    display: flex;
+    align-items: flex-end;
+    gap: .75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+/* ── Breadcrumb ────────────────────────────────────────── */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .75rem;
+    color: #9ca3af;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+.breadcrumb a:hover { color: #4b5563; }
+
+/* ── Page overflow guard ───────────────────────────────── */
+.dashboard-main {
+    overflow-x: hidden;
+    min-width: 0;
+}
+
+section {
+    box-sizing: border-box;
 }
 </style>
 {% endblock %}
@@ -82,18 +209,18 @@
 <div class="max-w-4xl mx-auto">
 
     <!-- Breadcrumb -->
-    <div class="flex items-center gap-2 text-xs text-gray-400 mb-5">
-        <a href="{% url 'dashboard' %}" class="hover:text-gray-600">Dashboard</a>
-        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-        <a href="{% url 'investment_plans' %}" class="hover:text-gray-600">Investment Plans</a>
-        <i class="fas fa-chevron-right text-gray-300 text-xs"></i>
-        <span class="text-gray-600">{{ plan.name }}</span>
+    <div class="breadcrumb">
+        <a href="{% url 'dashboard' %}">Dashboard</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <a href="{% url 'investment_plans' %}">Investment Plans</a>
+        <i class="fas fa-chevron-right text-xs"></i>
+        <span style="color:#4b5563;">{{ plan.name }}</span>
     </div>
 
-    <div class="grid lg:grid-cols-5 gap-6">
+    <div class="detail-grid">
 
-        <!-- LEFT: Plan details (3 cols) -->
-        <div class="lg:col-span-3 space-y-5">
+        <!-- LEFT: Plan details -->
+        <div style="display:flex;flex-direction:column;gap:1.25rem;min-width:0;">
 
             <!-- Hero card -->
             <div class="detail-hero">
@@ -104,28 +231,31 @@
                     <span class="tier-badge" style="background:rgba(255,215,0,.2);color:#ffd700;">⭐ Popular</span>
                     {% endif %}
                 </div>
-                <h1 class="title-font text-2xl mb-1">{{ plan.name }}</h1>
-                {% if plan.description %}<p class="opacity-70 text-sm leading-relaxed mb-4">{{ plan.description }}</p>{% endif %}
 
-                <div class="flex items-end gap-3 mb-5">
+                <h1 class="title-font text-2xl mb-1">{{ plan.name }}</h1>
+                {% if plan.description %}
+                <p style="opacity:.7;font-size:.875rem;line-height:1.6;margin-bottom:1rem;">{{ plan.description }}</p>
+                {% endif %}
+
+                <div class="roi-row">
                     <span class="roi-big">{{ plan.roi_percentage }}%</span>
-                    <div class="mb-2 opacity-80 text-sm">
+                    <div style="margin-bottom:.5rem;opacity:.8;font-size:.875rem;">
                         Total ROI<br>
-                        <span class="text-xs opacity-60">~{{ plan.daily_roi }}% per day</span>
+                        <span style="font-size:.75rem;opacity:.6;">~{{ plan.daily_roi }}% per day</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="meta-chip text-center">
-                        <p class="opacity-60 text-xs mb-0.5">Duration</p>
-                        <p class="font-bold">{{ plan.duration_days }} days</p>
+                <div class="meta-chips-row">
+                    <div class="meta-chip">
+                        <p style="opacity:.6;font-size:.7rem;margin-bottom:.2rem;">Duration</p>
+                        <p class="font-bold">{{ plan.duration_days }}d</p>
                     </div>
-                    <div class="meta-chip text-center">
-                        <p class="opacity-60 text-xs mb-0.5">Min Invest</p>
+                    <div class="meta-chip">
+                        <p style="opacity:.6;font-size:.7rem;margin-bottom:.2rem;">Min</p>
                         <p class="font-bold">${{ plan.minimum_amount|floatformat:0 }}</p>
                     </div>
-                    <div class="meta-chip text-center">
-                        <p class="opacity-60 text-xs mb-0.5">Max Invest</p>
+                    <div class="meta-chip">
+                        <p style="opacity:.6;font-size:.7rem;margin-bottom:.2rem;">Max</p>
                         <p class="font-bold">
                             {% if plan.maximum_amount %}${{ plan.maximum_amount|floatformat:0 }}{% else %}∞{% endif %}
                         </p>
@@ -135,8 +265,8 @@
 
             <!-- Features -->
             {% if plan.features %}
-            <div class="bg-white border border-gray-200 rounded-xl p-5">
-                <h3 class="font-semibold text-gray-900 text-sm mb-3">Plan Features</h3>
+            <div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:1.25rem;">
+                <h3 style="font-weight:600;color:#111827;font-size:.875rem;margin-bottom:.75rem;">Plan Features</h3>
                 {% for feature in plan.features %}
                 <div class="feature-row">
                     <i class="fas fa-check-circle"></i>
@@ -147,9 +277,11 @@
             {% endif %}
 
             <!-- How it works -->
-            <div class="bg-blue-50 border border-blue-100 rounded-xl p-5">
-                <h3 class="font-semibold text-blue-800 text-sm mb-3"><i class="fas fa-info-circle mr-1.5"></i>How It Works</h3>
-                <ol class="text-sm text-blue-700 space-y-2 pl-4 list-decimal">
+            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:1.25rem;">
+                <h3 style="font-weight:600;color:#1e40af;font-size:.875rem;margin-bottom:.75rem;">
+                    <i class="fas fa-info-circle" style="margin-right:.4rem;"></i>How It Works
+                </h3>
+                <ol style="font-size:.875rem;color:#1d4ed8;padding-left:1.25rem;margin:0;display:flex;flex-direction:column;gap:.5rem;list-style:decimal;">
                     <li>Enter the amount you want to invest (within the plan limits).</li>
                     <li>Funds are deducted from your account balance immediately.</li>
                     <li>Your investment grows over <strong>{{ plan.duration_days }} days</strong>.</li>
@@ -158,20 +290,24 @@
             </div>
         </div>
 
-        <!-- RIGHT: Invest form (2 cols) -->
-        <div class="lg:col-span-2">
-            <div class="invest-card sticky top-6">
+        <!-- RIGHT: Invest form -->
+        <div style="min-width:0;">
+            <div class="invest-card invest-card-sticky">
                 <h3 class="title-font text-lg text-gray-900 mb-1">Invest in {{ plan.name }}</h3>
-                <p class="text-xs text-gray-400 mb-5">Your balance: <strong class="text-gray-700">${{ user.account_balance|floatformat:2 }}</strong></p>
+                <p style="font-size:.75rem;color:#9ca3af;margin-bottom:1.25rem;">
+                    Your balance: <strong style="color:#374151;">${{ user.account_balance|floatformat:2 }}</strong>
+                </p>
 
                 <!-- Alert messages -->
                 <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
                 <form id="invest-form">
                     {% csrf_token %}
-                    <label class="block text-xs font-semibold text-gray-500 mb-1.5">Investment Amount (USD)</label>
-                    <div class="relative mb-3">
-                        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
+                    <label style="display:block;font-size:.75rem;font-weight:600;color:#6b7280;margin-bottom:.4rem;">
+                        Investment Amount (USD)
+                    </label>
+                    <div style="position:relative;margin-bottom:.75rem;">
+                        <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:#9ca3af;font-weight:700;">$</span>
                         <input 
                             type="number" 
                             id="amount-input"
@@ -180,52 +316,59 @@
                             {% if plan.maximum_amount %}max="{{ plan.maximum_amount }}"{% endif %}
                             step="0.01"
                             placeholder="{{ plan.minimum_amount|floatformat:0 }}"
-                            class="w-full border border-gray-200 rounded-lg py-2.5 pl-8 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            style="width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:.65rem .75rem .65rem 2rem;font-size:.875rem;box-sizing:border-box;outline:none;transition:border-color .15s;"
+                            onfocus="this.style.borderColor='#3b82f6'" 
+                            onblur="this.style.borderColor='#e5e7eb'"
                         >
                     </div>
 
                     <!-- Quick fill buttons -->
-                    <div class="flex flex-wrap gap-1.5 mb-4">
+                    <div class="quick-fill-row">
                         {% if plan.minimum_amount %}
                         <button type="button" onclick="setAmount({{ plan.minimum_amount }})" 
-                            class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1.5 rounded-lg transition">
-                            ${{ plan.minimum_amount|floatformat:0 }}
+                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                            Min ${{ plan.minimum_amount|floatformat:0 }}
                         </button>
                         {% endif %}
                         <button type="button" onclick="setAmount(500)" 
-                            class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1.5 rounded-lg transition">$500</button>
+                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$500</button>
                         <button type="button" onclick="setAmount(1000)" 
-                            class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1.5 rounded-lg transition">$1,000</button>
+                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$1,000</button>
                         <button type="button" onclick="setAmount(5000)" 
-                            class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-600 px-2.5 py-1.5 rounded-lg transition">$5,000</button>
+                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$5,000</button>
                     </div>
 
                     <!-- Return preview -->
                     <div id="preview" class="amount-preview mb-4">
-                        <p class="text-xs text-green-600 font-semibold mb-2">Estimated Returns</p>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-500">You invest</span>
-                            <span class="font-semibold text-gray-800" id="p-invested">–</span>
+                        <p style="font-size:.75rem;color:#16a34a;font-weight:600;margin-bottom:.5rem;">Estimated Returns</p>
+                        <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.25rem;">
+                            <span style="color:#6b7280;">You invest</span>
+                            <span style="font-weight:600;color:#111827;" id="p-invested">–</span>
                         </div>
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-500">ROI ({{ plan.roi_percentage }}%)</span>
-                            <span class="font-semibold text-green-600" id="p-profit">–</span>
+                        <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.25rem;">
+                            <span style="color:#6b7280;">ROI ({{ plan.roi_percentage }}%)</span>
+                            <span style="font-weight:600;color:#16a34a;" id="p-profit">–</span>
                         </div>
-                        <div class="flex justify-between text-sm pt-2 border-t border-green-200">
-                            <span class="text-gray-700 font-semibold">Total at maturity</span>
-                            <span class="font-bold text-green-700" id="p-total">–</span>
+                        <div style="display:flex;justify-content:space-between;font-size:.875rem;padding-top:.5rem;border-top:1px solid #bbf7d0;">
+                            <span style="color:#374151;font-weight:600;">Total at maturity</span>
+                            <span style="font-weight:700;color:#15803d;" id="p-total">–</span>
                         </div>
-                        <p class="text-xs text-gray-400 mt-2">Credited after {{ plan.duration_days }} days</p>
+                        <p style="font-size:.7rem;color:#9ca3af;margin-top:.5rem;">Credited after {{ plan.duration_days }} days</p>
                     </div>
 
                     <button type="submit" id="submit-btn"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl text-sm transition flex items-center justify-center gap-2">
-                        <i class="fas fa-lock text-xs opacity-70"></i> Confirm Investment
+                        style="width:100%;background:#2563eb;color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;border:none;cursor:pointer;transition:background .18s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-sizing:border-box;"
+                        onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                        <i class="fas fa-lock" style="font-size:.7rem;opacity:.7;"></i> Confirm Investment
                     </button>
                 </form>
 
-                <p class="text-center text-xs text-gray-400 mt-3">
-                    <i class="fas fa-shield-alt mr-1"></i> Funds secured & insured
+                <p style="text-align:center;font-size:.7rem;color:#9ca3af;margin-top:.75rem;">
+                    <i class="fas fa-shield-alt" style="margin-right:.25rem;"></i> Funds secured &amp; insured
                 </p>
             </div>
         </div>
@@ -272,7 +415,6 @@ document.getElementById('invest-form').addEventListener('submit', async function
     e.preventDefault();
     const amount = document.getElementById('amount-input').value;
     const btn    = document.getElementById('submit-btn');
-    const alert  = document.getElementById('alert-box');
 
     if (!amount || parseFloat(amount) <= 0) {
         showAlert('Please enter a valid amount.', 'error');
@@ -280,7 +422,7 @@ document.getElementById('invest-form').addEventListener('submit', async function
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Processing…';
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:.5rem;"></i> Processing…';
 
     try {
         const res  = await fetch(window.location.pathname, {
@@ -299,12 +441,12 @@ document.getElementById('invest-form').addEventListener('submit', async function
         } else {
             showAlert(data.message || 'Something went wrong. Please try again.', 'error');
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-lock text-xs opacity-70 mr-2"></i> Confirm Investment';
+            btn.innerHTML = '<i class="fas fa-lock" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Confirm Investment';
         }
     } catch (err) {
         showAlert('Network error. Please try again.', 'error');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-lock text-xs opacity-70 mr-2"></i> Confirm Investment';
+        btn.innerHTML = '<i class="fas fa-lock" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Confirm Investment';
     }
 });
 

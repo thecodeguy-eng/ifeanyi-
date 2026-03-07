@@ -4,30 +4,143 @@
 
 {% block extra_css %}
 <style>
-.stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:1.25rem 1.5rem; }
-.stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:.75rem; }
+/* ── Page overflow guard ───────────────────────────────── */
+.dashboard-main {
+    overflow-x: hidden;
+    min-width: 0;
+}
 
+/* ── Stat cards grid ───────────────────────────────────── */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.stat-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.1rem 1.25rem;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: .6rem;
+    flex-shrink: 0;
+}
+
+/* FIX: stat numbers truncate on very small screens */
+.stat-card .title-font {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+@media (max-width: 360px) {
+    .stat-card {
+        padding: .85rem .75rem;
+    }
+    .stat-card .title-font {
+        font-size: 1rem;
+    }
+}
+
+/* ── Investment row ────────────────────────────────────── */
 .inv-row {
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
-    padding: 1.25rem 1.5rem;
+    padding: 1.1rem 1.25rem;
     transition: box-shadow .2s;
+    min-width: 0;
+    box-sizing: border-box;
 }
 .inv-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
 
+/* ── Investment row inner layout ───────────────────────── */
+.inv-inner {
+    display: flex;
+    flex-direction: column;
+    gap: .85rem;
+}
+
+@media (min-width: 640px) {
+    .inv-inner {
+        flex-direction: row;
+        align-items: center;
+    }
+}
+
+/* ── Amounts section ───────────────────────────────────── */
+.inv-amounts {
+    display: flex;
+    gap: 1rem;
+    flex-shrink: 0;
+}
+
+/* On mobile: spread amounts across full width */
+@media (max-width: 639px) {
+    .inv-amounts {
+        justify-content: space-between;
+        border-top: 1px solid #f3f4f6;
+        padding-top: .75rem;
+        width: 100%;
+    }
+    .inv-amounts > div {
+        text-align: left;
+        flex: 1;
+    }
+}
+
+@media (min-width: 640px) {
+    .inv-amounts {
+        gap: 1.5rem;
+        text-align: right;
+    }
+    .inv-amounts > div {
+        text-align: right;
+    }
+}
+
+/* ── Progress bar ──────────────────────────────────────── */
 .progress-wrap { background: #f3f4f6; border-radius: 99px; height: 7px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #2563eb, #06b6d4); transition: width .4s ease; }
 
+/* ── Status badges ─────────────────────────────────────── */
 .badge-active    { background:#dbeafe; color:#1d4ed8; }
 .badge-completed { background:#dcfce7; color:#16a34a; }
 .badge-cancelled { background:#fee2e2; color:#dc2626; }
 .status-badge {
-    display: inline-flex; align-items: center; gap: .3rem;
-    font-size: .68rem; font-weight: 700; letter-spacing: .05em;
-    text-transform: uppercase; padding: .25rem .65rem; border-radius: 99px;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
+    font-size: .65rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: .22rem .6rem;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
+/* ── Tier badges ───────────────────────────────────────── */
 .tier-STARTER  { background: #f0fdf4; color: #16a34a; }
 .tier-SILVER   { background: #f8fafc; color: #475569; }
 .tier-GOLD     { background: #fffbeb; color: #b45309; }
@@ -35,8 +148,77 @@
 .tier-DIAMOND  { background: #fdf4ff; color: #9333ea; }
 .tier-badge {
     display: inline-block;
-    font-size: .65rem; font-weight: 700; letter-spacing: .06em;
-    text-transform: uppercase; padding: .2rem .55rem; border-radius: 99px;
+    font-size: .63rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: .18rem .5rem;
+    border-radius: 99px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* ── Plan name row ─────────────────────────────────────── */
+.plan-name-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .4rem;
+    margin-bottom: .25rem;
+}
+
+/* ── Header row ────────────────────────────────────────── */
+.page-header {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 540px) {
+    .page-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+/* ── New Investment button ─────────────────────────────── */
+.new-inv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: #2563eb;
+    color: #fff;
+    font-size: .875rem;
+    font-weight: 600;
+    padding: .6rem 1.1rem;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background .18s;
+    align-self: flex-start;
+    white-space: nowrap;
+}
+.new-inv-btn:hover { background: #1d4ed8; }
+
+/* ── Investment list spacing ───────────────────────────── */
+.inv-list {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+/* ── Progress bar max width ────────────────────────────── */
+.progress-container {
+    margin-top: .6rem;
+    max-width: 320px;
+    width: 100%;
+}
+
+@media (max-width: 639px) {
+    .progress-container {
+        max-width: 100%;
+    }
 }
 </style>
 {% endblock %}
@@ -49,18 +231,18 @@
 <div class="max-w-5xl mx-auto">
 
     <!-- Header -->
-    <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+    <div class="page-header">
         <div>
             <h1 class="title-font text-2xl text-gray-900 mb-0.5">My Investments</h1>
             <p class="text-gray-400 text-sm">Track all your investment plans and returns.</p>
         </div>
-        <a href="{% url 'investment_plans' %}" class="btn-primary px-4 py-2.5 rounded-lg text-sm self-start sm:self-auto">
-            <i class="fas fa-plus mr-1.5"></i> New Investment
+        <a href="{% url 'investment_plans' %}" class="new-inv-btn">
+            <i class="fas fa-plus"></i> New Investment
         </a>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+    <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon bg-blue-50"><i class="fas fa-layer-group text-blue-500 text-sm"></i></div>
             <p class="text-xs text-gray-400 mb-0.5">Total Invested</p>
@@ -84,25 +266,26 @@
     </div>
 
     <!-- Investments list -->
-    <div class="space-y-3">
+    <div class="inv-list">
         {% for inv in investments %}
         <div class="inv-row">
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            <div class="inv-inner">
 
                 <!-- Plan info -->
-                <div class="flex-1 min-w-0">
-                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                <div style="flex:1;min-width:0;">
+                    <div class="plan-name-row">
                         <span class="tier-badge tier-{{ inv.plan.tier }}">{{ inv.plan.tier }}</span>
-                        <h3 class="font-semibold text-gray-900 text-sm">{{ inv.plan.name }}</h3>
+                        <h3 style="font-weight:600;color:#111827;font-size:.875rem;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inv.plan.name }}</h3>
                         <span class="status-badge badge-{{ inv.status|lower }}">
-                            {% if inv.status == 'ACTIVE' %}<i class="fas fa-circle text-xs"></i>
-                            {% elif inv.status == 'COMPLETED' %}<i class="fas fa-check text-xs"></i>
-                            {% else %}<i class="fas fa-times text-xs"></i>
+                            {% if inv.status == 'ACTIVE' %}<i class="fas fa-circle" style="font-size:.4rem;"></i>
+                            {% elif inv.status == 'COMPLETED' %}<i class="fas fa-check" style="font-size:.6rem;"></i>
+                            {% else %}<i class="fas fa-times" style="font-size:.6rem;"></i>
                             {% endif %}
                             {{ inv.status }}
                         </span>
                     </div>
-                    <p class="text-xs text-gray-400">
+
+                    <p style="font-size:.72rem;color:#9ca3af;margin:0;">
                         Started {{ inv.start_date|date:"M d, Y" }} &nbsp;·&nbsp;
                         {% if inv.status == 'ACTIVE' %}
                             Matures {{ inv.end_date|date:"M d, Y" }} ({{ inv.days_remaining }}d left)
@@ -114,8 +297,8 @@
                     </p>
 
                     {% if inv.status == 'ACTIVE' %}
-                    <div class="mt-2 max-w-xs">
-                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                    <div class="progress-container">
+                        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#9ca3af;margin-bottom:.3rem;">
                             <span>Progress</span>
                             <span>{{ inv.progress_percentage }}%</span>
                         </div>
@@ -127,29 +310,30 @@
                 </div>
 
                 <!-- Amounts -->
-                <div class="flex gap-6 sm:gap-8 text-right flex-shrink-0">
+                <div class="inv-amounts">
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Invested</p>
-                        <p class="font-bold text-gray-900 text-sm">${{ inv.amount_invested|floatformat:2 }}</p>
+                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">Invested</p>
+                        <p style="font-weight:700;color:#111827;font-size:.875rem;margin:0;white-space:nowrap;">${{ inv.amount_invested|floatformat:2 }}</p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">ROI</p>
-                        <p class="font-bold text-green-600 text-sm">+${{ inv.profit_amount|floatformat:2 }}</p>
+                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">ROI</p>
+                        <p style="font-weight:700;color:#16a34a;font-size:.875rem;margin:0;white-space:nowrap;">+${{ inv.profit_amount|floatformat:2 }}</p>
                     </div>
                     <div>
-                        <p class="text-xs text-gray-400 mb-0.5">Total Return</p>
-                        <p class="font-bold text-blue-700 text-sm">${{ inv.expected_return|floatformat:2 }}</p>
+                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">Total Return</p>
+                        <p style="font-weight:700;color:#1d4ed8;font-size:.875rem;margin:0;white-space:nowrap;">${{ inv.expected_return|floatformat:2 }}</p>
                     </div>
                 </div>
 
             </div>
         </div>
         {% empty %}
-        <div class="bg-white border border-gray-200 rounded-xl py-16 text-center">
-            <i class="fas fa-chart-pie text-4xl text-gray-300 mb-4 block"></i>
-            <p class="text-gray-400 text-sm mb-3">You haven't made any investments yet.</p>
-            <a href="{% url 'investment_plans' %}" 
-               class="inline-block bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition">
+        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:4rem 1.5rem;text-align:center;">
+            <i class="fas fa-chart-pie" style="font-size:2.5rem;color:#d1d5db;display:block;margin-bottom:1rem;"></i>
+            <p style="color:#9ca3af;font-size:.875rem;margin-bottom:.75rem;">You haven't made any investments yet.</p>
+            <a href="{% url 'investment_plans' %}"
+               style="display:inline-block;background:#2563eb;color:#fff;font-size:.875rem;font-weight:600;padding:.6rem 1.25rem;border-radius:10px;text-decoration:none;transition:background .18s;"
+               onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                 Browse Plans
             </a>
         </div>

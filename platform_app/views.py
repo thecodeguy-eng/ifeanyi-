@@ -760,7 +760,7 @@ def deposit(request):
         amount = Decimal(request.POST.get('amount'))
         
         settings = PlatformSettings.objects.first()
-        min_deposit = settings.minimum_deposit if settings else Decimal('500')
+        min_deposit = settings.minimum_deposit if settings else Decimal('50')
         
         if amount < min_deposit:
             messages.error(request, f'Minimum deposit is ${min_deposit}')

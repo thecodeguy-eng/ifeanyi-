@@ -14,6 +14,10 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    /* FIX: prevent cards from overflowing on mobile */
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 .plan-card:hover {
     box-shadow: 0 8px 28px rgba(0,0,0,.08);
@@ -36,6 +40,11 @@
     text-transform: uppercase;
     padding: .28rem .75rem;
     border-radius: 99px;
+    /* FIX: prevent badge text from overflowing */
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .tier-STARTER  { background: #f0fdf4; color: #16a34a; }
 .tier-SILVER   { background: #f8fafc; color: #475569; }
@@ -53,6 +62,14 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* FIX: scale down on very small screens */
+    word-break: break-all;
+}
+
+@media (max-width: 360px) {
+    .roi-display {
+        font-size: 2rem;
+    }
 }
 
 /* ── Feature list ──────────────────────────────────────── */
@@ -63,6 +80,8 @@
     font-size: .8rem;
     color: #374151;
     margin-bottom: .4rem;
+    /* FIX: allow text wrapping */
+    word-break: break-word;
 }
 .feature-item i { color: #22c55e; margin-top: 2px; flex-shrink: 0; }
 
@@ -77,6 +96,9 @@
     border-radius: 14px;
     padding: 1.25rem 1.5rem;
     color: #fff;
+    /* FIX: prevent overflow */
+    min-width: 0;
+    box-sizing: border-box;
 }
 .progress-bar-wrap { background: rgba(255,255,255,.2); border-radius: 99px; height: 6px; overflow: hidden; }
 .progress-bar-fill { background: #22d3ee; height: 100%; border-radius: 99px; transition: width .4s ease; }
@@ -95,10 +117,89 @@
     text-decoration: none;
     transition: background .18s;
     margin-top: auto;
+    box-sizing: border-box;
 }
 .enroll-btn:hover { background: #1e40af; }
 .enroll-btn.featured-btn {
     background: linear-gradient(135deg, #2563eb, #06b6d4);
+}
+
+/* ── Min/Max/Duration boxes ─────────────────────────── */
+.plan-stats-row {
+    display: flex;
+    gap: .5rem;
+    margin-bottom: 1rem;
+    flex-wrap: nowrap;
+}
+.plan-stats-row .stat-box {
+    flex: 1 1 0;
+    background: #f9fafb;
+    border-radius: 10px;
+    padding: .5rem .25rem;
+    text-align: center;
+    min-width: 0;
+}
+.plan-stats-row .stat-box p {
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Plans grid ─────────────────────────────────────── */
+.plans-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+}
+
+@media (min-width: 540px) {
+    .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .plans-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ── Active investments grid ──────────────────────────── */
+.active-inv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+@media (min-width: 540px) {
+    .active-inv-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .active-inv-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* ── Page section padding fix on mobile ──────────────── */
+@media (max-width: 480px) {
+    .plan-card {
+        padding: 1.25rem 1rem;
+    }
+
+    .dashboard-main {
+        /* FIX: ensure main content doesn't get hidden behind sidebar on mobile */
+        overflow-x: hidden;
+        width: 100%;
+    }
+
+    section.py-6 {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
 }
 </style>
 {% endblock %}
@@ -120,12 +221,12 @@
     {% if user_active_investments %}
     <div class="mb-8">
         <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Your Active Investments</h2>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="active-inv-grid">
             {% for inv in user_active_investments %}
             <div class="active-inv-card">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-xs font-semibold opacity-70">{{ inv.plan.name }}</span>
-                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full">{{ inv.days_remaining }}d left</span>
+                    <span class="text-xs font-semibold opacity-70" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%">{{ inv.plan.name }}</span>
+                    <span class="text-xs bg-white/20 px-2 py-0.5 rounded-full flex-shrink-0">{{ inv.days_remaining }}d left</span>
                 </div>
                 <p class="text-xl font-bold mb-0.5">${{ inv.amount_invested|floatformat:2 }}</p>
                 <p class="text-xs opacity-70 mb-3">→ ${{ inv.expected_return|floatformat:2 }} at maturity</p>
@@ -143,7 +244,7 @@
     {% endif %}
 
     <!-- Plans grid -->
-    <div class="grid sm:grid-cols-2 xl:grid-cols-3 gap-5">
+    <div class="plans-grid">
         {% for plan in plans %}
         <div class="plan-card {% if plan.is_featured %}featured{% endif %}">
 
@@ -156,7 +257,7 @@
             {% endif %}
 
             <!-- Tier & risk -->
-            <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center justify-between mb-4" style="gap:.5rem;flex-wrap:wrap;">
                 <span class="tier-badge tier-{{ plan.tier }}">
                     {% if plan.tier == 'STARTER' %}<i class="fas fa-seedling"></i>
                     {% elif plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
@@ -176,25 +277,25 @@
             {% endif %}
 
             <!-- ROI display -->
-            <div class="flex items-end gap-2 mb-1">
+            <div class="flex items-end gap-2 mb-1" style="flex-wrap:wrap;">
                 <span class="roi-display">{{ plan.roi_percentage }}%</span>
                 <span class="text-gray-400 text-sm mb-2">ROI</span>
             </div>
             <p class="text-xs text-gray-400 mb-4">Over {{ plan.duration_days }} days &nbsp;·&nbsp; ~{{ plan.daily_roi }}%/day</p>
 
-            <!-- Min / Max -->
-            <div class="flex gap-3 mb-4">
-                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+            <!-- Min / Max / Duration -->
+            <div class="plan-stats-row">
+                <div class="stat-box">
                     <p class="text-xs text-gray-400">Min</p>
                     <p class="font-bold text-sm text-gray-800">${{ plan.minimum_amount|floatformat:0 }}</p>
                 </div>
-                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+                <div class="stat-box">
                     <p class="text-xs text-gray-400">Max</p>
                     <p class="font-bold text-sm text-gray-800">
-                        {% if plan.maximum_amount %}${{ plan.maximum_amount|floatformat:0 }}{% else %}Unlimited{% endif %}
+                        {% if plan.maximum_amount %}${{ plan.maximum_amount|floatformat:0 }}{% else %}∞{% endif %}
                     </p>
                 </div>
-                <div class="flex-1 bg-gray-50 rounded-lg p-2.5 text-center">
+                <div class="stat-box">
                     <p class="text-xs text-gray-400">Duration</p>
                     <p class="font-bold text-sm text-gray-800">{{ plan.duration_days }}d</p>
                 </div>
@@ -217,7 +318,7 @@
 
         </div>
         {% empty %}
-        <div class="col-span-full text-center py-16">
+        <div style="grid-column:1/-1;" class="text-center py-16">
             <i class="fas fa-chart-pie text-4xl text-gray-300 mb-4 block"></i>
             <p class="text-gray-400">No investment plans are available at the moment. Check back soon.</p>
         </div>
@@ -225,9 +326,9 @@
     </div>
 
     <!-- Info strip -->
-    <div class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5 flex gap-4">
+    <div class="mt-8 bg-blue-50 border border-blue-100 rounded-xl p-5 flex gap-4" style="flex-wrap:wrap;">
         <i class="fas fa-info-circle text-blue-400 text-lg mt-0.5 flex-shrink-0"></i>
-        <div class="text-sm text-blue-700 leading-relaxed">
+        <div class="text-sm text-blue-700 leading-relaxed" style="flex:1;min-width:0;">
             <strong>How it works:</strong> Select a plan, enter the amount you wish to invest (within the plan's limits), and confirm.
             Funds are deducted from your account balance immediately. At the end of the plan duration, your principal plus
             the stated ROI will be credited back to your account balance automatically.
