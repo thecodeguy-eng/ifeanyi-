@@ -36,52 +36,53 @@ def onboarding(request):
 def forgot_password(request):
     """Step 1: Request password reset - send code to email"""
     if request.method == 'POST':
-        email = request.POST.get('email')
-        
+        email = request.POST.get('email', '').strip().lower()  # normalize email
+
         try:
-            user = User.objects.get(email=email)
-            
+            user = User.objects.get(email__iexact=email)
+            canonical_email = user.email  # use the exact email stored in DB
+
             # Invalidate any existing unused codes for this user
             PasswordResetCode.objects.filter(
                 user=user,
                 is_used=False
             ).update(is_used=True)
-            
+
             # Create new reset code
             reset_code = PasswordResetCode.objects.create(
                 user=user,
-                email=email
+                email=canonical_email  # always store the DB email, not user input
             )
-            
+
             # Send email with reset code
-            user_name = f"{user.legal_first_name} {user.legal_last_name}"
-            result = send_password_reset_code(email, user_name, reset_code.code)
-            
+            user_name = f"{user.legal_first_name} {user.legal_last_name}".strip() or user.username
+            result = send_password_reset_code(canonical_email, user_name, reset_code.code)
+
             if result.get('success'):
-                # Store email in session for next step
-                request.session['reset_email'] = email
+                # Store the canonical DB email in session for next step
+                request.session['reset_email'] = canonical_email
                 messages.success(
-                    request, 
-                    f'A 6-digit reset code has been sent to {email}. Please check your inbox.'
+                    request,
+                    f'A 6-digit reset code has been sent to {canonical_email}. Please check your inbox.'
                 )
                 return redirect('verify_reset_code')
             else:
                 logger.error(f"Failed to send reset email: {result.get('error')}")
                 messages.error(
-                    request, 
+                    request,
                     'Failed to send reset code. Please try again later.'
                 )
-                
+
         except User.DoesNotExist:
             # Don't reveal that email doesn't exist (security best practice)
             messages.info(
-                request, 
+                request,
                 'If an account exists with that email, a reset code has been sent.'
             )
             # Still redirect to give impression code was sent
             request.session['reset_email'] = email
             return redirect('verify_reset_code')
-    
+
     return render(request, 'forgot_password.html')
 
 
@@ -94,8 +95,8 @@ def verify_reset_code(request):
         return redirect('forgot_password')
     
     if request.method == 'POST':
-        code = request.POST.get('code')
-        
+        code = request.POST.get('code', '').strip()  # strip any accidental whitespace
+
         try:
             # Find the reset code
             reset_code = PasswordResetCode.objects.filter(
