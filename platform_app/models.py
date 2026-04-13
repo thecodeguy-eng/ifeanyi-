@@ -50,8 +50,8 @@ class WalletAddress(models.Model):
         ('XRP', 'Ripple'),
         ('ADA', 'Cardano'),
         ('DOGE', 'Dogecoin'),
-        ('USDC (Sol)', 'Dogecoin'),
-        ('USDC (Eth)', 'Dogecoin'),
+        ('USDC (Sol)', 'usdc (sol)'),
+        ('USDC (Eth)', 'usdc (eth)'),
     ]
     
     cryptocurrency = models.CharField(max_length=10, choices=CRYPTO_CHOICES, unique=True)
