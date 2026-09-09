@@ -208,16 +208,8 @@ LOGGING = {
 }
 
 
-# hosting email vercel: ibchukwugirim@gmail.com
+# hosting email vercel: mainwesthern@gmail.com
 
-# database (supabase): ibeawuchinzechukwu@gmail.com
+# database (supabase): udsn.defence@gmail.com
 
 # cloudinary: ibchukwugirim@gmail.com (shared)
-
-# zohomail: 
-#   mail: nchukwugozirim@gmail.com
-#   password: @Mirrorwavetrades1
-#   name: Mirrorwavetrades
-
-# brevo:
-#   email:ibeawuchinzechukwu@gmail.com
