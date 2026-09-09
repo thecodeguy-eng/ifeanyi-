@@ -57,8 +57,63 @@
             <button type="submit" name="action" value="toggle_withdrawal" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white">
                 <i class="fas fa-check-circle mr-2"></i> {% if user_obj.withdrawal_approved %}Disapprove{% else %}Approve{% endif %} Withdrawal
             </button>
+            {% if user_obj.id != request.user.id %}
+            <button type="submit" name="action" value="toggle_staff" class="w-full bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg text-white"
+                    onclick="return confirm('{% if user_obj.is_staff %}Revoke{% else %}Grant{% endif %} admin access for {{ user_obj.username }}?')">
+                <i class="fas fa-user-shield mr-2"></i> {% if user_obj.is_staff %}Revoke{% else %}Grant{% endif %} Admin Access
+            </button>
+            {% else %}
+            <p class="text-xs text-gray-500 text-center py-1">This is your own account — admin access can't be self-toggled here.</p>
+            {% endif %}
         </form>
     </div>
+</div>
+
+<!-- Edit Profile -->
+<div class="admin-card p-6 rounded-xl mb-6">
+    <h4 class="text-lg font-bold text-white mb-4">Edit Profile</h4>
+    <form method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {% csrf_token %}
+        <div>
+            <label class="block text-gray-400 mb-1.5 text-sm">First Name</label>
+            <input type="text" name="legal_first_name" value="{{ user_obj.legal_first_name }}"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        <div>
+            <label class="block text-gray-400 mb-1.5 text-sm">Last Name</label>
+            <input type="text" name="legal_last_name" value="{{ user_obj.legal_last_name }}"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        <div class="sm:col-span-2">
+            <label class="block text-gray-400 mb-1.5 text-sm">Email</label>
+            <input type="email" name="email" value="{{ user_obj.email }}"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        <div>
+            <label class="block text-gray-400 mb-1.5 text-sm">Preferred Currency</label>
+            <select name="preferred_currency" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                <option value="USD" {% if user_obj.preferred_currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+                <option value="EUR" {% if user_obj.preferred_currency == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+                <option value="GBP" {% if user_obj.preferred_currency == 'GBP' %}selected{% endif %}>GBP - British Pound</option>
+            </select>
+        </div>
+        <div></div>
+        <div>
+            <label class="block text-gray-400 mb-1.5 text-sm">Bonus ($)</label>
+            <input type="number" name="bonus" step="0.01" value="{{ user_obj.bonus }}"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        <div>
+            <label class="block text-gray-400 mb-1.5 text-sm">Commission ($)</label>
+            <input type="number" name="commission" step="0.01" value="{{ user_obj.commission }}"
+                   class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        </div>
+        <div class="sm:col-span-2">
+            <button type="submit" name="action" value="update_profile" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg text-white font-semibold">
+                <i class="fas fa-save mr-2"></i> Save Profile
+            </button>
+        </div>
+    </form>
 </div>
 
 <!-- Stats -->
@@ -205,6 +260,20 @@
         </div>
     </div>
 </div>
+
+<!-- Danger Zone -->
+{% if user_obj.id != request.user.id %}
+<div class="admin-card p-6 rounded-xl mt-6" style="border-color: rgba(239,68,68,0.35);">
+    <h4 class="text-lg font-bold text-red-400 mb-2"><i class="fas fa-exclamation-triangle mr-2"></i>Danger Zone</h4>
+    <p class="text-gray-400 text-sm mb-4">Permanently delete this user account and all associated data (transactions, trades, portfolio, chats). This cannot be undone.</p>
+    <form method="POST" onsubmit="return confirm('Permanently delete {{ user_obj.username }}? This cannot be undone.')">
+        {% csrf_token %}
+        <button type="submit" name="action" value="delete_user" class="bg-red-600 hover:bg-red-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-trash mr-2"></i> Delete User Permanently
+        </button>
+    </form>
+</div>
+{% endif %}
 
 <script>
 function showTab(tabName) {

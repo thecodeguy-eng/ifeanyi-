@@ -1,58 +1,58 @@
 {% extends 'base.html' %}
 
-{% block title %}Login - Influxfinancetrading{% endblock %}
+{% block title %}Login - Mirrorwavetrades{% endblock %}
 
 {% block extra_css %}
 <style>
 .auth-input {
     width: 100%;
     padding: 0.7rem 1rem 0.7rem 2.75rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.9rem;
-    color: #111827;
-    background: #f9fafb;
+    color: var(--text-main);
+    background: rgba(255,255,255,.04);
     transition: all 0.2s ease;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
 .auth-input:focus {
     outline: none;
-    border-color: #9ca3af;
-    background: #fff;
+    border-color: var(--accent);
+    background: rgba(255,255,255,.07);
 }
-.auth-input::placeholder { color: #9ca3af; }
+.auth-input::placeholder { color: var(--text-light); }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="min-h-screen flex items-center py-16" style="background: #f8f9fb;">
+<section class="min-h-screen flex items-center py-16" style="background: var(--bg);">
     <div class="max-w-md mx-auto px-4 w-full">
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 md:p-10 shadow-sm">
+        <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-8 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,.4)]">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gray-100 mb-4">
-                    <i class="fas fa-user text-gray-600 text-xl"></i>
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-white/5 border border-[var(--border)] mb-4">
+                    <i class="fas fa-user text-[var(--accent-light)] text-xl"></i>
                 </div>
-                <h1 class="title-font text-2xl text-gray-900 mb-1">Welcome Back</h1>
-                <p class="text-gray-500 text-sm">Sign in to continue trading</p>
+                <h1 class="title-font text-2xl text-white mb-1">Welcome Back</h1>
+                <p class="text-[var(--text-muted)] text-sm">Sign in to continue trading</p>
             </div>
 
             <form method="post" class="space-y-5" id="loginForm">
                 {% csrf_token %}
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Email Address</label>
                     <div class="relative">
-                        <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-light)] text-sm"></i>
                         <input type="email" name="email" required class="auth-input" placeholder="you@example.com">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Password</label>
                     <div class="relative">
-                        <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                        <i class="fas fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-light)] text-sm"></i>
                         <input type="password" name="password" id="password" required class="auth-input" placeholder="Enter your password">
-                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-light)] hover:text-white">
                             <i class="fas fa-eye text-sm" id="toggleIcon"></i>
                         </button>
                     </div>
@@ -60,17 +60,17 @@
 
                 <!-- CAPTCHA -->
                 <div id="captchaContainer" class="hidden">
-                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">
-                            <i class="fas fa-shield-alt text-blue-500 mr-1.5"></i>Verify you're human
+                    <div class="border border-[var(--border)] rounded-lg p-4 bg-white/5">
+                        <label class="block text-sm font-medium text-[var(--text-muted)] mb-3">
+                            <i class="fas fa-shield-alt text-[var(--accent)] mr-1.5"></i>Verify you're human
                         </label>
                         <div class="flex items-center gap-3">
-                            <div id="captchaQuestion" class="text-base font-bold px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-center flex-1 text-gray-900"></div>
+                            <div id="captchaQuestion" class="text-base font-bold px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-center flex-1 text-white"></div>
                             <input type="number" id="captchaAnswer"
-                                class="w-20 px-3 py-2.5 text-center text-base font-bold border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 bg-white text-gray-900"
+                                class="w-20 px-3 py-2.5 text-center text-base font-bold border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--accent)] bg-[var(--bg-elevated)] text-white"
                                 placeholder="?" required>
                         </div>
-                        <button type="button" onclick="generateCaptcha()" class="text-xs text-blue-500 hover:text-blue-600 mt-2">
+                        <button type="button" onclick="generateCaptcha()" class="text-xs text-[var(--accent-light)] hover:text-white mt-2">
                             <i class="fas fa-sync-alt mr-1"></i>New puzzle
                         </button>
                     </div>
@@ -78,20 +78,20 @@
 
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" class="w-4 h-4 rounded border-gray-300 text-gray-700 accent-gray-800">
-                        <span class="text-gray-600">Remember me</span>
+                        <input type="checkbox" class="w-4 h-4 rounded border-white/20 accent-blue-600">
+                        <span class="text-[var(--text-muted)]">Remember me</span>
                     </label>
                     <!-- <a href="{% url 'forgot_password' %}" class="text-gray-700 font-medium hover:text-gray-900">Forgot password?</a> -->
-                    <a href="#" class="text-gray-700 font-medium hover:text-gray-900">Forgot password?</a>
+                    <a href="#" class="text-[var(--text-muted)] font-medium hover:text-white">Forgot password?</a>
                 </div>
 
                 <button type="submit" class="btn-primary w-full py-3 rounded-lg text-sm font-semibold">
                     Sign In
                 </button>
 
-                <p class="text-center text-sm text-gray-500">
+                <p class="text-center text-sm text-[var(--text-muted)]">
                     Don't have an account?
-                    <a href="{% url 'register' %}" class="text-gray-800 font-semibold hover:text-gray-900">Create one</a>
+                    <a href="{% url 'register' %}" class="text-[var(--accent-light)] font-semibold hover:text-white">Create one</a>
                 </p>
             </form>
         </div>

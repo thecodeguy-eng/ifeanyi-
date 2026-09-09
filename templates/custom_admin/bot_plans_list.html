@@ -1,29 +1,60 @@
-<!-- ===================================== -->
 <!-- bot_plans_list.html -->
 {% extends 'custom_admin/admin_base.html' %}
 
 {% block title %}Bot Plans Management{% endblock %}
 
 {% block admin_content %}
-<div class="mb-8">
-    <h2 class="text-3xl font-bold gradient-text mb-2">Trading Bot Plans</h2>
-    <p class="text-gray-400">Manage bot subscription plans</p>
+<div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h2 class="text-3xl font-bold gradient-text mb-2">Trading Bot Plans</h2>
+        <p class="text-gray-400">Manage bot subscription plans</p>
+    </div>
+    <a href="{% url 'admin_bot_plan_create' %}" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add New Plan
+    </a>
 </div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     {% for plan in plans %}
-    <div class="admin-card p-6 rounded-xl">
-        <h3 class="text-xl font-bold text-white mb-2">{{ plan.plan_type }}</h3>
+    <div class="admin-card p-6 rounded-xl flex flex-col">
+        <div class="flex items-start justify-between mb-2">
+            <h3 class="text-xl font-bold text-white">{{ plan.plan_type }}</h3>
+            <span class="px-2 py-1 rounded-full text-xs {% if plan.is_active %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                {% if plan.is_active %}Active{% else %}Inactive{% endif %}
+            </span>
+        </div>
         <p class="text-3xl font-bold gradient-text mb-4">${{ plan.price }}</p>
         <p class="text-green-400 mb-4">{{ plan.daily_profit_percentage }}% daily profit</p>
-        <div class="space-y-2 mb-4">
+        <div class="space-y-2 mb-4 flex-1">
             {% for feature in plan.features %}
             <p class="text-gray-400 text-sm"><i class="fas fa-check text-green-400 mr-2"></i>{{ feature }}</p>
+            {% empty %}
+            <p class="text-gray-500 text-sm italic">No features listed</p>
             {% endfor %}
         </div>
-        <span class="px-3 py-1 rounded-full text-xs {% if plan.is_active %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %}">
-            {% if plan.is_active %}Active{% else %}Inactive{% endif %}
-        </span>
+        <div class="flex items-center gap-2 pt-4 border-t border-slate-700">
+            <a href="{% url 'admin_bot_plan_edit' plan.id %}" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm">
+                <i class="fas fa-edit mr-1"></i> Edit
+            </a>
+            <form method="POST" action="{% url 'admin_bot_plan_toggle' plan.id %}">
+                {% csrf_token %}
+                <button type="submit" class="{% if plan.is_active %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-3 py-2 rounded-lg text-white text-sm">
+                    <i class="fas {% if plan.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                </button>
+            </form>
+            <form method="POST" action="{% url 'admin_bot_plan_delete' plan.id %}"
+                  onsubmit="return confirm('Delete the {{ plan.plan_type }} plan? This cannot be undone.')">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-white text-sm">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="admin-card p-10 rounded-xl col-span-full text-center">
+        <i class="fas fa-robot text-4xl text-gray-500 mb-3"></i>
+        <p class="text-gray-400">No bot plans yet. Create your first one.</p>
     </div>
     {% endfor %}
 </div>

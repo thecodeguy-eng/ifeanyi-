@@ -1,16 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}Stocks Trading - Influxfinancetrading{% endblock %}
+{% block title %}Stocks Trading - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
 .hero-stocks { background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 60%, #1d4ed8 100%); }
 .glass-chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; backdrop-filter: blur(8px); }
-.feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: box-shadow .2s, transform .2s; }
-.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.08); transform: translateY(-2px); }
-.sector-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all .2s; }
-.sector-card:hover { border-color: #1d4ed8; box-shadow: 0 4px 16px rgba(29,78,216,.1); }
-.ticker-wrap { overflow: hidden; background: #f1f5f9; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; }
+.feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: box-shadow .2s, transform .2s, border-color .2s; }
+.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.4); border-color: rgba(56,189,248,.3); transform: translateY(-2px); }
+.sector-card { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.25rem; cursor: pointer; transition: all .2s; }
+.sector-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(56,189,248,.15); }
+.ticker-wrap { overflow: hidden; background: var(--bg-elevated); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .ticker-track { display: flex; gap: 2.5rem; animation: ticker 35s linear infinite; white-space: nowrap; padding: .6rem 0; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.bg-gray-50 { background: var(--bg-elevated) !important; }
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
+.bg-purple-50 { background: rgba(168,85,247,.14) !important; }
+.bg-orange-50 { background: rgba(249,115,22,.14) !important; }
+.bg-red-50 { background: rgba(239,68,68,.12) !important; }
+.bg-cyan-50 { background: rgba(6,182,212,.14) !important; }
+.border-gray-200 { border-color: var(--border) !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -38,42 +51,42 @@
 
 <div class="ticker-wrap">
     <div class="ticker-track text-xs font-mono">
-        <span class="text-gray-600">AAPL <span class="text-green-600 font-semibold">$189.30 (+1.2%)</span></span>
-        <span class="text-gray-600">MSFT <span class="text-green-600 font-semibold">$415.70 (+0.8%)</span></span>
-        <span class="text-gray-600">GOOGL <span class="text-red-500 font-semibold">$140.50 (-0.3%)</span></span>
-        <span class="text-gray-600">AMZN <span class="text-green-600 font-semibold">$185.20 (+1.5%)</span></span>
-        <span class="text-gray-600">NVDA <span class="text-green-600 font-semibold">$875.40 (+3.1%)</span></span>
-        <span class="text-gray-600">TSLA <span class="text-red-500 font-semibold">$248.60 (-1.7%)</span></span>
-        <span class="text-gray-600">META <span class="text-green-600 font-semibold">$521.30 (+2.0%)</span></span>
-        <span class="text-gray-600">JPM <span class="text-green-600 font-semibold">$202.80 (+0.6%)</span></span>
-        <span class="text-gray-600">NFLX <span class="text-green-600 font-semibold">$630.20 (+2.3%)</span></span>
-        <span class="text-gray-600">AAPL <span class="text-green-600 font-semibold">$189.30 (+1.2%)</span></span>
-        <span class="text-gray-600">MSFT <span class="text-green-600 font-semibold">$415.70 (+0.8%)</span></span>
-        <span class="text-gray-600">GOOGL <span class="text-red-500 font-semibold">$140.50 (-0.3%)</span></span>
-        <span class="text-gray-600">AMZN <span class="text-green-600 font-semibold">$185.20 (+1.5%)</span></span>
-        <span class="text-gray-600">NVDA <span class="text-green-600 font-semibold">$875.40 (+3.1%)</span></span>
-        <span class="text-gray-600">TSLA <span class="text-red-500 font-semibold">$248.60 (-1.7%)</span></span>
-        <span class="text-gray-600">META <span class="text-green-600 font-semibold">$521.30 (+2.0%)</span></span>
-        <span class="text-gray-600">JPM <span class="text-green-600 font-semibold">$202.80 (+0.6%)</span></span>
-        <span class="text-gray-600">NFLX <span class="text-green-600 font-semibold">$630.20 (+2.3%)</span></span>
+        <span class="text-gray-300">AAPL <span class="text-green-400 font-semibold">$189.30 (+1.2%)</span></span>
+        <span class="text-gray-300">MSFT <span class="text-green-400 font-semibold">$415.70 (+0.8%)</span></span>
+        <span class="text-gray-300">GOOGL <span class="text-red-400 font-semibold">$140.50 (-0.3%)</span></span>
+        <span class="text-gray-300">AMZN <span class="text-green-400 font-semibold">$185.20 (+1.5%)</span></span>
+        <span class="text-gray-300">NVDA <span class="text-green-400 font-semibold">$875.40 (+3.1%)</span></span>
+        <span class="text-gray-300">TSLA <span class="text-red-400 font-semibold">$248.60 (-1.7%)</span></span>
+        <span class="text-gray-300">META <span class="text-green-400 font-semibold">$521.30 (+2.0%)</span></span>
+        <span class="text-gray-300">JPM <span class="text-green-400 font-semibold">$202.80 (+0.6%)</span></span>
+        <span class="text-gray-300">NFLX <span class="text-green-400 font-semibold">$630.20 (+2.3%)</span></span>
+        <span class="text-gray-300">AAPL <span class="text-green-400 font-semibold">$189.30 (+1.2%)</span></span>
+        <span class="text-gray-300">MSFT <span class="text-green-400 font-semibold">$415.70 (+0.8%)</span></span>
+        <span class="text-gray-300">GOOGL <span class="text-red-400 font-semibold">$140.50 (-0.3%)</span></span>
+        <span class="text-gray-300">AMZN <span class="text-green-400 font-semibold">$185.20 (+1.5%)</span></span>
+        <span class="text-gray-300">NVDA <span class="text-green-400 font-semibold">$875.40 (+3.1%)</span></span>
+        <span class="text-gray-300">TSLA <span class="text-red-400 font-semibold">$248.60 (-1.7%)</span></span>
+        <span class="text-gray-300">META <span class="text-green-400 font-semibold">$521.30 (+2.0%)</span></span>
+        <span class="text-gray-300">JPM <span class="text-green-400 font-semibold">$202.80 (+0.6%)</span></span>
+        <span class="text-gray-300">NFLX <span class="text-green-400 font-semibold">$630.20 (+2.3%)</span></span>
     </div>
 </div>
 
 <section class="py-16 px-4">
     <div class="max-w-6xl mx-auto">
         <div class="text-center mb-10">
-            <h2 class="title-font text-3xl text-gray-900 mb-2">Trade by Sector</h2>
-            <p class="text-gray-500 text-sm">Diversify across the world's leading industries</p>
+            <h2 class="title-font text-3xl text-white mb-2">Trade by Sector</h2>
+            <p class="text-gray-400 text-sm">Diversify across the world's leading industries</p>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128187;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Technology</h3><p class="text-xs text-gray-400 mb-2">1,200+ stocks</p><p class="text-xs font-semibold text-green-600">+2.4% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127973;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Healthcare</h3><p class="text-xs text-gray-400 mb-2">850+ stocks</p><p class="text-xs font-semibold text-green-600">+0.7% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127970;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Finance</h3><p class="text-xs text-gray-400 mb-2">620+ stocks</p><p class="text-xs font-semibold text-red-500">-0.3% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#9889;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Energy</h3><p class="text-xs text-gray-400 mb-2">410+ stocks</p><p class="text-xs font-semibold text-green-600">+1.1% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128722;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Consumer</h3><p class="text-xs text-gray-400 mb-2">730+ stocks</p><p class="text-xs font-semibold text-green-600">+0.5% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127981;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Industrial</h3><p class="text-xs text-gray-400 mb-2">490+ stocks</p><p class="text-xs font-semibold text-red-500">-0.2% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127959;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Real Estate</h3><p class="text-xs text-gray-400 mb-2">280+ stocks</p><p class="text-xs font-semibold text-green-600">+0.9% today</p></div>
-            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127807;</div><h3 class="font-semibold text-gray-900 text-sm mb-1">Materials</h3><p class="text-xs text-gray-400 mb-2">310+ stocks</p><p class="text-xs font-semibold text-green-600">+1.3% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128187;</div><h3 class="font-semibold text-white text-sm mb-1">Technology</h3><p class="text-xs text-gray-400 mb-2">1,200+ stocks</p><p class="text-xs font-semibold text-green-400">+2.4% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127973;</div><h3 class="font-semibold text-white text-sm mb-1">Healthcare</h3><p class="text-xs text-gray-400 mb-2">850+ stocks</p><p class="text-xs font-semibold text-green-400">+0.7% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127970;</div><h3 class="font-semibold text-white text-sm mb-1">Finance</h3><p class="text-xs text-gray-400 mb-2">620+ stocks</p><p class="text-xs font-semibold text-red-400">-0.3% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#9889;</div><h3 class="font-semibold text-white text-sm mb-1">Energy</h3><p class="text-xs text-gray-400 mb-2">410+ stocks</p><p class="text-xs font-semibold text-green-400">+1.1% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#128722;</div><h3 class="font-semibold text-white text-sm mb-1">Consumer</h3><p class="text-xs text-gray-400 mb-2">730+ stocks</p><p class="text-xs font-semibold text-green-400">+0.5% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127981;</div><h3 class="font-semibold text-white text-sm mb-1">Industrial</h3><p class="text-xs text-gray-400 mb-2">490+ stocks</p><p class="text-xs font-semibold text-red-400">-0.2% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127959;</div><h3 class="font-semibold text-white text-sm mb-1">Real Estate</h3><p class="text-xs text-gray-400 mb-2">280+ stocks</p><p class="text-xs font-semibold text-green-400">+0.9% today</p></div>
+            <div class="sector-card text-center"><div class="text-3xl mb-2">&#127807;</div><h3 class="font-semibold text-white text-sm mb-1">Materials</h3><p class="text-xs text-gray-400 mb-2">310+ stocks</p><p class="text-xs font-semibold text-green-400">+1.3% today</p></div>
         </div>
     </div>
 </section>

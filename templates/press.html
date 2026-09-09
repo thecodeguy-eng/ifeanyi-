@@ -1,11 +1,29 @@
 {% extends 'base.html' %}
-{% block title %}Press - Influxfinancetrading{% endblock %}
+{% block title %}Press - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.press-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
-.press-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.07); transform: translateY(-2px); }
+.press-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+.press-card:hover { border-color: rgba(56,189,248,.3); box-shadow: 0 8px 24px rgba(0,0,0,.4); transform: translateY(-2px); }
 .media-logo { height: 28px; object-fit: contain; filter: grayscale(1); opacity: .5; transition: all .2s; }
 .media-logo:hover { filter: grayscale(0); opacity: 1; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
+.bg-white { background: var(--bg-card) !important; }
+.bg-gray-50 { background: rgba(255,255,255,.04) !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
+.bg-orange-50 { background: rgba(249,115,22,.14) !important; }
+.bg-purple-50 { background: rgba(168,85,247,.14) !important; }
+.text-blue-600.text-xs { color: #60a5fa !important; }
+.text-green-600 { color: #4ade80 !important; }
+.text-orange-600 { color: #fb923c !important; }
+.text-purple-600 { color: #c084fc !important; }
+.border-gray-200 { border-color: var(--border) !important; }
+.border-gray-400 { border-color: #4b5563 !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -15,7 +33,7 @@
 
         <div class="text-center mb-14">
             <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-3">Press &amp; Media</p>
-            <h1 class="title-font text-4xl md:text-5xl text-gray-900 mb-4">Influxfinancetrading in the News</h1>
+            <h1 class="title-font text-4xl md:text-5xl text-gray-900 mb-4">Mirrorwavetrades in the News</h1>
             <p class="text-gray-500 text-lg max-w-2xl mx-auto">Press resources, announcements, and media kit for journalists and content creators covering our platform.</p>
         </div>
 
@@ -38,7 +56,7 @@
                     <span class="text-xs text-gray-400">March 2025</span>
                 </div>
                 <h3 class="font-semibold text-gray-900 mb-2">"The Trading Platform Democratizing Access to Global Markets"</h3>
-                <p class="text-gray-500 text-sm leading-relaxed mb-4">Forbes profiles how Influxfinancetrading is bringing institutional-grade trading tools to retail investors across 195 countries.</p>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">Forbes profiles how Mirrorwavetrades is bringing institutional-grade trading tools to retail investors across 195 countries.</p>
                 <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
             </div>
             <div class="press-card">
@@ -47,7 +65,7 @@
                     <span class="text-xs text-gray-400">January 2025</span>
                 </div>
                 <h3 class="font-semibold text-gray-900 mb-2">"AI Trading Bots Are Changing How Retail Investors Approach Crypto"</h3>
-                <p class="text-gray-500 text-sm leading-relaxed mb-4">TechCrunch explores how platforms like Influxfinancetrading are using AI to level the playing field for everyday traders.</p>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">TechCrunch explores how platforms like Mirrorwavetrades are using AI to level the playing field for everyday traders.</p>
                 <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
             </div>
             <div class="press-card">
@@ -56,7 +74,7 @@
                     <span class="text-xs text-gray-400">November 2024</span>
                 </div>
                 <h3 class="font-semibold text-gray-900 mb-2">"Copy Trading Platforms See Record Growth Amid Crypto Bull Run"</h3>
-                <p class="text-gray-500 text-sm leading-relaxed mb-4">Bloomberg reports on surging interest in social trading as Influxfinancetrading's copy trading feature passes 50,000 active subscriptions.</p>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">Bloomberg reports on surging interest in social trading as Mirrorwavetrades's copy trading feature passes 50,000 active subscriptions.</p>
                 <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
             </div>
             <div class="press-card">
@@ -65,7 +83,7 @@
                     <span class="text-xs text-gray-400">September 2024</span>
                 </div>
                 <h3 class="font-semibold text-gray-900 mb-2">"Multi-Asset Platforms Are the Future of Retail Trading"</h3>
-                <p class="text-gray-500 text-sm leading-relaxed mb-4">CoinDesk highlights Influxfinancetrading's expansion into forex and options markets alongside its established crypto offering.</p>
+                <p class="text-gray-500 text-sm leading-relaxed mb-4">CoinDesk highlights Mirrorwavetrades's expansion into forex and options markets alongside its established crypto offering.</p>
                 <a href="#" class="text-sm text-blue-600 font-medium hover:underline">Read Article <i class="fas fa-external-link-alt text-xs ml-1"></i></a>
             </div>
         </div>
@@ -98,7 +116,7 @@
                 <div class="space-y-3 text-sm">
                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                         <i class="fas fa-envelope text-gray-400"></i>
-                        <div><p class="font-medium text-gray-900">press@influxfinancetrading.com</p><p class="text-xs text-gray-400">Response within 4 hours</p></div>
+                        <div><p class="font-medium text-gray-900">press@Mirrorwavetrades.com</p><p class="text-xs text-gray-400">Response within 4 hours</p></div>
                     </div>
                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
                         <i class="fas fa-clock text-gray-400"></i>

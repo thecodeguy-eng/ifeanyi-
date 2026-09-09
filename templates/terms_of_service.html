@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}Terms of Service - Influxfinancetrading{% endblock %}
+{% block title %}Terms of Service - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2rem; }
 .legal-section:last-child { border-bottom: none; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -19,7 +26,7 @@
 
         <div class="legal-section">
             <h2 class="font-semibold text-gray-900 text-lg mb-3">1. Acceptance of Terms</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">By accessing or using the Influxfinancetrading platform ("Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Platform. We reserve the right to modify these Terms at any time, with changes effective upon posting. Your continued use of the Platform after changes constitutes acceptance.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">By accessing or using the Mirrorwavetrades platform ("Platform"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree to these Terms, you may not use the Platform. We reserve the right to modify these Terms at any time, with changes effective upon posting. Your continued use of the Platform after changes constitutes acceptance.</p>
         </div>
 
         <div class="legal-section">
@@ -67,7 +74,7 @@
 
         <div class="legal-section">
             <h2 class="font-semibold text-gray-900 text-lg mb-3">8. Limitation of Liability</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">To the maximum extent permitted by law, Influxfinancetrading shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Platform, including but not limited to trading losses, loss of profits, loss of data, or system downtime. Our total liability shall not exceed the amount of fees paid by you in the preceding 12 months.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">To the maximum extent permitted by law, Mirrorwavetrades shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Platform, including but not limited to trading losses, loss of profits, loss of data, or system downtime. Our total liability shall not exceed the amount of fees paid by you in the preceding 12 months.</p>
         </div>
 
         <div class="legal-section">
@@ -82,7 +89,7 @@
 
         <div>
             <h2 class="font-semibold text-gray-900 text-lg mb-3">11. Contact</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">Questions about these Terms? Contact us at <a href="mailto:legal@influxfinancetrading.com" class="text-blue-600 hover:underline">legal@influxfinancetrading.com</a> or through our <a href="{% url 'contact' %}" class="text-blue-600 hover:underline">contact page</a>.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">Questions about these Terms? Contact us at <a href="mailto:legal@Mirrorwavetrades.com" class="text-blue-600 hover:underline">legal@Mirrorwavetrades.com</a> or through our <a href="{% url 'contact' %}" class="text-blue-600 hover:underline">contact page</a>.</p>
         </div>
 
     </div>

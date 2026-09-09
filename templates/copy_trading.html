@@ -1,13 +1,24 @@
 {% extends 'base.html' %}
-{% block title %}Copy Trading - Influxfinancetrading{% endblock %}
+{% block title %}Copy Trading - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.trader-card { background:#fff; border:1.5px solid #e5e7eb; border-radius:14px; overflow:hidden; transition:box-shadow .2s, border-color .2s; }
-.trader-card:hover { box-shadow:0 6px 24px rgba(0,0,0,.08); border-color:#d1d5db; }
-.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.4); backdrop-filter:blur(4px); z-index:50; display:flex; align-items:center; justify-content:center; padding:1rem; }
-.modal-box { background:#fff; border-radius:16px; width:100%; max-width:440px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.15); }
-.form-input { width:100%; padding:.65rem 1rem 0.65rem 1.75rem; border:1px solid #e5e7eb; border-radius:8px; font-size:.9rem; color:#111827; background:#f9fafb; transition:all .2s; font-family:'DM Sans',sans-serif; }
-.form-input:focus { outline:none; border-color:#9ca3af; background:#fff; }
+.trader-card { background:var(--bg-card); border:1.5px solid var(--border); border-radius:14px; overflow:hidden; transition:box-shadow .2s, border-color .2s; }
+.trader-card:hover { box-shadow:0 8px 28px rgba(0,0,0,.4); border-color:rgba(56,189,248,.3); }
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.6); backdrop-filter:blur(4px); z-index:50; display:flex; align-items:center; justify-content:center; padding:1rem; }
+.modal-box { background:var(--bg-elevated); border:1px solid var(--border); border-radius:16px; width:100%; max-width:440px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.6); }
+.form-input { width:100%; padding:.65rem 1rem 0.65rem 1.75rem; border:1px solid var(--border); border-radius:8px; font-size:.9rem; color:var(--text-main); background:rgba(255,255,255,.04); transition:all .2s; font-family:'Poppins',sans-serif; }
+.form-input:focus { outline:none; border-color:#4b5563; background:rgba(255,255,255,.07); }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.bg-white { background: var(--bg-card) !important; }
+.bg-gray-50 { background: rgba(255,255,255,.04) !important; }
+.border-gray-200 { border-color: var(--border) !important; }
+.bg-amber-50 { background: rgba(245,158,11,.12) !important; }
+.border-amber-100 { border-color: rgba(245,158,11,.25) !important; }
 </style>
 {% endblock %}
 {% block content %}

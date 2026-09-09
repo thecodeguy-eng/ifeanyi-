@@ -56,10 +56,23 @@
                     </td>
                     <td class="px-6 py-4 text-gray-400">{{ chat.updated_at|timesince }} ago</td>
                     <td class="px-6 py-4">
-                        <div class="flex justify-center">
+                        <div class="flex justify-center items-center gap-2">
                             <a href="{% url 'admin_chat_detail' chat.id %}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm">
                                 <i class="fas fa-eye"></i> View
                             </a>
+                            <form method="POST" action="{% url 'admin_chat_close' chat.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="{% if chat.status == 'ACTIVE' %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-3 py-1 rounded text-white text-sm">
+                                    <i class="fas {% if chat.status == 'ACTIVE' %}fa-lock{% else %}fa-lock-open{% endif %}"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'admin_chat_delete' chat.id %}" class="inline"
+                                  onsubmit="return confirm('Delete chat #{{ chat.id }} and all its messages?')">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
                         </div>
                     </td>
                 </tr>

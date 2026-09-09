@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Influxfinancetrading - Trade the Future{% endblock %}
+{% block title %}Mirrorwavetrades - Trade the Future{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -16,14 +16,14 @@
         100% { transform: translateX(-50%); }
     }
 
-    /* ── Video Hero ─────────────────────────────────────────────────────── */
+    /* ── Hero ───────────────────────────────────────────────────────────── */
     .hero-video-section {
         position: relative;
         min-height: 100vh;
         display: flex;
         align-items: center;
         overflow: hidden;
-        background: #060d1a;
+        background: #030507;
     }
     .hero-video-bg {
         position: absolute;
@@ -32,17 +32,31 @@
         height: 100%;
         object-fit: cover;
         object-position: center center;
-        opacity: 0.5;
+        opacity: 0.32;
         z-index: 0;
         pointer-events: none;
     }
     .hero-overlay {
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, rgba(6,13,26,0.88) 0%, rgba(6,13,26,0.5) 55%, rgba(6,13,26,0.75) 100%);
+        background: linear-gradient(135deg, rgba(3,5,7,0.94) 0%, rgba(3,5,7,0.72) 55%, rgba(3,5,7,0.92) 100%);
         z-index: 1;
     }
+    .hero-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(90px);
+        z-index: 1;
+        opacity: .55;
+        pointer-events: none;
+        animation: floatBlob 9s ease-in-out infinite;
+    }
+    @keyframes floatBlob {
+        0%,100% { transform: translate(0,0) scale(1); }
+        50%      { transform: translate(20px,-24px) scale(1.08); }
+    }
     .hero-content { position: relative; z-index: 2; }
+    .accent-text { color: var(--accent); }
 
     @keyframes fadeUp {
         from { opacity:0; transform:translateY(28px); }
@@ -56,8 +70,8 @@
 
     .float-card {
         backdrop-filter: blur(14px);
-        background: rgba(255,255,255,0.08);
-        border: 1px solid rgba(255,255,255,0.14);
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
         border-radius: 16px;
         padding: 1.25rem 1.5rem;
         animation: float 4s ease-in-out infinite;
@@ -66,6 +80,7 @@
         0%,100% { transform: translateY(0); }
         50%      { transform: translateY(-10px); }
     }
+    @keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
 
     /* ── Section commons ────────────────────────────────────────────────── */
     .section-label {
@@ -74,27 +89,55 @@
         font-weight: 700;
         letter-spacing: 0.13em;
         text-transform: uppercase;
-        color: #0d9488;
-        background: #f0fdfa;
-        border: 1px solid #99f6e4;
+        color: var(--accent-light);
+        background: rgba(56,189,248,0.09);
+        border: 1px solid rgba(56,189,248,0.28);
         border-radius: 99px;
         padding: 0.28rem 0.9rem;
         margin-bottom: 1rem;
     }
     .section-title {
-        font-family: 'Syne', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
         font-size: clamp(1.6rem, 3vw, 2.2rem);
-        color: #111827;
+        color: #fff;
         margin-bottom: 0.75rem;
         line-height: 1.25;
     }
-    .section-sub { color: #6b7280; font-size: 0.95rem; margin-bottom: 2.5rem; }
+    .section-sub { color: #9aa3b2; font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+    /* ── Live rate cards ────────────────────────────────────────────────── */
+    .rate-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.5rem;
+        transition: all .25s ease;
+    }
+    .rate-card:hover { border-color: rgba(56,189,248,.35); box-shadow: 0 10px 30px rgba(0,0,0,.4); transform: translateY(-2px); }
+    .rate-card-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:.75rem; }
+    .rate-symbol { font-family:'Poppins',sans-serif; font-weight:700; color:#fff; font-size:1rem; }
+    .rate-pair { color:#6b7280; font-size:.8rem; margin-left:2px; }
+    .rate-change { font-size:.72rem; font-weight:700; padding:.2rem .55rem; border-radius:99px; }
+    .rate-change.up { color:#22c55e; background:rgba(34,197,94,.12); }
+    .rate-change.down { color:#ef4444; background:rgba(239,68,68,.12); }
+    .rate-price { font-family:'Poppins',sans-serif; font-weight:800; font-size:1.65rem; color:#fff; margin-bottom:.9rem; }
+    .rate-range { display:flex; justify-content:space-between; font-size:.72rem; color:#6b7280; margin-bottom:1.1rem; }
+    .rate-range b { color:#c7ccd6; font-weight:600; }
+    .rate-actions { display:flex; gap:.5rem; }
+    .rate-buy, .rate-sell {
+        flex:1; text-align:center; padding:.5rem; border-radius:8px;
+        font-size:.78rem; font-weight:700; text-decoration:none; transition: all .18s;
+    }
+    .rate-buy  { background: rgba(34,197,94,.13); color:#4ade80; border:1px solid rgba(34,197,94,.3); }
+    .rate-buy:hover { background: rgba(34,197,94,.22); }
+    .rate-sell { background: rgba(239,68,68,.13); color:#f87171; border:1px solid rgba(239,68,68,.3); }
+    .rate-sell:hover { background: rgba(239,68,68,.22); }
 
     /* ── Market cards ───────────────────────────────────────────────────── */
     .market-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 14px;
         padding: 1.75rem;
         transition: all 0.25s ease;
@@ -106,31 +149,31 @@
         position: absolute;
         top: 0; left: 0; right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #0d9488, #3b82f6);
+        background: linear-gradient(90deg, var(--primary), var(--accent));
         transform: scaleX(0);
         transform-origin: left;
         transition: transform 0.3s ease;
     }
-    .market-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.08); border-color: #d1d5db; transform: translateY(-3px); }
+    .market-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.4); border-color: rgba(56,189,248,.3); transform: translateY(-3px); }
     .market-card:hover::before { transform: scaleX(1); }
     .market-icon { font-size: 2rem; margin-bottom: 1rem; }
 
     /* ── Step cards ─────────────────────────────────────────────────────── */
     .step-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 16px;
         padding: 2rem 1.5rem;
         text-align: center;
         transition: all 0.25s ease;
     }
-    .step-card:hover { box-shadow: 0 10px 32px rgba(0,0,0,0.08); transform: translateY(-4px); }
+    .step-card:hover { box-shadow: 0 10px 32px rgba(0,0,0,0.4); transform: translateY(-4px); border-color: rgba(56,189,248,.25); }
     .step-number {
         width: 48px; height: 48px;
         border-radius: 50%;
-        background: #111827;
+        background: var(--primary);
         color: #fff;
-        font-family: 'Syne', sans-serif;
+        font-family: 'Poppins', sans-serif;
         font-weight: 700;
         font-size: 1.1rem;
         display: flex;
@@ -139,27 +182,50 @@
         margin: 0 auto 1.25rem;
     }
     .step-img-wrap {
-        background: #f8f9fb;
-        border: 1px solid #e5e7eb;
+        background: #090c12;
+        border: 1px solid var(--border);
         border-radius: 12px;
         overflow: hidden;
         height: 175px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
         margin-bottom: 1.25rem;
     }
+    .mockup-topbar { display:flex; align-items:center; gap:5px; padding:.5rem .65rem; border-bottom:1px solid var(--border); flex-shrink:0; }
+    .mockup-dot { width:7px; height:7px; border-radius:50%; background:#374151; }
+    .mockup-body { flex:1; padding:.85rem; display:flex; flex-direction:column; justify-content:center; min-height:0; }
+
+    /* Step 1 — sign up mockup */
+    .mockup-avatar { width:26px; height:26px; border-radius:8px; background:rgba(56,189,248,.15); display:flex; align-items:center; justify-content:center; margin:0 auto .5rem; }
+    .mockup-title { text-align:center; font-size:.68rem; font-weight:700; color:#fff; margin-bottom:.6rem; }
+    .mockup-field { height:16px; border-radius:5px; background:rgba(255,255,255,.05); border:1px solid var(--border); margin-bottom:.4rem; }
+    .mockup-btn { height:18px; border-radius:5px; background:var(--primary); margin-top:.3rem; }
+
+    /* Step 2 — demo dashboard mockup */
+    .mockup-balance { background:linear-gradient(135deg,#1d4ed8,#0891b2); border-radius:8px; padding:.5rem .6rem; margin-bottom:.5rem; }
+    .mockup-balance .lbl { font-size:.5rem; color:rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.05em; }
+    .mockup-balance .amt { font-size:.85rem; font-weight:800; color:#fff; font-family:'Poppins',sans-serif; }
+    .mockup-tiles { display:grid; grid-template-columns:1fr 1fr; gap:.4rem; }
+    .mockup-tile { background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:6px; padding:.35rem .5rem; }
+    .mockup-tile .t1 { font-size:.48rem; color:var(--text-light); }
+    .mockup-tile .t2 { font-size:.62rem; font-weight:700; color:#fff; }
+
+    /* Step 3 — trade chart mockup */
+    .mockup-chart { flex:1; display:flex; align-items:flex-end; gap:3px; padding:0 .1rem .3rem; }
+    .mockup-bar { flex:1; border-radius:2px 2px 0 0; }
+    .mockup-trade-row { display:flex; gap:.4rem; margin-top:.4rem; }
+    .mockup-trade-row span { flex:1; text-align:center; font-size:.55rem; font-weight:700; border-radius:5px; padding:.22rem 0; }
 
     /* ── Trust cards ────────────────────────────────────────────────────── */
     .trust-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 14px;
         padding: 2rem 1.5rem;
         text-align: center;
-        transition: box-shadow 0.2s ease;
+        transition: box-shadow 0.2s ease, border-color .2s ease;
     }
-    .trust-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.07); }
+    .trust-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.35); border-color: rgba(56,189,248,.25); }
     .trust-icon {
         width: 60px; height: 60px;
         margin: 0 auto 1.25rem;
@@ -170,27 +236,110 @@
 
     /* ── Testimonials ───────────────────────────────────────────────────── */
     .testimonial-card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
         border-radius: 14px;
         padding: 1.75rem;
-        transition: box-shadow 0.2s ease;
+        transition: box-shadow 0.2s ease, border-color .2s ease;
     }
-    .testimonial-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.07); }
+    .testimonial-card:hover { box-shadow: 0 6px 22px rgba(0,0,0,0.35); border-color: rgba(56,189,248,.2); }
 
     /* ── Tabs ───────────────────────────────────────────────────────────── */
-    .tab-group { display:flex; border-bottom:2px solid #e5e7eb; margin-bottom:2rem; }
+    .tab-group { display:flex; border-bottom:2px solid var(--border); margin-bottom:2rem; }
     .tab-btn {
-        padding:0.75rem 1.5rem; font-size:0.9rem; font-weight:500; color:#6b7280;
+        padding:0.75rem 1.5rem; font-size:0.9rem; font-weight:500; color:#9aa3b2;
         border-bottom:2px solid transparent; margin-bottom:-2px; cursor:pointer;
         transition:all 0.2s; background:none; border-top:none; border-left:none; border-right:none;
     }
-    .tab-btn.active { color:#111827; border-bottom-color:#111827; font-weight:600; }
+    .tab-btn.active { color:#fff; border-bottom-color: var(--primary); font-weight:600; }
     .tab-content.hidden { display:none; }
+
+    /* ── Phone / device mockup ─────────────────────────────────────────── */
+    .device-wrap { position: relative; display:flex; align-items:center; justify-content:center; min-height: 420px; }
+    .glow-orb { position:absolute; border-radius:50%; filter: blur(70px); opacity:.4; z-index:0; }
+    .glow-orb.blue { width:260px; height:260px; background:#2563eb; top:10%; left:8%; animation: floatBlob 8s ease-in-out infinite; }
+    .glow-orb.cyan { width:220px; height:220px; background:#38bdf8; bottom:5%; right:10%; animation: floatBlob 10s ease-in-out infinite reverse; }
+    .phone-frame {
+        position: relative; z-index: 1;
+        width: 260px; border-radius: 36px;
+        background: #0a0e16; border: 8px solid #12161f;
+        box-shadow: 0 30px 80px rgba(37,99,235,.28), 0 0 0 1px rgba(255,255,255,.04);
+        padding: 20px 16px 24px;
+    }
+    .phone-notch { width:70px; height:6px; border-radius:99px; background:#1c212c; margin:0 auto 16px; }
+    .phone-balance { background: linear-gradient(135deg,#1d4ed8 0%,#06b6d4 100%); border-radius:14px; padding:14px 16px; margin-bottom:14px; }
+    .phone-balance .lbl { font-size:.62rem; color:rgba(255,255,255,.7); text-transform:uppercase; letter-spacing:.06em; margin-bottom:2px; }
+    .phone-balance .amt { font-family:'Poppins',sans-serif; font-weight:800; font-size:1.35rem; color:#fff; }
+    .phone-row { display:flex; align-items:center; justify-content:space-between; padding:9px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+    .phone-row:last-of-type { border-bottom:none; }
+    .phone-row .coin { display:flex; align-items:center; gap:8px; font-size:.78rem; font-weight:600; color:#fff; }
+    .phone-row .dot { width:8px; height:8px; border-radius:50%; }
+    .phone-row .chg { font-size:.72rem; font-weight:700; }
+    .phone-btns { display:flex; gap:8px; margin-top:14px; }
+    .phone-btns span { flex:1; text-align:center; padding:.5rem; border-radius:8px; font-size:.7rem; font-weight:700; }
+
+    /* ── Investment plan teaser cards ─────────────────────────────────────── */
+    .home-plan-card {
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+        padding: 1.75rem 1.5rem; display:flex; flex-direction:column; position:relative;
+        transition: all .22s ease;
+    }
+    .home-plan-card:hover { border-color: rgba(56,189,248,.35); box-shadow: 0 10px 30px rgba(0,0,0,.4); transform: translateY(-3px); }
+    .home-plan-card.featured { border-color: rgba(37,99,235,.55); box-shadow: 0 0 0 1px rgba(37,99,235,.25); }
+    .home-plan-tier {
+        display:inline-flex; align-items:center; gap:.35rem; font-size:.65rem; font-weight:700;
+        letter-spacing:.06em; text-transform:uppercase; padding:.25rem .7rem; border-radius:99px;
+        background: rgba(56,189,248,.1); color: var(--accent-light); width:fit-content; margin-bottom:1rem;
+    }
+    .home-plan-roi {
+        font-family:'Poppins',sans-serif; font-weight:800; font-size:2.4rem; line-height:1;
+        background: linear-gradient(135deg,#fff,#7dd3fc);
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+    .home-plan-stats { display:flex; gap:.5rem; margin:1rem 0; }
+    .home-plan-stats .box { flex:1; background: rgba(255,255,255,.03); border-radius:10px; padding:.5rem .25rem; text-align:center; }
+    .home-plan-stats .box p { margin:0; }
+    .home-plan-cta {
+        margin-top:auto; display:block; text-align:center; padding:.7rem; border-radius:10px;
+        font-weight:600; font-size:.85rem; text-decoration:none; background: var(--primary); color:#fff; transition: background .18s;
+    }
+    .home-plan-cta:hover { background:#1d4ed8; }
+
+    /* ── Stat counters ─────────────────────────────────────────────────── */
+    .stat-counter-card {
+        background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+        padding: 2.25rem 1.5rem; text-align:center; position:relative; overflow:hidden;
+    }
+    .stat-counter-card::before {
+        content:''; position:absolute; top:-30px; right:-30px; width:110px; height:110px;
+        background: radial-gradient(circle, rgba(56,189,248,.16), transparent 70%);
+        border-radius:50%;
+    }
+    .stat-num {
+        font-family:'Poppins',sans-serif; font-weight:800; font-size:2.4rem; line-height:1;
+        background: linear-gradient(135deg,#fff,#93c5fd);
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        position:relative; z-index:1;
+    }
+    .stat-label { color:#9aa3b2; font-size:.8rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; margin-top:.5rem; position:relative; z-index:1; }
+
+    /* ── FAQ ────────────────────────────────────────────────────────────── */
+    .faq-item { background: var(--bg-card); border:1px solid var(--border); border-radius: 14px; margin-bottom: .85rem; overflow:hidden; }
+    .faq-q {
+        width:100%; display:flex; align-items:center; justify-content:space-between; gap:1rem;
+        padding: 1.15rem 1.4rem; background:none; border:none; cursor:pointer; text-align:left;
+        font-family:'Poppins',sans-serif; font-weight:600; font-size:.92rem; color:#fff;
+    }
+    .faq-q i { color:#6b7280; transition: transform .25s; flex-shrink:0; }
+    .faq-item.open .faq-q i { transform: rotate(180deg); color: var(--accent); }
+    .faq-a { max-height:0; overflow:hidden; transition: max-height .3s ease; }
+    .faq-a-inner { padding: 0 1.4rem 1.25rem; color:#9aa3b2; font-size:.85rem; line-height:1.65; }
+    .faq-item.open .faq-a { max-height: 260px; }
 
     /* ── CTA dark ───────────────────────────────────────────────────────── */
     .cta-dark {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background: linear-gradient(135deg, #0a0f1a 0%, #101a2c 100%);
+        border: 1px solid var(--border);
         border-radius: 20px;
         padding: 5rem 2rem;
         text-align: center;
@@ -202,7 +351,7 @@
         position: absolute;
         width: 420px; height: 420px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(13,148,136,0.2), transparent 70%);
+        background: radial-gradient(circle, rgba(37,99,235,0.25), transparent 70%);
         top: -120px; right: -100px;
         pointer-events: none;
     }
@@ -211,23 +360,42 @@
         position: absolute;
         width: 300px; height: 300px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
+        background: radial-gradient(circle, rgba(56,189,248,0.16), transparent 70%);
         bottom: -80px; left: -60px;
         pointer-events: none;
     }
 
-    /* ── Misc ───────────────────────────────────────────────────────────── */
-    html { scroll-behavior: smooth; }
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: #f1f5f9; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+    /* ── TradingView widget wrappers ───────────────────────────────────── */
+    .tv-card { background: var(--bg-card); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
 
+    /* ── Cross-rate matrix ─────────────────────────────────────────────── */
+    #cross-rate-table th, #cross-rate-table td {
+        padding: .6rem .75rem; font-size: .72rem; text-align: center; white-space: nowrap;
+        border-bottom: 1px solid var(--border); border-right: 1px solid var(--border);
+    }
+    #cross-rate-table th:last-child, #cross-rate-table td:last-child { border-right: none; }
+    #cross-rate-table thead th {
+        background: var(--bg-elevated); color: #c7ccd6; font-weight: 700; text-transform: uppercase; letter-spacing: .04em;
+        position: sticky; top: 0;
+    }
+    #cross-rate-table tbody th {
+        background: var(--bg-elevated); color: #fff; font-weight: 700; text-align: left; position: sticky; left: 0;
+    }
+    #cross-rate-table td { color: #c7ccd6; font-family: 'Courier New', monospace; transition: background-color .3s ease; }
+    #cross-rate-table td.diag { color: #4b5563; }
+    #cross-rate-table tbody tr:last-child th, #cross-rate-table tbody tr:last-child td { border-bottom: none; }
+    .flash-up   { animation: flashUp 1s ease; }
+    .flash-down { animation: flashDown 1s ease; }
+    @keyframes flashUp   { 0% { background-color: rgba(34,197,94,.4); color:#fff; } 100% { background-color: transparent; } }
+    @keyframes flashDown { 0% { background-color: rgba(239,68,68,.4); color:#fff; } 100% { background-color: transparent; } }
+
+    /* ── Misc ───────────────────────────────────────────────────────────── */
     .stat-pill {
         display: inline-flex;
         align-items: center;
         gap: 0.4rem;
-        background: rgba(255,255,255,0.07);
-        border: 1px solid rgba(255,255,255,0.13);
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
         border-radius: 99px;
         padding: 0.4rem 1rem;
         font-size: 0.78rem;
@@ -249,12 +417,28 @@
 
     .payment-badge {
         display: inline-flex; align-items: center; gap: 0.5rem;
-        background: #fff; border: 1px solid #e5e7eb;
+        background: var(--bg-card); border: 1px solid var(--border);
         border-radius: 10px; padding: 0.55rem 1rem;
-        font-size: 0.8rem; font-weight: 600; color: #374151;
+        font-size: 0.8rem; font-weight: 600; color: #c7ccd6;
         transition: all 0.2s;
     }
-    .payment-badge:hover { border-color: #9ca3af; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .payment-badge:hover { border-color: #4b5563; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+
+    .platform-logo-card {
+        display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+        padding: 0.85rem 0.5rem; background: var(--bg-card);
+        border: 1.5px solid var(--border); border-radius: 14px; transition: all 0.2s ease;
+    }
+    .platform-logo-card:hover { border-color: rgba(56,189,248,.4); box-shadow: 0 4px 14px rgba(0,0,0,0.35); transform: translateY(-2px); }
+    .platform-logo-card img { width: 34px; height: 34px; object-fit: contain; border-radius: 8px; display: block; }
+    .platform-logo-card .plat-label { font-size: 0.64rem; font-weight: 600; color: #9aa3b2; text-align: center; line-height: 1.2; }
+    .platform-logo-card .plat-fallback {
+        display: none; width: 34px; height: 34px; border-radius: 8px;
+        align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; color: #fff;
+    }
+    .trusted-divider { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; }
+    .trusted-divider::before, .trusted-divider::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+    .trusted-divider span { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #6b7280; white-space: nowrap; }
 </style>
 {% endblock %}
 
@@ -263,12 +447,12 @@
 <!-- ══════════════════════════════════════════════════════════
      LIVE PRICE TICKER
 ══════════════════════════════════════════════════════════ -->
-<div style="background:#fff; border-bottom:1px solid #e5e7eb;">
+<div style="background:var(--bg-elevated); border-bottom:1px solid var(--border);">
     <div class="max-w-7xl mx-auto px-4 py-2.5">
         <div class="flex items-center gap-4">
             <div class="flex items-center gap-1.5 shrink-0">
                 <span class="live-dot"></span>
-                <span class="text-xs text-gray-400 font-semibold tracking-wide">LIVE</span>
+                <span class="text-xs text-gray-500 font-semibold tracking-wide">LIVE</span>
             </div>
             <div class="ticker-wrap flex-1">
                 <div class="ticker-scroll" id="price-ticker"><!-- JS fills --></div>
@@ -278,27 +462,21 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════
-     HERO — full-screen video background
+     HERO — dark, video ambience
 ══════════════════════════════════════════════════════════ -->
 <section class="hero-video-section">
-    <!-- HTML5 video — free stock trading footage, autoplay muted loop (works in all browsers) -->
     <video
         class="hero-video-bg"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
+        autoplay muted loop playsinline preload="auto"
         poster="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=1600&q=80"
     >
-        <!-- Primary: Pexels free stock video — stock market / trading -->
         <source src="https://videos.pexels.com/video-files/7579524/7579524-hd_1920_1080_25fps.mp4" type="video/mp4">
-        <!-- Fallback 1 -->
         <source src="https://videos.pexels.com/video-files/6774554/6774554-hd_1920_1080_25fps.mp4" type="video/mp4">
-        <!-- Fallback 2 — Mixkit free video -->
         <source src="https://assets.mixkit.co/videos/preview/mixkit-stock-exchange-data-on-screens-1651-large.mp4" type="video/mp4">
     </video>
     <div class="hero-overlay"></div>
+    <div class="hero-glow" style="width:420px;height:420px;background:#2563eb;top:-10%;left:-8%;"></div>
+    <div class="hero-glow" style="width:340px;height:340px;background:#38bdf8;bottom:-12%;right:-6%;animation-direction:reverse;"></div>
 
     <div class="hero-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-28">
         <div class="max-w-2xl">
@@ -308,7 +486,7 @@
             </div>
 
             <h1 class="fade-up fade-up-2 title-font text-4xl md:text-5xl lg:text-6xl text-white leading-tight mb-6">
-                Trading for anyone.<br>Anywhere. Anytime.
+                Trading for anyone.<br><span class="accent-text">Anywhere. Anytime.</span>
             </h1>
 
             <p class="fade-up fade-up-3 text-gray-300 text-lg leading-relaxed mb-8 max-w-lg">
@@ -318,14 +496,14 @@
             <div class="fade-up fade-up-4 flex flex-col sm:flex-row gap-3 mb-12">
                 <a href="{% url 'register' %}"
                    class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg text-sm font-semibold"
-                   style="background:#0d9488; color:#fff; transition:background .2s;"
-                   onmouseover="this.style.background='#0f766e'" onmouseout="this.style.background='#0d9488'">
+                   style="background:#2563eb; color:#fff; transition:background .2s;"
+                   onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
                     <i class="fas fa-rocket"></i> Start Trading Free
                 </a>
                 <a href="#how-it-works"
                    class="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-lg text-sm font-semibold"
-                   style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:#fff; transition:background .2s;"
-                   onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+                   style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); color:#fff; transition:background .2s;"
+                   onmouseover="this.style.background='rgba(255,255,255,0.16)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">
                     <i class="fas fa-play-circle"></i> How It Works
                 </a>
             </div>
@@ -364,54 +542,157 @@
         <i class="fas fa-chevron-down text-white text-sm" style="animation:bounce 1.5s infinite;"></i>
     </div>
 </section>
-<style>
-@keyframes bounce { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
-</style>
+
+<!-- ══════════════════════════════════════════════════════════
+     LIVE MARKET RATES
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14 reveal">
+            <span class="section-label">Live Pricing</span>
+            <h2 class="section-title">The Real-Time Market Advantage</h2>
+            <p class="section-sub max-w-xl mx-auto">Tight spreads, transparent pricing and instant execution — trade the assets that matter, the moment they move.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger reveal">
+            <div class="rate-card">
+                <div class="rate-card-head">
+                    <div><span class="rate-symbol">BTC</span><span class="rate-pair">/USD</span></div>
+                    <span class="rate-change up" id="rate-BTC-change">+0.00%</span>
+                </div>
+                <div class="rate-price" id="rate-BTC-price">$--,---</div>
+                <div class="rate-range"><span>Low <b id="rate-BTC-low">--</b></span><span>High <b id="rate-BTC-high">--</b></span></div>
+                <div class="rate-actions">
+                    <a href="{% url 'trading' %}" class="rate-buy">Buy</a>
+                    <a href="{% url 'trading' %}" class="rate-sell">Sell</a>
+                </div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-card-head">
+                    <div><span class="rate-symbol">ETH</span><span class="rate-pair">/USD</span></div>
+                    <span class="rate-change up" id="rate-ETH-change">+0.00%</span>
+                </div>
+                <div class="rate-price" id="rate-ETH-price">$--,---</div>
+                <div class="rate-range"><span>Low <b id="rate-ETH-low">--</b></span><span>High <b id="rate-ETH-high">--</b></span></div>
+                <div class="rate-actions">
+                    <a href="{% url 'trading' %}" class="rate-buy">Buy</a>
+                    <a href="{% url 'trading' %}" class="rate-sell">Sell</a>
+                </div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-card-head">
+                    <div><span class="rate-symbol">SOL</span><span class="rate-pair">/USD</span></div>
+                    <span class="rate-change up" id="rate-SOL-change">+0.00%</span>
+                </div>
+                <div class="rate-price" id="rate-SOL-price">$--,---</div>
+                <div class="rate-range"><span>Low <b id="rate-SOL-low">--</b></span><span>High <b id="rate-SOL-high">--</b></span></div>
+                <div class="rate-actions">
+                    <a href="{% url 'trading' %}" class="rate-buy">Buy</a>
+                    <a href="{% url 'trading' %}" class="rate-sell">Sell</a>
+                </div>
+            </div>
+            <div class="rate-card">
+                <div class="rate-card-head">
+                    <div><span class="rate-symbol">BNB</span><span class="rate-pair">/USD</span></div>
+                    <span class="rate-change up" id="rate-BNB-change">+0.00%</span>
+                </div>
+                <div class="rate-price" id="rate-BNB-price">$--,---</div>
+                <div class="rate-range"><span>Low <b id="rate-BNB-low">--</b></span><span>High <b id="rate-BNB-high">--</b></span></div>
+                <div class="rate-actions">
+                    <a href="{% url 'trading' %}" class="rate-buy">Buy</a>
+                    <a href="{% url 'trading' %}" class="rate-sell">Sell</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live cross-rate matrix -->
+        <div class="mt-16 reveal">
+            <div class="text-center mb-8">
+                <h3 class="title-font text-xl text-white mb-1">Live Crypto Cross Rates</h3>
+                <p class="text-gray-500 text-sm">Every value below is computed live from real market prices — watch cells flash as rates move.</p>
+            </div>
+            <div class="tv-card" style="overflow-x:auto;">
+                <table id="cross-rate-table" style="width:100%; border-collapse:collapse; min-width:640px;">
+                    <thead>
+                        <tr id="cross-rate-head"></tr>
+                    </thead>
+                    <tbody id="cross-rate-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- ══════════════════════════════════════════════════════════
      HOW IT WORKS — 3 Steps
 ══════════════════════════════════════════════════════════ -->
-<section id="how-it-works" class="py-20 bg-white">
+<section id="how-it-works" class="py-20" style="background:var(--bg-elevated);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
             <span class="section-label">Simple Process</span>
             <h2 class="section-title">Start trading in 3 steps</h2>
             <p class="section-sub max-w-xl mx-auto">Get set up in minutes. No experience required — our platform guides you every step of the way.</p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6">
-            <!-- Step 1 -->
+        <div class="grid md:grid-cols-3 gap-6 reveal-stagger reveal">
             <div class="step-card">
                 <div class="step-img-wrap">
-                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhnz5Lj8gMCsDw5fx6NgdJTWVKciuAvHqijh-WAQ-4up7G2MiqqCeHLKizPWWP-ZHa_FR4O8kdmh1fZLGvkerAEvdJq5FZS-2qC4MkgfIGpsBQTzbc6H4btrx1lsMZDo0Q4Ud7itvpYASJWrDVuV1raG3-TkEi-8tCXQxyxIY2tTrOFkQI15O5smyB9Ibs" alt="">
+                    <div class="mockup-topbar"><span class="mockup-dot"></span><span class="mockup-dot"></span><span class="mockup-dot"></span></div>
+                    <div class="mockup-body">
+                        <div class="mockup-avatar"><i class="fas fa-user-plus" style="font-size:.6rem;color:#7dd3fc;"></i></div>
+                        <div class="mockup-title">Create Your Account</div>
+                        <div class="mockup-field"></div>
+                        <div class="mockup-field"></div>
+                        <div class="mockup-btn"></div>
+                    </div>
                 </div>
                 <div class="step-number">1</div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Sign up and explore</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Sign up in minutes and explore your trading needs — all in one place, no experience required.</p>
+                <h3 class="title-font text-base text-white mb-2">Sign up and explore</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Sign up in minutes and explore your trading needs — all in one place, no experience required.</p>
             </div>
-
-            <!-- Step 2 -->
             <div class="step-card">
                 <div class="step-img-wrap">
-                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEhgQmX_xpD-dURCi00DsbMy5S84pcJO2Wsm_GgqgO8G613r_rixsY08zavChB59WjBT6dR9AC2HtGgGVf9zzVvv5orM33ipEvS3CIFX_Fk2PFZppxpKFRCjG5eqs89ZCADQQ0fiS9T6I7NLV03uLvNJ6FkMfguxbN_1eOvc-PX04xbT00YU-9CvlaN4td4" alt="">
+                    <div class="mockup-topbar"><span class="mockup-dot"></span><span class="mockup-dot"></span><span class="mockup-dot"></span></div>
+                    <div class="mockup-body">
+                        <div class="mockup-balance">
+                            <div class="lbl">Demo Balance</div>
+                            <div class="amt">$10,000.00</div>
+                        </div>
+                        <div class="mockup-tiles">
+                            <div class="mockup-tile"><div class="t1">P&amp;L</div><div class="t2" style="color:#4ade80;">+$248.90</div></div>
+                            <div class="mockup-tile"><div class="t1">Trades</div><div class="t2">12</div></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="step-number">2</div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Try with zero risk</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Try any trade, on any platform with a zero-risk, demo trading account before going live.</p>
+                <h3 class="title-font text-base text-white mb-2">Try with zero risk</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Try any trade, on any platform with a zero-risk, demo trading account before going live.</p>
             </div>
-
-            <!-- Step 3 -->
             <div class="step-card">
                 <div class="step-img-wrap">
-                    <img src="https://blogger.googleusercontent.com/img/a/AVvXsEiW1Vgc6xbdkTX89W9o4CEj99lwYRZ_2b2pfp6dbPZqJ9Ic67QGc4d3qNHqbblFH31l2Gw3W5-nZO34_VGbU60xRnUBwkIwougzPrJQJVPqWWspjheYomsHqDtD8ZrXtI80dfIZvyh7W0FOKepB8j1HfIsIRbY9iltKTLTgwmuIKChswxbhCMiUQNpcHCk" alt="">
+                    <div class="mockup-topbar"><span class="mockup-dot"></span><span class="mockup-dot"></span><span class="mockup-dot"></span></div>
+                    <div class="mockup-chart">
+                        <div class="mockup-bar" style="height:35%;background:#4ade80;"></div>
+                        <div class="mockup-bar" style="height:55%;background:#f87171;"></div>
+                        <div class="mockup-bar" style="height:40%;background:#4ade80;"></div>
+                        <div class="mockup-bar" style="height:70%;background:#4ade80;"></div>
+                        <div class="mockup-bar" style="height:30%;background:#f87171;"></div>
+                        <div class="mockup-bar" style="height:60%;background:#4ade80;"></div>
+                        <div class="mockup-bar" style="height:45%;background:#f87171;"></div>
+                        <div class="mockup-bar" style="height:80%;background:#4ade80;"></div>
+                        <div class="mockup-bar" style="height:50%;background:#4ade80;"></div>
+                    </div>
+                    <div class="mockup-trade-row" style="padding:0 .6rem .6rem;">
+                        <span style="background:rgba(34,197,94,.18);color:#4ade80;">BUY</span>
+                        <span style="background:rgba(239,68,68,.18);color:#f87171;">SELL</span>
+                    </div>
                 </div>
                 <div class="step-number">3</div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Trade with confidence</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Fund your account and start trading with round-the-clock expert support behind you.</p>
+                <h3 class="title-font text-base text-white mb-2">Trade with confidence</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Fund your account and start trading with round-the-clock expert support behind you.</p>
             </div>
         </div>
 
-        <div class="text-center mt-10">
+        <div class="text-center mt-10 reveal">
             <a href="{% url 'register' %}" class="btn-primary px-8 py-3 text-sm rounded-lg">Get Started Free</a>
         </div>
     </div>
@@ -420,49 +701,108 @@
 <!-- ══════════════════════════════════════════════════════════
      MARKETS
 ══════════════════════════════════════════════════════════ -->
-<section id="markets" class="py-20" style="background:#f8f9fb;">
+<section id="markets" class="py-20" style="background:var(--bg);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
             <span class="section-label">Global Markets</span>
             <h2 class="section-title">Trade Stocks, Options, Forex and More</h2>
             <p class="section-sub">Access global markets with professional tools and competitive spreads</p>
         </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 reveal-stagger reveal">
             <div class="market-card">
                 <div class="market-icon">🌍</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">Forex</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Trade major, minor and exotic currency pairs with tight spreads and fast execution around the clock.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 60+ currency pairs</div>
+                <h3 class="title-font text-lg text-white mb-2">Forex</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Trade major, minor and exotic currency pairs with tight spreads and fast execution around the clock.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> 60+ currency pairs</div>
             </div>
             <div class="market-card">
                 <div class="market-icon">📊</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">Options</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Trade diverse options contracts across markets without risking more than your initial capital.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> Capped risk</div>
+                <h3 class="title-font text-lg text-white mb-2">Options</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Trade diverse options contracts across markets without risking more than your initial capital.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> Capped risk</div>
             </div>
             <div class="market-card">
                 <div class="market-icon">📈</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">Leverage</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Multiply your potential on global financial markets without losing more than your initial stake.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> Up to 1:500</div>
+                <h3 class="title-font text-lg text-white mb-2">Leverage</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Multiply your potential on global financial markets without losing more than your initial stake.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> Up to 1:500</div>
             </div>
             <div class="market-card">
                 <div class="market-icon">🏢</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">Stocks</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Buy and sell shares in hundreds of global companies across NYSE, NASDAQ, LSE and beyond.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 500+ stocks</div>
+                <h3 class="title-font text-lg text-white mb-2">Stocks</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Buy and sell shares in hundreds of global companies across NYSE, NASDAQ, LSE and beyond.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> 500+ stocks</div>
             </div>
             <div class="market-card">
                 <div class="market-icon">₿</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">Crypto</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Trade Bitcoin, Ethereum, Solana and 100+ more cryptocurrencies with real-time data.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 100+ tokens</div>
+                <h3 class="title-font text-lg text-white mb-2">Crypto</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Trade Bitcoin, Ethereum, Solana and 100+ more cryptocurrencies with real-time data.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> 100+ tokens</div>
             </div>
             <div class="market-card">
                 <div class="market-icon">🗂️</div>
-                <h3 class="title-font text-lg text-gray-900 mb-2">ETFs</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Diversify across sectors and markets instantly — from tech to energy — with full risk control.</p>
-                <div class="mt-4 flex items-center gap-2 text-xs text-teal-600 font-semibold"><i class="fas fa-arrow-right"></i> 200+ ETFs</div>
+                <h3 class="title-font text-lg text-white mb-2">ETFs</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Diversify across sectors and markets instantly — from tech to energy — with full risk control.</p>
+                <div class="mt-4 flex items-center gap-2 text-xs font-semibold" style="color:var(--accent-light);"><i class="fas fa-arrow-right"></i> 200+ ETFs</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     GLOBAL MARKETS AT YOUR FINGERTIPS — device mockup
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg-elevated);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-14 items-center">
+            <div class="reveal">
+                <span class="section-label">Advanced Technology</span>
+                <h2 class="section-title">Global Markets At<br><span class="accent-text">Your Fingertips</span></h2>
+                <p class="text-gray-400 leading-relaxed mb-6 text-sm max-w-md">
+                    Execute trades from any device with institutional-grade liquidity and sub-second execution. Whether you self-trade or follow expert strategies, your portfolio stays one tap away.
+                </p>
+                <ul class="space-y-3 mb-8">
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Institutional-grade liquidity</li>
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Sub-second execution</li>
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Advanced risk management tools</li>
+                </ul>
+                <a href="{% url 'register' %}" class="inline-flex items-center gap-2 px-7 py-3 rounded-lg text-sm font-semibold" style="background:var(--primary); color:#fff;">
+                    Start Trading Now <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="device-wrap reveal">
+                <div class="glow-orb blue"></div>
+                <div class="glow-orb cyan"></div>
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-balance">
+                        <div class="lbl">Total Balance</div>
+                        <div class="amt">$48,216.90</div>
+                    </div>
+                    <div class="phone-row">
+                        <span class="coin"><span class="dot" style="background:#f7931a;"></span>BTC</span>
+                        <span class="chg" style="color:#4ade80;">+2.14%</span>
+                    </div>
+                    <div class="phone-row">
+                        <span class="coin"><span class="dot" style="background:#627eea;"></span>ETH</span>
+                        <span class="chg" style="color:#4ade80;">+1.02%</span>
+                    </div>
+                    <div class="phone-row">
+                        <span class="coin"><span class="dot" style="background:#9945ff;"></span>SOL</span>
+                        <span class="chg" style="color:#f87171;">-0.68%</span>
+                    </div>
+                    <div class="phone-btns">
+                        <span style="background:rgba(34,197,94,.15); color:#4ade80;">BUY</span>
+                        <span style="background:rgba(239,68,68,.15); color:#f87171;">SELL</span>
+                    </div>
+                </div>
+                <div class="float-card hidden md:block" style="position:absolute; top:6%; right:0; min-width:150px;">
+                    <div class="text-xs text-gray-300 font-semibold">Zero Commissions</div>
+                </div>
+                <div class="float-card hidden md:block" style="position:absolute; bottom:4%; left:0; min-width:150px; animation-delay:1s;">
+                    <div class="text-xs text-gray-300 font-semibold">1:500 Leverage</div>
+                </div>
             </div>
         </div>
     </div>
@@ -471,189 +811,80 @@
 <!-- ══════════════════════════════════════════════════════════
      FEATURE — Fast deposits & withdrawals
 ══════════════════════════════════════════════════════════ -->
-<style>
-    .platform-logo-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.85rem 0.5rem;
-        background: #fff;
-        border: 1.5px solid #e5e7eb;
-        border-radius: 14px;
-        transition: all 0.2s ease;
-    }
-    .platform-logo-card:hover {
-        border-color: #9ca3af;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.07);
-        transform: translateY(-2px);
-    }
-    .platform-logo-card img {
-        width: 34px;
-        height: 34px;
-        object-fit: contain;
-        border-radius: 8px;
-        display: block;
-    }
-    .platform-logo-card .plat-label {
-        font-size: 0.64rem;
-        font-weight: 600;
-        color: #4b5563;
-        text-align: center;
-        line-height: 1.2;
-    }
-    .platform-logo-card .plat-fallback {
-        display: none;
-        width: 34px;
-        height: 34px;
-        border-radius: 8px;
-        align-items: center;
-        justify-content: center;
-        font-weight: 800;
-        font-size: 0.85rem;
-        color: #fff;
-    }
-    .trusted-divider {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        margin-bottom: 1rem;
-    }
-    .trusted-divider::before, .trusted-divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
-        background: #e5e7eb;
-    }
-    .trusted-divider span {
-        font-size: 0.68rem;
-        font-weight: 700;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: #9ca3af;
-        white-space: nowrap;
-    }
-</style>
-<section class="py-12 md:py-20 bg-white">
+<section class="py-12 md:py-20" style="background:var(--bg);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
-
-            <!-- LEFT — text + trusted platforms -->
-            <div>
+            <div class="reveal">
                 <span class="section-label">Payments</span>
                 <h2 class="section-title">Fast, hassle-free deposits<br>and withdrawals</h2>
-                <p class="text-gray-500 leading-relaxed mb-6 text-sm">10+ global payment methods. Deposit instantly starting from just $1 (USD). Withdraw in minutes.*</p>
+                <p class="text-gray-400 leading-relaxed mb-6 text-sm">10+ global payment methods. Deposit instantly starting from just $1 (USD). Withdraw in minutes.*</p>
 
-                <!-- Trusted Platforms -->
                 <div class="trusted-divider"><span>Trusted platforms &amp; currencies</span></div>
 
                 <div class="grid grid-cols-5 gap-2.5">
-
-                    <!-- Bitcoin -->
                     <div class="platform-logo-card">
-                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/btc.png"
-                             alt="Bitcoin"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/btc.png" alt="Bitcoin" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#F7931A;">₿</div>
                         <span class="plat-label">Bitcoin</span>
                     </div>
-
-                    <!-- Ethereum -->
                     <div class="platform-logo-card">
-                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/eth.png"
-                             alt="Ethereum"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/eth.png" alt="Ethereum" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#627EEA;">Ξ</div>
                         <span class="plat-label">Ethereum</span>
                     </div>
-
-                    <!-- USDT -->
                     <div class="platform-logo-card">
-                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/usdt.png"
-                             alt="USDT"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/usdt.png" alt="USDT" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#26A17B;">₮</div>
                         <span class="plat-label">USDT</span>
                     </div>
-
-                    <!-- Solana -->
                     <div class="platform-logo-card">
-                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/sol.png"
-                             alt="Solana"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/sol.png" alt="Solana" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#9945FF;">◎</div>
                         <span class="plat-label">Solana</span>
                     </div>
-
-                    <!-- BNB -->
                     <div class="platform-logo-card">
-                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/bnb.png"
-                             alt="BNB"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://cdn.jsdelivr.net/gh/spothq/cryptocurrency-icons@master/128/color/bnb.png" alt="BNB" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#F3BA2F;color:#1a1a1a;font-size:0.55rem;">BNB</div>
                         <span class="plat-label">BNB</span>
                     </div>
-
-                    <!-- Revolut -->
                     <div class="platform-logo-card">
-                        <img src="https://logo.clearbit.com/revolut.com"
-                             alt="Revolut"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://logo.clearbit.com/revolut.com" alt="Revolut" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#191C1F;">R</div>
                         <span class="plat-label">Revolut</span>
                     </div>
-
-                    <!-- Cash App -->
                     <div class="platform-logo-card">
-                        <img src="https://logo.clearbit.com/cash.app"
-                             alt="Cash App"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://logo.clearbit.com/cash.app" alt="Cash App" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#00D632;">$</div>
                         <span class="plat-label">Cash App</span>
                     </div>
-
-                    <!-- Coinbase -->
                     <div class="platform-logo-card">
-                        <img src="https://logo.clearbit.com/coinbase.com"
-                             alt="Coinbase"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://logo.clearbit.com/coinbase.com" alt="Coinbase" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#0052FF;">C</div>
                         <span class="plat-label">Coinbase</span>
                     </div>
-
-                    <!-- Binance -->
                     <div class="platform-logo-card">
-                        <img src="https://logo.clearbit.com/binance.com"
-                             alt="Binance"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://logo.clearbit.com/binance.com" alt="Binance" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#F3BA2F;color:#1a1a1a;font-size:0.55rem;">BIN</div>
                         <span class="plat-label">Binance</span>
                     </div>
-
-                    <!-- MoonPay -->
                     <div class="platform-logo-card">
-                        <img src="https://logo.clearbit.com/moonpay.com"
-                             alt="MoonPay"
-                             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                        <img src="https://logo.clearbit.com/moonpay.com" alt="MoonPay" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
                         <div class="plat-fallback" style="background:#7B2EF8;font-size:0.55rem;">MP</div>
                         <span class="plat-label">MoonPay</span>
                     </div>
-
                 </div>
-                <p class="text-xs text-gray-400 mt-3">* Withdrawal times vary by method. Crypto withdrawals are typically fastest.</p>
+                <p class="text-xs text-gray-500 mt-3">* Withdrawal times vary by method. Crypto withdrawals are typically fastest.</p>
             </div>
-
         </div>
     </div>
 </section>
 
-
 <!-- ══════════════════════════════════════════════════════════
      LIVE CHART — Tabs
 ══════════════════════════════════════════════════════════ -->
-<section class="py-20" style="background:#f8f9fb;">
+<section class="py-20" style="background:var(--bg-elevated);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-10">
+        <div class="text-center mb-10 reveal">
             <span class="section-label">Platform</span>
             <h2 class="section-title">User-friendly trading on any device</h2>
             <p class="section-sub">Trade seamlessly across all your devices with our cutting-edge tools</p>
@@ -661,49 +892,195 @@
 
         <div class="tab-group max-w-lg mx-auto justify-center flex">
             <button class="tab-btn active" onclick="switchTab(this,'bots')">Bots</button>
-            <!-- <button class="tab-btn" onclick="switchTab(this,'bots')">Bots</button> -->
             <button class="tab-btn" onclick="switchTab(this,'social')">Social</button>
         </div>
 
         <div id="tab-platforms" class="tab-content">
-            <div id="tradingview_chart" class="rounded-xl overflow-hidden border border-gray-200 shadow-sm" style="height:500px;"></div>
+            <div class="tv-card">
+                <div id="tradingview_chart" style="height:500px;"></div>
+            </div>
         </div>
         <div id="tab-bots" class="tab-content hidden">
             <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-robot text-2xl text-purple-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">AI Trading Bots</h3>
-                    <p class="text-gray-500 text-sm">Automated trading powered by machine learning algorithms that never sleep.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(168,85,247,.12);"><i class="fas fa-robot text-2xl" style="color:#c084fc;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">AI Trading Bots</h3>
+                    <p class="text-gray-400 text-sm">Automated trading powered by machine learning algorithms that never sleep.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-chart-line text-2xl text-blue-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">Strategy Builder</h3>
-                    <p class="text-gray-500 text-sm">Build and backtest custom trading strategies visually — no coding needed.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(56,189,248,.12);"><i class="fas fa-chart-line text-2xl" style="color:#38bdf8;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">Strategy Builder</h3>
+                    <p class="text-gray-400 text-sm">Build and backtest custom trading strategies visually — no coding needed.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-teal-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-history text-2xl text-teal-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">Backtesting</h3>
-                    <p class="text-gray-500 text-sm">Test your strategies against years of historical market data in seconds.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(45,212,191,.12);"><i class="fas fa-history text-2xl" style="color:#2dd4bf;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">Backtesting</h3>
+                    <p class="text-gray-400 text-sm">Test your strategies against years of historical market data in seconds.</p>
                 </div>
             </div>
         </div>
         <div id="tab-social" class="tab-content hidden">
             <div class="grid md:grid-cols-3 gap-5">
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-users text-2xl text-green-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">Copy Trading</h3>
-                    <p class="text-gray-500 text-sm">Follow and mirror trades from top-performing traders automatically.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(34,197,94,.12);"><i class="fas fa-users text-2xl" style="color:#4ade80;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">Copy Trading</h3>
+                    <p class="text-gray-400 text-sm">Follow and mirror trades from top-performing traders automatically.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-comments text-2xl text-indigo-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">Community</h3>
-                    <p class="text-gray-500 text-sm">Connect with thousands of traders worldwide and share market insights.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(99,102,241,.12);"><i class="fas fa-comments text-2xl" style="color:#818cf8;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">Community</h3>
+                    <p class="text-gray-400 text-sm">Connect with thousands of traders worldwide and share market insights.</p>
                 </div>
                 <div class="market-card text-center">
-                    <div class="w-14 h-14 rounded-2xl bg-yellow-50 flex items-center justify-center mx-auto mb-4"><i class="fas fa-trophy text-2xl text-yellow-600"></i></div>
-                    <h3 class="title-font text-base text-gray-900 mb-2">Leaderboard</h3>
-                    <p class="text-gray-500 text-sm">See who the top traders are and learn directly from their strategies.</p>
+                    <div class="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style="background:rgba(234,179,8,.12);"><i class="fas fa-trophy text-2xl" style="color:#facc15;"></i></div>
+                    <h3 class="title-font text-base text-white mb-2">Leaderboard</h3>
+                    <p class="text-gray-400 text-sm">See who the top traders are and learn directly from their strategies.</p>
                 </div>
+            </div>
+        </div>
+
+        <!-- Technical Analysis widget -->
+        <div class="mt-12 reveal">
+            <div class="text-center mb-6">
+                <h3 class="title-font text-lg text-white mb-1">Live Technical Analysis</h3>
+                <p class="text-gray-400 text-sm">Real-time buy/sell signal gauge, powered by TradingView</p>
+            </div>
+            <div class="tv-card">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                    {
+                    "interval": "1h",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "425",
+                    "symbol": "BINANCE:BTCUSDT",
+                    "showIntervalTabs": true,
+                    "displayMode": "single",
+                    "locale": "en",
+                    "colorTheme": "dark"
+                    }
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     INVESTMENT PLANS
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid lg:grid-cols-2 gap-14 items-center mb-16">
+            <div class="device-wrap reveal" style="min-height:380px;">
+                <div class="glow-orb blue" style="top:5%; left:12%;"></div>
+                <div class="glow-orb cyan" style="bottom:0; right:8%;"></div>
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div style="text-align:center; margin-bottom:12px;">
+                        <div class="title-font" style="font-size:.8rem; font-weight:700; color:#fff;">Investment Plans</div>
+                        <div style="font-size:.6rem; color:var(--text-light);">Fixed returns, zero guesswork</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,.04); border:1px solid var(--border); border-radius:10px; padding:10px 12px; margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:.68rem; font-weight:700; color:#4ade80;">STARTER</span>
+                            <span style="font-size:.6rem; color:var(--text-light);">30 days</span>
+                        </div>
+                        <div class="title-font" style="font-size:1rem; color:#fff; margin:.2rem 0;">8% ROI</div>
+                        <div style="height:16px; border-radius:5px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:.55rem; font-weight:700; color:#fff;">SUBSCRIBE</div>
+                    </div>
+                    <div style="background:rgba(255,255,255,.04); border:1px solid rgba(37,99,235,.4); border-radius:10px; padding:10px 12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-size:.68rem; font-weight:700; color:#60a5fa;">GOLD</span>
+                            <span style="font-size:.6rem; color:var(--text-light);">60 days</span>
+                        </div>
+                        <div class="title-font" style="font-size:1rem; color:#fff; margin:.2rem 0;">18% ROI</div>
+                        <div style="height:16px; border-radius:5px; background:var(--primary); display:flex; align-items:center; justify-content:center; font-size:.55rem; font-weight:700; color:#fff;">SUBSCRIBE</div>
+                    </div>
+                </div>
+            </div>
+            <div class="reveal">
+                <span class="section-label">Investment Plans</span>
+                <h2 class="section-title">Put your capital to work</h2>
+                <p class="text-gray-400 text-sm leading-relaxed mb-6 max-w-md">Choose a plan that fits your goals and earn a fixed, guaranteed return at maturity — no trading experience needed, no surprises.</p>
+                <ul class="space-y-3">
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Fixed, guaranteed ROI at maturity</li>
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Five tiers, from Starter to Diamond</li>
+                    <li class="flex items-center gap-3 text-sm text-gray-300"><span style="width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;"></span> Principal + returns credited automatically</li>
+                </ul>
+            </div>
+        </div>
+
+        {% if plans %}
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger reveal">
+            {% for plan in plans %}
+            <div class="home-plan-card {% if plan.is_featured %}featured{% endif %}">
+                <span class="home-plan-tier">{{ plan.tier }}</span>
+                <h3 class="title-font text-base text-white mb-3">{{ plan.name }}</h3>
+                <div class="flex items-end gap-2 mb-1">
+                    <span class="home-plan-roi">{{ plan.roi_percentage }}%</span>
+                    <span class="text-gray-500 text-xs mb-2">ROI</span>
+                </div>
+                <p class="text-xs text-gray-500 mb-2">Over {{ plan.duration_days }} days</p>
+                <div class="home-plan-stats">
+                    <div class="box">
+                        <p class="text-xs text-gray-500">Min</p>
+                        <p class="font-bold text-sm text-white">${{ plan.minimum_amount|floatformat:0 }}</p>
+                    </div>
+                    <div class="box">
+                        <p class="text-xs text-gray-500">Duration</p>
+                        <p class="font-bold text-sm text-white">{{ plan.duration_days }}d</p>
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'investment_plan_detail' plan.id %}" class="home-plan-cta">Invest Now</a>
+                {% else %}
+                <a href="{% url 'register' %}" class="home-plan-cta">Get Started</a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-10 reveal">
+            <a href="{% url 'investment_plans' %}" class="inline-flex items-center gap-2 text-sm font-semibold" style="color:var(--accent-light);">
+                View all investment plans <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-10 reveal">
+            <p class="text-gray-500">New investment plans are launching soon — check back shortly.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     STATS
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg-elevated);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-14 reveal">
+            <span class="section-label">By The Numbers</span>
+            <h2 class="section-title">Trusted by traders worldwide</h2>
+            <p class="section-sub">Real-time statistics from our growing global community</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger reveal">
+            <div class="stat-counter-card">
+                <div class="stat-num"><span data-count-to="150000" data-count-suffix="+">0</span></div>
+                <div class="stat-label">Active Traders</div>
+            </div>
+            <div class="stat-counter-card">
+                <div class="stat-num"><span data-count-to="120" data-count-suffix="+">0</span></div>
+                <div class="stat-label">Countries Served</div>
+            </div>
+            <div class="stat-counter-card">
+                <div class="stat-num"><span data-count-to="50" data-count-suffix="+">0</span></div>
+                <div class="stat-label">Markets</div>
+            </div>
+            <div class="stat-counter-card">
+                <div class="stat-num"><span data-count-to="99.97" data-count-decimals="2" data-count-suffix="%">0</span></div>
+                <div class="stat-label">Platform Uptime</div>
             </div>
         </div>
     </div>
@@ -712,33 +1089,33 @@
 <!-- ══════════════════════════════════════════════════════════
      WHY CHOOSE US
 ══════════════════════════════════════════════════════════ -->
-<section class="py-20 bg-white">
+<section class="py-20" style="background:var(--bg);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
             <span class="section-label">Why Us</span>
             <h2 class="section-title">Trading for an edge</h2>
             <p class="section-sub">Everything you need to trade with confidence and clarity</p>
         </div>
-        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 reveal-stagger reveal">
             <div class="trust-card">
-                <div class="trust-icon bg-blue-50"><i class="fas fa-server text-blue-600"></i></div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Dependable</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Our 99.97% uptime ensures you never miss a trade due to downtime.</p>
+                <div class="trust-icon" style="background:rgba(56,189,248,.12);"><i class="fas fa-server" style="color:#38bdf8;"></i></div>
+                <h3 class="title-font text-base text-white mb-2">Dependable</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Our 99.97% uptime ensures you never miss a trade due to downtime.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon bg-green-50"><i class="fas fa-lock text-green-600"></i></div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Safe & Secure</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">256-bit SSL and cold storage keep your funds and data fully protected.</p>
+                <div class="trust-icon" style="background:rgba(34,197,94,.12);"><i class="fas fa-lock" style="color:#4ade80;"></i></div>
+                <h3 class="title-font text-base text-white mb-2">Safe & Secure</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">256-bit SSL and cold storage keep your funds and data fully protected.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon bg-teal-50"><i class="fas fa-shield-alt text-teal-600"></i></div>
-                <h3 class="title-font text-base text-gray-900 mb-2">Regulated</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Regulated and licensed by global financial authorities you can trust.</p>
+                <div class="trust-icon" style="background:rgba(45,212,191,.12);"><i class="fas fa-shield-alt" style="color:#2dd4bf;"></i></div>
+                <h3 class="title-font text-base text-white mb-2">Regulated</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Regulated and licensed by global financial authorities you can trust.</p>
             </div>
             <div class="trust-card">
-                <div class="trust-icon bg-purple-50"><i class="fas fa-headset text-purple-600"></i></div>
-                <h3 class="title-font text-base text-gray-900 mb-2">24/7 Support</h3>
-                <p class="text-gray-500 text-sm leading-relaxed">Our multilingual support team is available every hour of every day.</p>
+                <div class="trust-icon" style="background:rgba(168,85,247,.12);"><i class="fas fa-headset" style="color:#c084fc;"></i></div>
+                <h3 class="title-font text-base text-white mb-2">24/7 Support</h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Our multilingual support team is available every hour of every day.</p>
             </div>
         </div>
     </div>
@@ -747,43 +1124,106 @@
 <!-- ══════════════════════════════════════════════════════════
      TESTIMONIALS
 ══════════════════════════════════════════════════════════ -->
-<section class="py-20" style="background:#f8f9fb;">
+<section class="py-20" style="background:var(--bg-elevated);">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-14">
+        <div class="text-center mb-14 reveal">
             <span class="section-label">Testimonials</span>
             <h2 class="section-title">What our traders say</h2>
             <p class="section-sub">Join 150,000+ satisfied traders from around the world</p>
         </div>
-        <div class="grid md:grid-cols-3 gap-5">
+        <div class="grid md:grid-cols-3 gap-5 reveal-stagger reveal">
             <div class="testimonial-card">
                 <div class="flex items-center gap-1 text-yellow-400 mb-3">
                     <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">"The platform is incredibly fast. I've been trading forex for 3 years and this is by far the best execution I've seen. Withdrawals are always on time."</p>
-                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
-                    <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-xs font-bold text-blue-700 flex-shrink-0">JM</div>
-                    <div><div class="text-sm font-semibold text-gray-900">James M.</div><div class="text-xs text-gray-400">Forex Trader · UK</div></div>
+                <p class="text-gray-300 text-sm leading-relaxed mb-4">"The platform is incredibly fast. I've been trading forex for 3 years and this is by far the best execution I've seen. Withdrawals are always on time."</p>
+                <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border);">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:rgba(56,189,248,.15); color:#38bdf8;">JM</div>
+                    <div><div class="text-sm font-semibold text-white">James M.</div><div class="text-xs text-gray-500">Forex Trader · UK</div></div>
                 </div>
             </div>
             <div class="testimonial-card">
                 <div class="flex items-center gap-1 text-yellow-400 mb-3">
                     <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">"Deposited crypto and funds appeared within seconds. The copy trading feature let me follow pro traders while I was learning. Made profit in week one!"</p>
-                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
-                    <div class="w-9 h-9 rounded-full bg-teal-100 flex items-center justify-center text-xs font-bold text-teal-700 flex-shrink-0">SA</div>
-                    <div><div class="text-sm font-semibold text-gray-900">Sarah A.</div><div class="text-xs text-gray-400">Crypto Trader · USA</div></div>
+                <p class="text-gray-300 text-sm leading-relaxed mb-4">"Deposited crypto and funds appeared within seconds. The copy trading feature let me follow pro traders while I was learning. Made profit in week one!"</p>
+                <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border);">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:rgba(45,212,191,.15); color:#2dd4bf;">SA</div>
+                    <div><div class="text-sm font-semibold text-white">Sarah A.</div><div class="text-xs text-gray-500">Crypto Trader · USA</div></div>
                 </div>
             </div>
             <div class="testimonial-card">
                 <div class="flex items-center gap-1 text-yellow-400 mb-3">
                     <i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star text-xs"></i><i class="fas fa-star-half-alt text-xs"></i>
                 </div>
-                <p class="text-gray-600 text-sm leading-relaxed mb-4">"24/7 support actually means 24/7 here. Got help at 3am on a Sunday. The bots are accurate and the dashboard is clean and easy to understand."</p>
-                <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
-                    <div class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-700 flex-shrink-0">KO</div>
-                    <div><div class="text-sm font-semibold text-gray-900">Kofi O.</div><div class="text-xs text-gray-400">Stocks Trader · Ghana</div></div>
+                <p class="text-gray-300 text-sm leading-relaxed mb-4">"24/7 support actually means 24/7 here. Got help at 3am on a Sunday. The bots are accurate and the dashboard is clean and easy to understand."</p>
+                <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border);">
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0" style="background:rgba(168,85,247,.15); color:#c084fc;">KO</div>
+                    <div><div class="text-sm font-semibold text-white">Kofi O.</div><div class="text-xs text-gray-500">Stocks Trader · Ghana</div></div>
                 </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     MARKET NEWS
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10 reveal">
+            <span class="section-label">Market News</span>
+            <h2 class="section-title">Stay ahead of the market</h2>
+            <p class="section-sub">The latest headlines moving stocks, crypto and forex — updated in real time</p>
+        </div>
+        <div class="tv-card reveal">
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-timeline.js" async>
+                {
+                "displayMode": "regular",
+                "feedMode": "all_symbols",
+                "colorTheme": "dark",
+                "isTransparent": true,
+                "locale": "en",
+                "width": "100%",
+                "height": "450"
+                }
+                </script>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════════════════
+     FAQ
+══════════════════════════════════════════════════════════ -->
+<section class="py-20" style="background:var(--bg-elevated);">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12 reveal">
+            <span class="section-label">FAQ</span>
+            <h2 class="section-title">Frequently asked questions</h2>
+        </div>
+        <div class="reveal">
+            <div class="faq-item open">
+                <button class="faq-q" onclick="toggleFaq(this)">What is Mirrorwavetrades? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a"><div class="faq-a-inner">Mirrorwavetrades is a professional trading platform giving you access to stocks, crypto, forex and options in one place, with tools for self-directed trading, copy trading and fixed-return investment plans.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">How do I deposit and withdraw funds? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a"><div class="faq-a-inner">You can deposit via Bitcoin, Ethereum, USDT and other supported currencies from your dashboard. Withdrawals are processed once your withdrawal access is approved — usually within minutes for crypto.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">What are investment plans and how do they work? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a"><div class="faq-a-inner">Investment plans let you allocate funds from your account balance into a fixed-term plan with a set ROI. At the end of the term, your principal plus the stated return is automatically credited back to your balance.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">Is my account secure? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a"><div class="faq-a-inner">Yes. We use 256-bit SSL encryption across the platform and follow strict account verification and security practices to keep your funds and data protected.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-q" onclick="toggleFaq(this)">Can I get help if I have a problem? <i class="fas fa-chevron-down"></i></button>
+                <div class="faq-a"><div class="faq-a-inner">Our support team is available 24/7 via live chat once you're logged in, so help is always a click away no matter your timezone.</div></div>
             </div>
         </div>
     </div>
@@ -792,17 +1232,17 @@
 <!-- ══════════════════════════════════════════════════════════
      CTA — dark
 ══════════════════════════════════════════════════════════ -->
-<section class="py-20 bg-white">
+<section class="py-20" style="background:var(--bg);">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="cta-dark">
+        <div class="cta-dark reveal">
             <div class="relative z-10">
-                <span class="inline-block text-xs font-bold tracking-widest uppercase text-teal-400 mb-5">Get Started Today</span>
+                <span class="inline-block text-xs font-bold tracking-widest uppercase mb-5" style="color:var(--accent-light);">Get Started Today</span>
                 <h2 class="title-font text-3xl md:text-4xl text-white mb-4">Start trading today</h2>
                 <p class="text-gray-400 text-base mb-8 max-w-xl mx-auto">
                     Join 150,000+ traders who trust our platform. Get started in minutes — no experience needed.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
-                    <a href="{% url 'register' %}" class="inline-block px-8 py-3.5 rounded-lg text-sm font-semibold" style="background:#0d9488; color:#fff;">
+                    <a href="{% url 'register' %}" class="inline-block px-8 py-3.5 rounded-lg text-sm font-semibold" style="background:var(--primary); color:#fff;">
                         <i class="fas fa-rocket mr-1.5"></i> Create Free Account
                     </a>
                     <a href="{% url 'login' %}" class="inline-block px-8 py-3.5 rounded-lg text-sm font-semibold" style="background:transparent; border:1.5px solid #374151; color:#d1d5db;">
@@ -810,9 +1250,9 @@
                     </a>
                 </div>
                 <div class="flex flex-wrap justify-center gap-6 text-gray-500 text-sm">
-                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> No Credit Card Required</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> Instant Access</div>
-                    <div class="flex items-center gap-2"><i class="fas fa-check-circle text-teal-500"></i> 24/7 Support</div>
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle" style="color:var(--accent);"></i> No Credit Card Required</div>
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle" style="color:var(--accent);"></i> Instant Access</div>
+                    <div class="flex items-center gap-2"><i class="fas fa-check-circle" style="color:var(--accent);"></i> 24/7 Support</div>
                 </div>
             </div>
         </div>
@@ -825,15 +1265,44 @@
 <script>
 // ── Price Ticker ─────────────────────────────────────────────────────────────
 const tickerSymbols = ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE','AVAX','LTC','MATIC'];
+const rateSymbols = ['BTC','ETH','SOL','BNB'];
 let cachedPrices = {};
+
+// Real price history tracked client-side from actual API polls — no random data.
+// "Change" is measured against the price when this page was first loaded (session change),
+// and Low/High are the real observed min/max since then. Both are honest, live-derived
+// numbers that only move when the underlying price genuinely moves.
+let priceHistory = {};
+
+function trackPriceHistory(prices) {
+    Object.keys(prices).forEach(symbol => {
+        const p = parseFloat(prices[symbol]);
+        if (!p) return;
+        if (!priceHistory[symbol]) {
+            priceHistory[symbol] = { first: p, low: p, high: p };
+        } else {
+            priceHistory[symbol].low = Math.min(priceHistory[symbol].low, p);
+            priceHistory[symbol].high = Math.max(priceHistory[symbol].high, p);
+        }
+    });
+}
+
+function sessionChangePct(symbol, p) {
+    const h = priceHistory[symbol];
+    if (!h || !h.first) return 0;
+    return ((p - h.first) / h.first) * 100;
+}
 
 async function updatePrices() {
     try {
         const res = await fetch('/api/crypto-prices/');
         cachedPrices = await res.json();
     } catch(e) {}
+    trackPriceHistory(cachedPrices);
     renderTicker(cachedPrices);
     updateHeroCard(cachedPrices);
+    updateRateCards(cachedPrices);
+    updateCrossRateTable(cachedPrices);
 }
 
 function renderTicker(prices) {
@@ -841,14 +1310,16 @@ function renderTicker(prices) {
     if (!ticker) return;
     let html = '';
     tickerSymbols.forEach(symbol => {
-        const price = prices[symbol] || (Math.random()*50000+100).toFixed(2);
-        const change = (Math.random()*10-5).toFixed(2);
+        const price = prices[symbol];
+        if (!price) return;
+        const p = parseFloat(price);
+        const change = sessionChangePct(symbol, p).toFixed(2);
         const isUp = parseFloat(change) >= 0;
         html += `<div class="flex items-center gap-2 whitespace-nowrap">
-            <span class="text-xs font-bold text-gray-700">${symbol}</span>
-            <span class="text-xs text-gray-600">$${parseFloat(price).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+            <span class="text-xs font-bold text-gray-300">${symbol}</span>
+            <span class="text-xs text-gray-500">$${p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
             <span class="text-xs font-semibold px-1.5 py-0.5 rounded"
-                  style="background:${isUp?'#dcfce7':'#fee2e2'};color:${isUp?'#16a34a':'#dc2626'}">
+                  style="background:${isUp?'rgba(34,197,94,.15)':'rgba(239,68,68,.15)'};color:${isUp?'#4ade80':'#f87171'}">
                 ${isUp?'↑':'↓'}${Math.abs(change)}%
             </span>
         </div>`;
@@ -865,8 +1336,8 @@ function updateHeroCard(prices) {
     const ethEl = document.getElementById('hero-eth');
     const solEl = document.getElementById('hero-sol');
     if (btcEl && btc) btcEl.textContent = '$' + parseFloat(btc).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
-    if (chgEl) {
-        const chg = (Math.random()*4-1).toFixed(2);
+    if (chgEl && btc) {
+        const chg = sessionChangePct('BTC', parseFloat(btc)).toFixed(2);
         chgEl.textContent = (parseFloat(chg)>=0?'+':'')+chg+'%';
         chgEl.style.color = parseFloat(chg)>=0?'#4ade80':'#f87171';
     }
@@ -874,10 +1345,82 @@ function updateHeroCard(prices) {
     if (solEl && sol) solEl.textContent = '$'+parseFloat(sol).toLocaleString(undefined,{maximumFractionDigits:0});
 }
 
+function updateRateCards(prices) {
+    rateSymbols.forEach(symbol => {
+        const price = prices[symbol];
+        if (!price) return;
+        const priceEl = document.getElementById('rate-'+symbol+'-price');
+        const changeEl = document.getElementById('rate-'+symbol+'-change');
+        const lowEl = document.getElementById('rate-'+symbol+'-low');
+        const highEl = document.getElementById('rate-'+symbol+'-high');
+        const p = parseFloat(price);
+        const change = sessionChangePct(symbol, p).toFixed(2);
+        const isUp = parseFloat(change) >= 0;
+        const h = priceHistory[symbol];
+        if (priceEl) priceEl.textContent = '$' + p.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+        if (changeEl) {
+            changeEl.textContent = (isUp?'+':'') + change + '%';
+            changeEl.className = 'rate-change ' + (isUp ? 'up' : 'down');
+        }
+        if (lowEl && h) lowEl.textContent = '$' + h.low.toLocaleString(undefined,{maximumFractionDigits:2});
+        if (highEl && h) highEl.textContent = '$' + h.high.toLocaleString(undefined,{maximumFractionDigits:2});
+    });
+}
+
+// ── Live cross-rate matrix ──────────────────────────────────────────────────
+const matrixSymbols = ['BTC','ETH','SOL','BNB','XRP','ADA','DOGE'];
+let matrixBuilt = false;
+let prevMatrix = {};
+
+function formatRate(v) {
+    if (v >= 1000) return v.toLocaleString(undefined,{maximumFractionDigits:2});
+    if (v >= 1)    return v.toFixed(4);
+    return v.toFixed(8);
+}
+
+function buildCrossRateTable() {
+    const head = document.getElementById('cross-rate-head');
+    const body = document.getElementById('cross-rate-body');
+    if (!head || !body || matrixBuilt) return;
+
+    head.innerHTML = '<th></th>' + matrixSymbols.map(s => `<th>${s}</th>`).join('');
+    body.innerHTML = matrixSymbols.map(row => {
+        const cells = matrixSymbols.map(col => {
+            if (row === col) return `<td class="diag">—</td>`;
+            return `<td id="xr-${row}-${col}">…</td>`;
+        }).join('');
+        return `<tr><th>${row}</th>${cells}</tr>`;
+    }).join('');
+    matrixBuilt = true;
+}
+
+function updateCrossRateTable(prices) {
+    buildCrossRateTable();
+    matrixSymbols.forEach(row => {
+        matrixSymbols.forEach(col => {
+            if (row === col) return;
+            const pRow = prices[row], pCol = prices[col];
+            if (!pRow || !pCol) return;
+            const value = pRow / pCol; // real cross-rate, no artificial wobble
+            const cell = document.getElementById(`xr-${row}-${col}`);
+            if (!cell) return;
+            const key = row + '-' + col;
+            const prev = prevMatrix[key];
+            cell.textContent = formatRate(value);
+            if (prev !== undefined && prev !== value) {
+                cell.classList.remove('flash-up', 'flash-down');
+                void cell.offsetWidth; // restart animation
+                cell.classList.add(value > prev ? 'flash-up' : 'flash-down');
+            }
+            prevMatrix[key] = value;
+        });
+    });
+}
+
 // ── TradingView iframe (no library needed, always renders) ───────────────────
 document.getElementById('tradingview_chart').innerHTML = `
     <iframe
-        src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3ABTCUSDT&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f8f9fb&studies=%5B%5D&theme=light&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&locale=en"
+        src="https://www.tradingview.com/widgetembed/?frameElementId=tradingview_chart&symbol=BINANCE%3ABTCUSDT&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=0d1117&studies=%5B%5D&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&showpopupbutton=1&locale=en"
         style="width:100%;height:500px;border:none;"
         allowtransparency="true"
         allowfullscreen
@@ -891,6 +1434,14 @@ function switchTab(btn, tab) {
     document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
     btn.classList.add('active');
     document.getElementById('tab-' + tab)?.classList.remove('hidden');
+}
+
+// ── FAQ accordion ─────────────────────────────────────────────────────────────
+function toggleFaq(btn) {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────

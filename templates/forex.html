@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Forex Trading - Influxfinancetrading{% endblock %}
+{% block title %}Forex Trading - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
 /* ── Reset & Base ── */
@@ -156,20 +156,20 @@
 .section-header h2 {
   font-family: 'Georgia', serif;
   font-size: clamp(1.25rem, 4vw, 1.6rem);
-  color: #111827;
+  color: #fff;
   margin: 0;
 }
 
 .section-header p {
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: .8rem;
   margin: .2rem 0 0;
 }
 
 /* Scrollable table wrapper on small screens */
 .table-wrapper {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: .875rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -182,7 +182,7 @@
 }
 
 .rates-table thead tr {
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 .rates-table th {
@@ -190,14 +190,14 @@
   text-align: left;
   font-size: .68rem;
   font-weight: 700;
-  color: #9ca3af;
+  color: var(--text-light);
   text-transform: uppercase;
   letter-spacing: .06em;
   white-space: nowrap;
 }
 
-.pair-row { border-bottom: 1px solid #f1f5f9; transition: background .15s; }
-.pair-row:hover { background: #f8fafc; }
+.pair-row { border-bottom: 1px solid var(--border); transition: background .15s; }
+.pair-row:hover { background: rgba(255,255,255,.03); }
 .pair-row:last-child { border-bottom: none; }
 
 .pair-row td {
@@ -206,14 +206,14 @@
   white-space: nowrap;
 }
 
-.pair-name { font-weight: 700; color: #111827; }
-.pair-price { color: #374151; font-family: 'Courier New', monospace; }
-.pair-change-up { color: #16a34a; font-weight: 700; }
-.pair-change-dn { color: #dc2626; font-weight: 700; }
+.pair-name { font-weight: 700; color: #fff; }
+.pair-price { color: #c7ccd6; font-family: 'Courier New', monospace; }
+.pair-change-up { color: #4ade80; font-weight: 700; }
+.pair-change-dn { color: #f87171; font-weight: 700; }
 
 .spread-pill {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: rgba(34,197,94,.15);
+  color: #4ade80;
   padding: .2rem .55rem;
   border-radius: 9999px;
   font-size: .68rem;
@@ -239,7 +239,7 @@
 /* ── Features Section ── */
 .section-features {
   padding: 3.5rem 1rem;
-  background: #f9fafb;
+  background: var(--bg-elevated);
 }
 
 .section-features .inner { max-width: 64rem; margin: 0 auto; }
@@ -248,10 +248,10 @@
 .section-center h2 {
   font-family: 'Georgia', serif;
   font-size: clamp(1.4rem, 4vw, 2rem);
-  color: #111827;
+  color: #fff;
   margin: 0 0 .4rem;
 }
-.section-center p { color: #6b7280; font-size: .85rem; margin: 0; }
+.section-center p { color: var(--text-muted); font-size: .85rem; margin: 0; }
 
 .features-grid {
   display: grid;
@@ -268,13 +268,13 @@
 }
 
 .feature-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
   border-radius: .875rem;
   padding: 1.5rem;
-  transition: box-shadow .2s, transform .2s;
+  transition: box-shadow .2s, transform .2s, border-color .2s;
 }
-.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.07); transform: translateY(-2px); }
+.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.4); border-color: rgba(16,185,129,.3); transform: translateY(-2px); }
 
 .icon-wrap {
   width: 2.6rem;
@@ -287,8 +287,8 @@
   font-size: 1rem;
 }
 
-.feature-card h3 { font-size: .95rem; font-weight: 700; color: #111827; margin: 0 0 .4rem; }
-.feature-card p  { font-size: .8rem; color: #6b7280; margin: 0; line-height: 1.65; }
+.feature-card h3 { font-size: .95rem; font-weight: 700; color: #fff; margin: 0 0 .4rem; }
+.feature-card p  { font-size: .8rem; color: var(--text-muted); margin: 0; line-height: 1.65; }
 
 /* ── CTA Bottom ── */
 .section-cta {
@@ -298,10 +298,10 @@
 .section-cta h2 {
   font-family: 'Georgia', serif;
   font-size: clamp(1.4rem, 4vw, 2rem);
-  color: #111827;
+  color: #fff;
   margin: 0 0 .75rem;
 }
-.section-cta p { color: #6b7280; font-size: .9rem; margin: 0 0 2rem; }
+.section-cta p { color: var(--text-muted); font-size: .9rem; margin: 0 0 2rem; }
 
 .cta-buttons {
   display: flex;
@@ -328,16 +328,16 @@
 .btn-cta-outline {
   padding: 1rem 2.25rem;
   background: transparent;
-  color: #374151;
+  color: #c7ccd6;
   font-weight: 700;
   font-size: .95rem;
   border-radius: .875rem;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border);
   text-decoration: none;
   transition: border-color .15s, transform .15s;
   display: inline-block;
 }
-.btn-cta-outline:hover { border-color: #6b7280; transform: translateY(-1px); }
+.btn-cta-outline:hover { border-color: #4b5563; transform: translateY(-1px); }
 
 /* ── Utility ── */
 @media (max-width: 480px) {
@@ -469,48 +469,48 @@
     <div class="features-grid">
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#ecfdf5;">
-          <i class="fas fa-water" style="color:#059669;"></i>
+        <div class="icon-wrap" style="background:rgba(5,150,105,.14);">
+          <i class="fas fa-water" style="color:#34d399;"></i>
         </div>
         <h3>Deep Liquidity</h3>
         <p>Institutional liquidity from tier-1 banks ensures tight spreads and seamless order fills at any size.</p>
       </div>
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#eff6ff;">
-          <i class="fas fa-sliders-h" style="color:#2563eb;"></i>
+        <div class="icon-wrap" style="background:rgba(37,99,235,.14);">
+          <i class="fas fa-sliders-h" style="color:#60a5fa;"></i>
         </div>
         <h3>Flexible Leverage</h3>
         <p>Choose leverage from 1:1 to 1:500 depending on your strategy and risk tolerance across all pairs.</p>
       </div>
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#faf5ff;">
-          <i class="fas fa-clock" style="color:#7c3aed;"></i>
+        <div class="icon-wrap" style="background:rgba(124,58,237,.14);">
+          <i class="fas fa-clock" style="color:#c084fc;"></i>
         </div>
         <h3>24/5 Markets</h3>
         <p>Trade around major session opens — London, New York, Tokyo, and Sydney — five days a week.</p>
       </div>
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#fff7ed;">
-          <i class="fas fa-globe" style="color:#ea580c;"></i>
+        <div class="icon-wrap" style="background:rgba(234,88,12,.14);">
+          <i class="fas fa-globe" style="color:#fb923c;"></i>
         </div>
         <h3>50+ Pairs</h3>
         <p>Majors, minors, and exotic pairs. Trade emerging market currencies alongside the G10 with ease.</p>
       </div>
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#fef2f2;">
-          <i class="fas fa-robot" style="color:#dc2626;"></i>
+        <div class="icon-wrap" style="background:rgba(220,38,38,.14);">
+          <i class="fas fa-robot" style="color:#f87171;"></i>
         </div>
         <h3>Automated Forex Bots</h3>
         <p>Deploy our AI trading bots on your chosen forex pairs and earn consistent daily returns automatically.</p>
       </div>
 
       <div class="feature-card">
-        <div class="icon-wrap" style="background:#ecfeff;">
-          <i class="fas fa-chart-bar" style="color:#0891b2;"></i>
+        <div class="icon-wrap" style="background:rgba(8,145,178,.14);">
+          <i class="fas fa-chart-bar" style="color:#22d3ee;"></i>
         </div>
         <h3>Economic Calendar</h3>
         <p>Built-in economic calendar with impact ratings. Stay ahead of NFP, FOMC, and other high-impact events.</p>

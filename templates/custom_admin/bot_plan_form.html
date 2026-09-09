@@ -1,0 +1,65 @@
+<!-- bot_plan_form.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}{% if action == 'create' %}Add Bot Plan{% else %}Edit Bot Plan{% endif %}{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">
+        {% if action == 'create' %}Add New Bot Plan{% else %}Edit Bot Plan{% endif %}
+    </h2>
+    <p class="text-gray-400">Configure trading bot subscription plan</p>
+</div>
+
+<div class="admin-card p-6 rounded-xl max-w-2xl">
+    <form method="POST" class="space-y-6">
+        {% csrf_token %}
+
+        <div>
+            <label class="block text-gray-400 mb-2">Plan Type</label>
+            <select name="plan_type" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                {% for val, label in plan_choices %}
+                <option value="{{ val }}" {% if plan.plan_type == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-gray-400 mb-2">Price ($)</label>
+                <input type="number" name="price" step="0.01" min="0" required
+                       value="{% if plan %}{{ plan.price }}{% endif %}"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-2">Daily Profit (%)</label>
+                <input type="number" name="daily_profit_percentage" step="0.01" min="0" required
+                       value="{% if plan %}{{ plan.daily_profit_percentage }}{% endif %}"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+        </div>
+
+        <div>
+            <label class="block text-gray-400 mb-2">Features <span class="text-gray-500 text-xs">one per line</span></label>
+            <textarea name="features_text" rows="4" placeholder="24/7 automated trading&#10;Real-time notifications&#10;Withdraw anytime"
+                      class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white resize-none font-mono text-sm">{% for f in plan.features %}{{ f }}
+{% endfor %}</textarea>
+        </div>
+
+        <label class="flex items-center gap-2.5 cursor-pointer">
+            <input type="checkbox" name="is_active" value="1" {% if plan.is_active or not plan %}checked{% endif %}
+                   class="w-4 h-4 bg-slate-800 border-slate-600 rounded">
+            <span class="text-white">Active (visible to users)</span>
+        </label>
+
+        <div class="flex space-x-4">
+            <button type="submit" class="flex-1 bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+                <i class="fas fa-save mr-2"></i> {% if action == 'create' %}Create Plan{% else %}Update Plan{% endif %}
+            </button>
+            <a href="{% url 'admin_bot_plans_list' %}" class="flex-1 bg-gray-600 hover:bg-gray-700 px-6 py-3 rounded-lg text-white font-semibold text-center">
+                <i class="fas fa-times mr-2"></i> Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

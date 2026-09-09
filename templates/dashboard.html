@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard - Influxfinancetrading{% endblock %}
+{% block title %}Dashboard - Mirrorwavetrades{% endblock %}
 
 {% block extra_css %}
 <style>
-.stat-card { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:1.5rem; transition:box-shadow .2s ease; }
-.stat-card:hover { box-shadow:0 4px 16px rgba(0,0,0,.06); }
+.stat-card { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; transition:box-shadow .2s ease, border-color .2s ease; }
+.stat-card:hover { box-shadow:0 4px 20px rgba(0,0,0,.4); border-color:rgba(56,189,248,.25); }
 .stat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
-.quick-link { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border-radius:10px; border:1px solid #e5e7eb; background:#fff; font-size:.875rem; font-weight:500; color:#374151; transition:all .2s ease; text-decoration:none; }
-.quick-link:hover { border-color:#9ca3af; background:#f9fafb; }
+.quick-link { display:flex; align-items:center; gap:.75rem; padding:.85rem 1rem; border-radius:10px; border:1px solid var(--border); background:var(--bg-card); font-size:.875rem; font-weight:500; color:var(--text-main); transition:all .2s ease; text-decoration:none; }
+.quick-link:hover { border-color:rgba(56,189,248,.35); background:rgba(255,255,255,.04); }
 .badge { display:inline-flex; align-items:center; padding:.25rem .75rem; border-radius:99px; font-size:.7rem; font-weight:600; }
-.badge-green  { background:#dcfce7; color:#16a34a; }
-.badge-yellow { background:#fef9c3; color:#ca8a04; }
-.badge-red    { background:#fee2e2; color:#dc2626; }
-.badge-blue   { background:#dbeafe; color:#2563eb; }
+.badge-green  { background:rgba(34,197,94,.12); color:#4ade80; }
+.badge-yellow { background:rgba(245,158,11,.12); color:#fbbf24; }
+.badge-red    { background:rgba(239,68,68,.12); color:#f87171; }
+.badge-blue   { background:rgba(37,99,235,.12); color:#60a5fa; }
 </style>
 {% endblock %}
 
@@ -27,19 +27,19 @@
 
                 <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
-                        <h1 class="title-font text-2xl text-gray-900 mb-0.5">Hello, {{ user.legal_first_name }} 👋</h1>
-                        <p class="text-gray-400 text-sm">Here's what's happening with your account today.</p>
+                        <h1 class="title-font text-2xl mb-0.5" style="color:#fff;">Hello, {{ user.legal_first_name }} 👋</h1>
+                        <p class="text-sm" style="color:var(--text-muted);">Here's what's happening with your account today.</p>
                     </div>
                     <div class="flex gap-2">
                         <a href="{% url 'deposit' %}" class="btn-primary px-4 py-2.5 rounded-lg text-sm">
                             <i class="fas fa-plus mr-1.5"></i>Deposit
                         </a>
                         {% if withdrawal_enabled %}
-                        <a href="{% url 'withdrawal' %}" class="inline-block px-4 py-2.5 rounded-lg text-sm font-semibold bg-red-50 border border-red-200 text-red-600 hover:bg-red-100 transition">
+                        <a href="{% url 'withdrawal' %}" class="inline-block px-4 py-2.5 rounded-lg text-sm font-semibold transition" style="background:rgba(239,68,68,.1); border:1px solid rgba(239,68,68,.35); color:#f87171;">
                             <i class="fas fa-minus mr-1.5"></i>Withdraw
                         </a>
                         {% else %}
-                        <button disabled class="px-4 py-2.5 rounded-lg text-sm font-semibold bg-gray-100 border border-gray-200 text-gray-400 cursor-not-allowed">
+                        <button disabled class="px-4 py-2.5 rounded-lg text-sm font-semibold cursor-not-allowed" style="background:rgba(255,255,255,.03); border:1px solid var(--border); color:var(--text-light);">
                             <i class="fas fa-lock mr-1.5"></i>Withdraw
                         </button>
                         {% endif %}
@@ -48,80 +48,80 @@
 
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
                     <div class="stat-card">
-                        <div class="stat-icon bg-blue-50"><i class="fas fa-wallet text-blue-500"></i></div>
-                        <p class="text-xs text-gray-400 mb-1">Account Balance</p>
-                        <p class="title-font text-xl text-gray-900">${{ user.account_balance|floatformat:2 }}</p>
-                        <p class="text-xs text-gray-400 mt-1">{{ user.preferred_currency }}</p>
+                        <div class="stat-icon" style="background:rgba(37,99,235,.12);"><i class="fas fa-wallet" style="color:#60a5fa;"></i></div>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Account Balance</p>
+                        <p class="title-font text-xl" style="color:#fff;">${{ user.account_balance|floatformat:2 }}</p>
+                        <p class="text-xs mt-1" style="color:var(--text-muted);">{{ user.preferred_currency }}</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon bg-green-50"><i class="fas fa-chart-line text-green-500"></i></div>
-                        <p class="text-xs text-gray-400 mb-1">Total Profit</p>
-                        <p class="title-font text-xl text-green-600">${{ user.total_profit|floatformat:2 }}</p>
+                        <div class="stat-icon" style="background:rgba(34,197,94,.12);"><i class="fas fa-chart-line" style="color:#4ade80;"></i></div>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Total Profit</p>
+                        <p class="title-font text-xl" style="color:#4ade80;">${{ user.total_profit|floatformat:2 }}</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon bg-purple-50"><i class="fas fa-gift text-purple-500"></i></div>
-                        <p class="text-xs text-gray-400 mb-1">Bonus</p>
-                        <p class="title-font text-xl text-purple-600">${{ user.bonus|floatformat:2 }}</p>
+                        <div class="stat-icon" style="background:rgba(168,85,247,.12);"><i class="fas fa-gift" style="color:#c084fc;"></i></div>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Bonus</p>
+                        <p class="title-font text-xl" style="color:#c084fc;">${{ user.bonus|floatformat:2 }}</p>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon bg-orange-50"><i class="fas fa-exchange-alt text-orange-500"></i></div>
-                        <p class="text-xs text-gray-400 mb-1">Total Trades</p>
-                        <p class="title-font text-xl text-gray-900">{{ user.trading_count }}</p>
-                        <p class="text-xs text-gray-400 mt-1">All time</p>
+                        <div class="stat-icon" style="background:rgba(251,146,60,.12);"><i class="fas fa-exchange-alt" style="color:#fb923c;"></i></div>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Total Trades</p>
+                        <p class="title-font text-xl" style="color:#fff;">{{ user.trading_count }}</p>
+                        <p class="text-xs mt-1" style="color:var(--text-muted);">All time</p>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
                     <div class="stat-card">
-                        <p class="text-xs text-gray-400 mb-1">Commission</p>
-                        <p class="font-bold text-gray-900">${{ user.commission|floatformat:2 }}</p>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Commission</p>
+                        <p class="font-bold" style="color:#fff;">${{ user.commission|floatformat:2 }}</p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-xs text-gray-400 mb-1">Total Deposited</p>
-                        <p class="font-bold text-green-600">${{ user.total_deposit|floatformat:2 }}</p>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Total Deposited</p>
+                        <p class="font-bold" style="color:#4ade80;">${{ user.total_deposit|floatformat:2 }}</p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-xs text-gray-400 mb-1">Total Withdrawn</p>
-                        <p class="font-bold text-red-500">${{ user.total_withdrawal|floatformat:2 }}</p>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Total Withdrawn</p>
+                        <p class="font-bold" style="color:#f87171;">${{ user.total_withdrawal|floatformat:2 }}</p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-xs text-gray-400 mb-1">Latest Deposit</p>
-                        <p class="font-bold text-gray-900">$0.00</p>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">Latest Deposit</p>
+                        <p class="font-bold" style="color:#fff;">$0.00</p>
                     </div>
                 </div>
 
                 <div class="grid lg:grid-cols-3 gap-4 mb-5">
-                    <div class="lg:col-span-2 bg-white border border-gray-200 rounded-xl overflow-hidden">
-                        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-                            <h2 class="font-semibold text-gray-900 text-sm">Live Market Chart</h2>
+                    <div class="lg:col-span-2 card overflow-hidden">
+                        <div class="p-4 flex items-center justify-between" style="border-bottom:1px solid var(--border);">
+                            <h2 class="font-semibold text-sm" style="color:#fff;">Live Market Chart</h2>
                             <span class="badge badge-green"><i class="fas fa-circle text-xs mr-1"></i>Live</span>
                         </div>
                         <div id="tradingview_chart_dashboard" style="height:380px;"></div>
                     </div>
                     <div class="space-y-3">
-                        <div class="bg-white border border-gray-200 rounded-xl p-4">
-                            <h3 class="font-semibold text-gray-900 text-sm mb-3">Quick Actions</h3>
+                        <div class="card p-4">
+                            <h3 class="font-semibold text-sm mb-3" style="color:#fff;">Quick Actions</h3>
                             <div class="space-y-1.5">
-                                <a href="{% url 'trading' %}"      class="quick-link"><i class="fas fa-exchange-alt text-blue-500 w-4"></i>Live Trading</a>
-                                <a href="{% url 'trading_bot' %}"  class="quick-link"><i class="fas fa-robot text-purple-500 w-4"></i>Trading Bots</a>
-                                <a href="{% url 'copy_trading' %}" class="quick-link"><i class="fas fa-users text-green-500 w-4"></i>Copy Trading</a>
-                                <a href="{% url 'portfolio' %}"    class="quick-link"><i class="fas fa-briefcase text-orange-500 w-4"></i>My Portfolio</a>
-                                <a href="{% url 'transactions' %}" class="quick-link"><i class="fas fa-receipt text-gray-500 w-4"></i>Transactions</a>
+                                <a href="{% url 'trading' %}"      class="quick-link"><i class="fas fa-exchange-alt w-4" style="color:#60a5fa;"></i>Live Trading</a>
+                                <a href="{% url 'trading_bot' %}"  class="quick-link"><i class="fas fa-robot w-4" style="color:#c084fc;"></i>Trading Bots</a>
+                                <a href="{% url 'copy_trading' %}" class="quick-link"><i class="fas fa-users w-4" style="color:#4ade80;"></i>Copy Trading</a>
+                                <a href="{% url 'portfolio' %}"    class="quick-link"><i class="fas fa-briefcase w-4" style="color:#fb923c;"></i>My Portfolio</a>
+                                <a href="{% url 'transactions' %}" class="quick-link"><i class="fas fa-receipt w-4" style="color:var(--text-muted);"></i>Transactions</a>
                             </div>
                         </div>
-                        <div class="bg-white border border-gray-200 rounded-xl p-4">
-                            <h3 class="font-semibold text-gray-900 text-sm mb-3">Account Info</h3>
+                        <div class="card p-4">
+                            <h3 class="font-semibold text-sm mb-3" style="color:#fff;">Account Info</h3>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between">
-                                    <span class="text-gray-400 text-xs">User ID</span>
-                                    <span class="font-mono text-gray-700 text-xs">{{ user.id }}</span>
+                                    <span class="text-xs" style="color:var(--text-muted);">User ID</span>
+                                    <span class="font-mono text-xs" style="color:var(--text-main);">{{ user.id }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-400 text-xs">Email</span>
-                                    <span class="text-gray-700 text-xs truncate max-w-32">{{ user.email }}</span>
+                                    <span class="text-xs" style="color:var(--text-muted);">Email</span>
+                                    <span class="text-xs truncate max-w-32" style="color:var(--text-main);">{{ user.email }}</span>
                                 </div>
                                 <div class="flex justify-between">
-                                    <span class="text-gray-400 text-xs">Status</span>
+                                    <span class="text-xs" style="color:var(--text-muted);">Status</span>
                                     <span class="badge badge-green"><i class="fas fa-check text-xs mr-1"></i>Active</span>
                                 </div>
                             </div>
@@ -129,39 +129,39 @@
                     </div>
                 </div>
 
-                <div class="bg-white border border-gray-200 rounded-xl overflow-hidden">
-                    <div class="p-4 border-b border-gray-100 flex items-center justify-between">
-                        <h2 class="font-semibold text-gray-900 text-sm">Recent Transactions</h2>
-                        <a href="{% url 'transactions' %}" class="text-xs text-gray-500 hover:text-gray-700 font-medium">View All →</a>
+                <div class="card overflow-hidden">
+                    <div class="p-4 flex items-center justify-between" style="border-bottom:1px solid var(--border);">
+                        <h2 class="font-semibold text-sm" style="color:#fff;">Recent Transactions</h2>
+                        <a href="{% url 'transactions' %}" class="text-xs font-medium" style="color:var(--text-muted);">View All →</a>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full">
                             <thead>
-                                <tr class="border-b border-gray-100">
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Type</th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Amount</th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Status</th>
-                                    <th class="px-5 py-3 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide">Date</th>
+                                <tr style="border-bottom:1px solid var(--border);">
+                                    <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide" style="color:var(--text-muted);">Type</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide" style="color:var(--text-muted);">Amount</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide" style="color:var(--text-muted);">Status</th>
+                                    <th class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide" style="color:var(--text-muted);">Date</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50">
+                            <tbody>
                                 {% for transaction in recent_transactions %}
-                                <tr class="hover:bg-gray-50 transition">
+                                <tr class="transition" style="border-bottom:1px solid var(--border);" onmouseover="this.style.background='rgba(255,255,255,.03)'" onmouseout="this.style.background='transparent'">
                                     <td class="px-5 py-4">
                                         <div class="flex items-center gap-2.5">
                                             {% if transaction.transaction_type == 'DEPOSIT' %}
-                                            <div class="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center"><i class="fas fa-arrow-down text-green-500 text-xs"></i></div>
+                                            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(34,197,94,.12);"><i class="fas fa-arrow-down text-xs" style="color:#4ade80;"></i></div>
                                             {% elif transaction.transaction_type == 'WITHDRAWAL' %}
-                                            <div class="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center"><i class="fas fa-arrow-up text-red-500 text-xs"></i></div>
+                                            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(239,68,68,.12);"><i class="fas fa-arrow-up text-xs" style="color:#f87171;"></i></div>
                                             {% elif transaction.transaction_type == 'PROFIT' %}
-                                            <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center"><i class="fas fa-chart-line text-blue-500 text-xs"></i></div>
+                                            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(37,99,235,.12);"><i class="fas fa-chart-line text-xs" style="color:#60a5fa;"></i></div>
                                             {% else %}
-                                            <div class="w-7 h-7 rounded-lg bg-gray-100 flex items-center justify-center"><i class="fas fa-exchange-alt text-gray-500 text-xs"></i></div>
+                                            <div class="w-7 h-7 rounded-lg flex items-center justify-center" style="background:rgba(255,255,255,.06);"><i class="fas fa-exchange-alt text-xs" style="color:var(--text-muted);"></i></div>
                                             {% endif %}
-                                            <span class="text-sm text-gray-700 font-medium">{{ transaction.transaction_type|title }}</span>
+                                            <span class="text-sm font-medium" style="color:var(--text-main);">{{ transaction.transaction_type|title }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-5 py-4 text-sm font-semibold text-gray-900">${{ transaction.amount|floatformat:2 }}</td>
+                                    <td class="px-5 py-4 text-sm font-semibold" style="color:#fff;">${{ transaction.amount|floatformat:2 }}</td>
                                     <td class="px-5 py-4">
                                         {% if transaction.status == 'COMPLETED' or transaction.status == 'APPROVED' %}
                                         <span class="badge badge-green">{{ transaction.status }}</span>
@@ -171,13 +171,13 @@
                                         <span class="badge badge-red">{{ transaction.status }}</span>
                                         {% endif %}
                                     </td>
-                                    <td class="px-5 py-4 text-xs text-gray-400">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
+                                    <td class="px-5 py-4 text-xs" style="color:var(--text-muted);">{{ transaction.created_at|date:"M d, Y H:i" }}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>
                                     <td colspan="4" class="px-5 py-12 text-center">
-                                        <i class="fas fa-inbox text-3xl text-gray-300 mb-3 block"></i>
-                                        <p class="text-sm text-gray-400">No transactions yet. Start by making your first deposit!</p>
+                                        <i class="fas fa-inbox text-3xl mb-3 block" style="color:var(--text-light);"></i>
+                                        <p class="text-sm" style="color:var(--text-muted);">No transactions yet. Start by making your first deposit!</p>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -203,11 +203,11 @@
             new TradingView.widget({
                 autosize: true, height: 380,
                 symbol: 'BINANCE:BTCUSDT', interval: '15',
-                timezone: 'Etc/UTC', theme: 'light', style: '1',
-                locale: 'en', toolbar_bg: '#ffffff',
+                timezone: 'Etc/UTC', theme: 'dark', style: '1',
+                locale: 'en', toolbar_bg: '#0d1117',
                 enable_publishing: false, allow_symbol_change: true,
                 container_id: 'tradingview_chart_dashboard',
-                backgroundColor: '#ffffff'
+                backgroundColor: '#0d1117'
             });
         };
         document.head.appendChild(script);

@@ -1,37 +1,37 @@
 {% extends 'base.html' %}
 
-{% block title %}Create Account - Influxfinancetrading{% endblock %}
+{% block title %}Create Account - Mirrorwavetrades{% endblock %}
 
 {% block extra_css %}
 <style>
 .auth-input {
     width: 100%;
     padding: 0.7rem 1rem;
-    border: 1px solid #e5e7eb;
+    border: 1px solid var(--border);
     border-radius: 8px;
     font-size: 0.875rem;
-    color: #111827;
-    background: #f9fafb;
+    color: var(--text-main);
+    background: rgba(255,255,255,.04);
     transition: all 0.2s ease;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Poppins', sans-serif;
 }
-.auth-input:focus { outline: none; border-color: #9ca3af; background: #fff; }
-.auth-input::placeholder { color: #9ca3af; }
-.req-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: #9ca3af; transition: color 0.2s; }
-.req-item.met { color: #16a34a; }
+.auth-input:focus { outline: none; border-color: var(--accent); background: rgba(255,255,255,.07); }
+.auth-input::placeholder { color: var(--text-light); }
+.req-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--text-light); transition: color 0.2s; }
+.req-item.met { color: var(--success); }
 </style>
 {% endblock %}
 
 {% block content %}
-<section class="min-h-screen py-12" style="background: #f8f9fb;">
+<section class="min-h-screen py-12" style="background: var(--bg);">
     <div class="max-w-xl mx-auto px-4">
-        <div class="bg-white border border-gray-200 rounded-2xl p-8 md:p-10 shadow-sm">
+        <div class="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-8 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,.4)]">
             <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gray-100 mb-4">
-                    <i class="fas fa-user-plus text-gray-600 text-xl"></i>
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-white/5 border border-[var(--border)] mb-4">
+                    <i class="fas fa-user-plus text-[var(--accent-light)] text-xl"></i>
                 </div>
-                <h1 class="title-font text-2xl text-gray-900 mb-1">Create Your Account</h1>
-                <p class="text-gray-500 text-sm">Join thousands of successful traders</p>
+                <h1 class="title-font text-2xl text-white mb-1">Create Your Account</h1>
+                <p class="text-[var(--text-muted)] text-sm">Join thousands of successful traders</p>
             </div>
 
             <form method="post" class="space-y-4" id="registerForm">
@@ -39,32 +39,27 @@
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">First Name</label>
+                        <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">First Name</label>
                         <input type="text" name="legal_first_name" required class="auth-input" placeholder="John">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1.5">Last Name</label>
+                        <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Last Name</label>
                         <input type="text" name="legal_last_name" required class="auth-input" placeholder="Doe">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Username</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Username</label>
                     <input type="text" name="username" required class="auth-input" placeholder="johndoe">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Email Address</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Email Address</label>
                     <input type="email" name="email" required class="auth-input" placeholder="you@example.com">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Phone Number</label>
-                    <input type="tel" name="phone_number" required class="auth-input" placeholder="+1234567890">
-                </div>
-
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Preferred Currency</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Preferred Currency</label>
                     <select name="preferred_currency" required class="auth-input">
                         <option value="USD">USD - US Dollar</option>
                         <option value="EUR">EUR - Euro</option>
@@ -73,10 +68,10 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+                    <label class="block text-sm font-medium text-[var(--text-muted)] mb-1.5">Password</label>
                     <div class="relative">
                         <input type="password" name="password" id="password" required class="auth-input" style="padding-right: 2.75rem;" placeholder="Minimum 8 characters">
-                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                        <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-light)] hover:text-white">
                             <i class="fas fa-eye text-sm" id="toggleIcon"></i>
                         </button>
                     </div>
@@ -89,27 +84,27 @@
 
                 <!-- CAPTCHA -->
                 <div id="captchaContainer" class="hidden">
-                    <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                        <label class="block text-sm font-medium text-gray-700 mb-3">
-                            <i class="fas fa-shield-alt text-blue-500 mr-1.5"></i>Verify you're human
+                    <div class="border border-[var(--border)] rounded-lg p-4 bg-white/5">
+                        <label class="block text-sm font-medium text-[var(--text-muted)] mb-3">
+                            <i class="fas fa-shield-alt text-[var(--accent)] mr-1.5"></i>Verify you're human
                         </label>
                         <div class="flex items-center gap-3">
-                            <div id="captchaQuestion" class="text-base font-bold px-4 py-2.5 rounded-lg bg-white border border-gray-200 text-center flex-1 text-gray-900"></div>
+                            <div id="captchaQuestion" class="text-base font-bold px-4 py-2.5 rounded-lg bg-[var(--bg-elevated)] border border-[var(--border)] text-center flex-1 text-white"></div>
                             <input type="number" id="captchaAnswer"
-                                class="w-20 px-3 py-2.5 text-center font-bold border border-gray-200 rounded-lg focus:outline-none focus:border-gray-400 bg-white text-gray-900"
+                                class="w-20 px-3 py-2.5 text-center font-bold border border-[var(--border)] rounded-lg focus:outline-none focus:border-[var(--accent)] bg-[var(--bg-elevated)] text-white"
                                 placeholder="?" required>
                         </div>
-                        <button type="button" onclick="generateCaptcha()" class="text-xs text-blue-500 hover:text-blue-600 mt-2">
+                        <button type="button" onclick="generateCaptcha()" class="text-xs text-[var(--accent-light)] hover:text-white mt-2">
                             <i class="fas fa-sync-alt mr-1"></i>New puzzle
                         </button>
                     </div>
                 </div>
 
-                <div class="flex items-start gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100">
-                    <input type="checkbox" required class="w-4 h-4 mt-0.5 rounded border-gray-300 accent-gray-800">
-                    <label class="text-sm text-gray-600">
-                        I agree to the <a href="#" class="text-gray-800 font-semibold hover:underline">Terms of Service</a> and
-                        <a href="#" class="text-gray-800 font-semibold hover:underline">Privacy Policy</a>
+                <div class="flex items-start gap-3 p-3 bg-white/5 rounded-lg border border-[var(--border)]">
+                    <input type="checkbox" required class="w-4 h-4 mt-0.5 rounded border-white/20 accent-blue-600">
+                    <label class="text-sm text-[var(--text-muted)]">
+                        I agree to the <a href="#" class="text-[var(--accent-light)] font-semibold hover:text-white hover:underline">Terms of Service</a> and
+                        <a href="#" class="text-[var(--accent-light)] font-semibold hover:text-white hover:underline">Privacy Policy</a>
                     </label>
                 </div>
 
@@ -117,9 +112,9 @@
                     Create Account
                 </button>
 
-                <p class="text-center text-sm text-gray-500">
+                <p class="text-center text-sm text-[var(--text-muted)]">
                     Already have an account?
-                    <a href="{% url 'login' %}" class="text-gray-800 font-semibold hover:text-gray-900">Sign in</a>
+                    <a href="{% url 'login' %}" class="text-[var(--accent-light)] font-semibold hover:text-white">Sign in</a>
                 </p>
             </form>
         </div>

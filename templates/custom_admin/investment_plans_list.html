@@ -1,342 +1,130 @@
-{% extends 'custom_admin/base.html' %}
-{% block title %}Investment Plans – Admin{% endblock %}
+{% extends 'custom_admin/admin_base.html' %}
 
-{% block content %}
-<style>
-  /* ── Responsive card/table toggle ── */
-  .plan-card { display: none; }
-  @media (max-width: 767px) {
-    .plan-card   { display: block; }
-    .plans-table { display: none;  }
-  }
+{% block title %}Investment Plans - Admin{% endblock %}
 
-  /* ── Smooth row hover ── */
-  .plan-row { transition: background .15s; }
-  .plan-row:hover { background: #f8fafc; }
-
-  /* ── Badge base ── */
-  .badge {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: .7rem; font-weight: 700; letter-spacing: .03em;
-    padding: 3px 9px; border-radius: 999px;
-  }
-
-  /* ── Tier icon bubble ── */
-  .tier-icon {
-    width: 36px; height: 36px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: .85rem; flex-shrink: 0;
-  }
-
-  /* ── Mobile card ── */
-  .plan-card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 12px;
-  }
-  .plan-card-header {
-    display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;
-    margin-bottom: 14px;
-  }
-  .plan-card-meta {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    margin-bottom: 14px;
-  }
-  .plan-card-meta-item { background: #f9fafb; border-radius: 10px; padding: 10px; }
-  .plan-card-meta-label { font-size: .68rem; color: #9ca3af; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; margin-bottom: 2px; }
-  .plan-card-meta-value { font-size: .9rem; font-weight: 700; color: #111827; }
-  .plan-card-actions {
-    display: flex; gap: 8px; flex-wrap: wrap;
-  }
-  .plan-card-actions a,
-  .plan-card-actions button {
-    flex: 1; min-width: 100px; text-align: center;
-    font-size: .78rem; font-weight: 600; padding: 8px 12px;
-    border-radius: 9px; border: none; cursor: pointer; transition: background .15s;
-  }
-
-  /* ── Stats grid ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  @media (min-width: 640px)  { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (min-width: 1024px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
-
-  .stat-card {
-    background: #fff; border: 1px solid #e5e7eb;
-    border-radius: 14px; padding: 16px;
-  }
-
-  /* ── Page header ── */
-  .page-header {
-    display: flex; flex-wrap: wrap; align-items: center;
-    justify-content: space-between; gap: 12px; margin-bottom: 24px;
-  }
-
-  /* ── Action button ── */
-  .btn-add {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: #2563eb; color: #fff; font-size: .82rem; font-weight: 700;
-    padding: 10px 18px; border-radius: 10px; text-decoration: none;
-    transition: background .15s; white-space: nowrap;
-  }
-  .btn-add:hover { background: #1d4ed8; }
-
-  /* ── Table action btns ── */
-  .tbl-btn {
-    font-size: .72rem; font-weight: 600; padding: 6px 12px;
-    border-radius: 8px; border: none; cursor: pointer;
-    text-decoration: none; display: inline-flex; align-items: center; gap: 4px;
-    transition: background .15s;
-  }
-
-  /* ── Empty state ── */
-  .empty-state { padding: 56px 20px; text-align: center; }
-</style>
-
-<!-- Page header -->
-<div class="page-header">
-  <div>
-    <h1 style="font-size:1.2rem;font-weight:800;color:#111827;margin:0 0 2px;">Investment Plans</h1>
-    <p style="font-size:.82rem;color:#6b7280;margin:0;">Manage user-selectable investment plans</p>
-  </div>
-  <a href="{% url 'admin_investment_plan_create' %}" class="btn-add">
-    <i class="fas fa-plus"></i> Add Plan
-  </a>
+{% block admin_content %}
+<div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h2 class="text-3xl font-bold gradient-text mb-2">Investment Plans</h2>
+        <p class="text-gray-400">Manage user-selectable investment plans</p>
+    </div>
+    <a href="{% url 'admin_investment_plan_create' %}" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add Plan
+    </a>
 </div>
 
 <!-- Stats -->
-<div class="stats-grid">
-  <div class="stat-card">
-    <p style="font-size:.7rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px;">Total Plans</p>
-    <p style="font-size:1.6rem;font-weight:800;color:#111827;margin:0;">{{ plans|length }}</p>
-  </div>
-  <div class="stat-card">
-    <p style="font-size:.7rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px;">Active Plans</p>
-    <p style="font-size:1.6rem;font-weight:800;color:#16a34a;margin:0;">{{ active_count }}</p>
-  </div>
-  <div class="stat-card">
-    <p style="font-size:.7rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px;">Total Investments</p>
-    <p style="font-size:1.6rem;font-weight:800;color:#2563eb;margin:0;">{{ total_investments }}</p>
-  </div>
-  <div class="stat-card">
-    <p style="font-size:.7rem;color:#9ca3af;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin:0 0 6px;">Total Invested</p>
-    <p style="font-size:1.6rem;font-weight:800;color:#111827;margin:0;">${{ total_invested|floatformat:2 }}</p>
-  </div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Plans</p>
+        <p class="text-2xl font-bold text-white">{{ plans|length }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Active Plans</p>
+        <p class="text-2xl font-bold text-green-400">{{ active_count }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Investments</p>
+        <p class="text-2xl font-bold text-blue-400">{{ total_investments }}</p>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <p class="text-gray-400 text-sm mb-1">Total Invested</p>
+        <p class="text-2xl font-bold text-cyan-400">${{ total_invested|floatformat:2 }}</p>
+    </div>
 </div>
 
-<!-- ════════════════════════════════
-     DESKTOP TABLE (md+)
-════════════════════════════════ -->
-<div class="plans-table bg-white border border-gray-200 rounded-xl overflow-hidden">
-  <div class="overflow-x-auto">
-    <table style="width:100%;border-collapse:collapse;">
-      <thead>
-        <tr style="background:#f9fafb;border-bottom:1px solid #f3f4f6;">
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Plan</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">ROI / Duration</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Range</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Risk</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Subscribers</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Status</th>
-          <th style="padding:12px 20px;text-align:left;font-size:.7rem;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for plan in plans %}
-        <tr class="plan-row" style="border-bottom:1px solid #f3f4f6;">
-          <!-- Plan name + tier -->
-          <td style="padding:14px 20px;">
-            <div style="display:flex;align-items:center;gap:12px;">
-              <div class="tier-icon
-                {% if plan.tier == 'STARTER' %}bg-green-50 text-green-600
-                {% elif plan.tier == 'SILVER' %}bg-gray-100 text-gray-500
-                {% elif plan.tier == 'GOLD' %}bg-yellow-50 text-yellow-600
-                {% elif plan.tier == 'PLATINUM' %}bg-blue-50 text-blue-600
-                {% elif plan.tier == 'DIAMOND' %}bg-purple-50 text-purple-600{% endif %}">
-                {% if plan.tier == 'STARTER' %}<i class="fas fa-seedling"></i>
-                {% elif plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
-                {% elif plan.tier == 'GOLD' %}<i class="fas fa-star"></i>
-                {% elif plan.tier == 'PLATINUM' %}<i class="fas fa-gem"></i>
-                {% elif plan.tier == 'DIAMOND' %}<i class="fas fa-crown"></i>{% endif %}
-              </div>
-              <div>
-                <p style="font-weight:700;font-size:.85rem;color:#111827;margin:0 0 2px;">{{ plan.name }}</p>
-                <p style="font-size:.72rem;color:#9ca3af;margin:0;">{{ plan.tier }}{% if plan.is_featured %} · ⭐ Featured{% endif %}</p>
-              </div>
-            </div>
-          </td>
-          <!-- ROI -->
-          <td style="padding:14px 20px;">
-            <p style="font-weight:800;font-size:.9rem;color:#16a34a;margin:0 0 2px;">{{ plan.roi_percentage }}%</p>
-            <p style="font-size:.72rem;color:#9ca3af;margin:0;">{{ plan.duration_days }} days</p>
-          </td>
-          <!-- Range -->
-          <td style="padding:14px 20px;">
-            <p style="font-size:.85rem;color:#374151;margin:0;white-space:nowrap;">
-              ${{ plan.minimum_amount|floatformat:0 }}{% if plan.maximum_amount %} – ${{ plan.maximum_amount|floatformat:0 }}{% else %} +{% endif %}
-            </p>
-          </td>
-          <!-- Risk -->
-          <td style="padding:14px 20px;">
-            <span class="badge
-              {% if plan.risk_level == 'LOW' %}bg-green-50 text-green-700
-              {% elif plan.risk_level == 'MEDIUM' %}bg-yellow-50 text-yellow-700
-              {% else %}bg-red-50 text-red-700{% endif %}">
-              {{ plan.risk_level }}
-            </span>
-          </td>
-          <!-- Subscribers -->
-          <td style="padding:14px 20px;">
-            <p style="font-weight:700;font-size:.85rem;color:#111827;margin:0 0 2px;">{{ plan.subscriptions.count }}</p>
-            <p style="font-size:.72rem;color:#9ca3af;margin:0;">{{ plan.subscriptions.filter(status='ACTIVE').count }} active</p>
-          </td>
-          <!-- Status -->
-          <td style="padding:14px 20px;">
-            {% if plan.is_active %}
-            <span class="badge" style="background:#dcfce7;color:#15803d;">
-              <i class="fas fa-circle" style="font-size:.45rem;"></i> Active
-            </span>
-            {% else %}
-            <span class="badge" style="background:#f3f4f6;color:#6b7280;">
-              <i class="fas fa-circle" style="font-size:.45rem;"></i> Inactive
-            </span>
-            {% endif %}
-          </td>
-          <!-- Actions -->
-          <td style="padding:14px 20px;">
-            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-              <a href="{% url 'admin_investment_plan_edit' plan.id %}"
-                 class="tbl-btn" style="background:#eff6ff;color:#2563eb;">
-                <i class="fas fa-edit"></i> Edit
-              </a>
-              <form method="post" action="{% url 'admin_investment_plan_toggle' plan.id %}" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit" class="tbl-btn"
-                  style="{% if plan.is_active %}background:#fefce8;color:#ca8a04;{% else %}background:#f0fdf4;color:#16a34a;{% endif %}">
-                  {% if plan.is_active %}<i class="fas fa-pause"></i> Disable
-                  {% else %}<i class="fas fa-play"></i> Enable{% endif %}
-                </button>
-              </form>
-            </div>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7">
-            <div class="empty-state">
-              <i class="fas fa-chart-pie" style="font-size:2rem;color:#d1d5db;display:block;margin-bottom:12px;"></i>
-              <p style="font-size:.85rem;color:#9ca3af;margin:0;">No investment plans yet. Create your first one.</p>
-            </div>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Plan</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">ROI / Duration</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Range</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Risk</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Subscribers</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for plan in plans %}
+                <tr class="hover:bg-slate-800/50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-lg flex items-center justify-center
+                                {% if plan.tier == 'STARTER' %}bg-green-500/20 text-green-400
+                                {% elif plan.tier == 'SILVER' %}bg-slate-500/20 text-slate-300
+                                {% elif plan.tier == 'GOLD' %}bg-yellow-500/20 text-yellow-400
+                                {% elif plan.tier == 'PLATINUM' %}bg-blue-500/20 text-blue-400
+                                {% else %}bg-purple-500/20 text-purple-400{% endif %}">
+                                {% if plan.tier == 'STARTER' %}<i class="fas fa-seedling"></i>
+                                {% elif plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
+                                {% elif plan.tier == 'GOLD' %}<i class="fas fa-star"></i>
+                                {% elif plan.tier == 'PLATINUM' %}<i class="fas fa-gem"></i>
+                                {% else %}<i class="fas fa-crown"></i>{% endif %}
+                            </div>
+                            <div>
+                                <p class="text-white font-medium">{{ plan.name }}</p>
+                                <p class="text-gray-400 text-xs">{{ plan.tier }}{% if plan.is_featured %} · ⭐ Featured{% endif %}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-green-400 font-semibold">{{ plan.roi_percentage }}%</p>
+                        <p class="text-gray-400 text-xs">{{ plan.duration_days }} days</p>
+                    </td>
+                    <td class="px-6 py-4 text-gray-300 text-sm whitespace-nowrap">
+                        ${{ plan.minimum_amount|floatformat:0 }}{% if plan.maximum_amount %} – ${{ plan.maximum_amount|floatformat:0 }}{% else %}+{% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs
+                            {% if plan.risk_level == 'LOW' %}bg-green-500/20 text-green-400
+                            {% elif plan.risk_level == 'MEDIUM' %}bg-yellow-500/20 text-yellow-400
+                            {% else %}bg-red-500/20 text-red-400{% endif %}">
+                            {{ plan.risk_level }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-300">
+                        {{ plan.subscriptions.count }}
+                        <span class="text-gray-500 text-xs">total</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 rounded-full text-xs {% if plan.is_active %}bg-green-500/20 text-green-400{% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                            {% if plan.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center items-center space-x-2">
+                            <a href="{% url 'admin_investment_plan_edit' plan.id %}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{% url 'admin_investment_plan_toggle' plan.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="{% if plan.is_active %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-3 py-1 rounded text-white text-sm">
+                                    <i class="fas {% if plan.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'admin_investment_plan_delete' plan.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm"
+                                        onclick="return confirm('Delete plan &quot;{{ plan.name }}&quot;? This cannot be undone.')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-400">
+                        <i class="fas fa-chart-pie text-4xl mb-2"></i>
+                        <p>No investment plans yet. Create your first one.</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
-
-<!-- ════════════════════════════════
-     MOBILE CARDS (< md)
-════════════════════════════════ -->
-{% for plan in plans %}
-<div class="plan-card">
-  <!-- Card header: icon + name + status -->
-  <div class="plan-card-header">
-    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0;">
-      <div class="tier-icon
-        {% if plan.tier == 'STARTER' %}bg-green-50 text-green-600
-        {% elif plan.tier == 'SILVER' %}bg-gray-100 text-gray-500
-        {% elif plan.tier == 'GOLD' %}bg-yellow-50 text-yellow-600
-        {% elif plan.tier == 'PLATINUM' %}bg-blue-50 text-blue-600
-        {% elif plan.tier == 'DIAMOND' %}bg-purple-50 text-purple-600{% endif %}">
-        {% if plan.tier == 'STARTER' %}<i class="fas fa-seedling"></i>
-        {% elif plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
-        {% elif plan.tier == 'GOLD' %}<i class="fas fa-star"></i>
-        {% elif plan.tier == 'PLATINUM' %}<i class="fas fa-gem"></i>
-        {% elif plan.tier == 'DIAMOND' %}<i class="fas fa-crown"></i>{% endif %}
-      </div>
-      <div style="min-width:0;">
-        <p style="font-weight:800;font-size:.9rem;color:#111827;margin:0 0 1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ plan.name }}</p>
-        <p style="font-size:.72rem;color:#9ca3af;margin:0;">{{ plan.tier }}{% if plan.is_featured %} · ⭐ Featured{% endif %}</p>
-      </div>
-    </div>
-    <!-- Status badge -->
-    {% if plan.is_active %}
-    <span class="badge" style="background:#dcfce7;color:#15803d;flex-shrink:0;">
-      <i class="fas fa-circle" style="font-size:.4rem;"></i> Active
-    </span>
-    {% else %}
-    <span class="badge" style="background:#f3f4f6;color:#6b7280;flex-shrink:0;">
-      <i class="fas fa-circle" style="font-size:.4rem;"></i> Inactive
-    </span>
-    {% endif %}
-  </div>
-
-  <!-- Meta grid -->
-  <div class="plan-card-meta">
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">ROI</div>
-      <div class="plan-card-meta-value" style="color:#16a34a;">{{ plan.roi_percentage }}%</div>
-    </div>
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">Duration</div>
-      <div class="plan-card-meta-value">{{ plan.duration_days }}d</div>
-    </div>
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">Min – Max</div>
-      <div class="plan-card-meta-value" style="font-size:.78rem;">
-        ${{ plan.minimum_amount|floatformat:0 }}{% if plan.maximum_amount %} – ${{ plan.maximum_amount|floatformat:0 }}{% else %}+{% endif %}
-      </div>
-    </div>
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">Risk</div>
-      <div class="plan-card-meta-value">
-        <span class="badge"
-          style="{% if plan.risk_level == 'LOW' %}background:#dcfce7;color:#15803d;
-                 {% elif plan.risk_level == 'MEDIUM' %}background:#fef9c3;color:#b45309;
-                 {% else %}background:#fee2e2;color:#b91c1c;{% endif %}">
-          {{ plan.risk_level }}
-        </span>
-      </div>
-    </div>
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">Subscribers</div>
-      <div class="plan-card-meta-value">{{ plan.subscriptions.count }}</div>
-    </div>
-    <div class="plan-card-meta-item">
-      <div class="plan-card-meta-label">Active Subs</div>
-      <div class="plan-card-meta-value">{{ plan.subscriptions.filter(status='ACTIVE').count }}</div>
-    </div>
-  </div>
-
-  <!-- Actions -->
-  <div class="plan-card-actions">
-    <a href="{% url 'admin_investment_plan_edit' plan.id %}"
-       style="background:#eff6ff;color:#2563eb;text-decoration:none;">
-      <i class="fas fa-edit" style="margin-right:4px;"></i>Edit
-    </a>
-    <form method="post" action="{% url 'admin_investment_plan_toggle' plan.id %}" style="flex:1;min-width:100px;">
-      {% csrf_token %}
-      <button type="submit" style="width:100%;
-        {% if plan.is_active %}background:#fefce8;color:#ca8a04;{% else %}background:#f0fdf4;color:#16a34a;{% endif %}
-        font-size:.78rem;font-weight:600;padding:8px 12px;border-radius:9px;border:none;cursor:pointer;transition:background .15s;">
-        {% if plan.is_active %}<i class="fas fa-pause" style="margin-right:4px;"></i>Disable
-        {% else %}<i class="fas fa-play" style="margin-right:4px;"></i>Enable{% endif %}
-      </button>
-    </form>
-  </div>
-</div>
-{% empty %}
-<div class="plan-card" style="text-align:center;padding:40px 20px;">
-  <i class="fas fa-chart-pie" style="font-size:2rem;color:#d1d5db;display:block;margin-bottom:10px;"></i>
-  <p style="font-size:.85rem;color:#9ca3af;margin:0;">No investment plans yet. Create your first one.</p>
-</div>
-{% endfor %}
-
 {% endblock %}

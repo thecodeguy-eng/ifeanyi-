@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.cache import cache
 from django.db.models import Sum, Q
 from decimal import Decimal
 import json
@@ -266,6 +267,9 @@ def get_crypto_price(symbol):
             'XRP': 'ripple',
             'ADA': 'cardano',
             'DOGE': 'dogecoin',
+            'AVAX': 'avalanche-2',
+            'LTC': 'litecoin',
+            'MATIC': 'matic-network',
         }
         
         coin_id = symbol_map.get(symbol.upper())
@@ -305,6 +309,9 @@ def get_crypto_price(symbol):
         'XRP': Decimal('2.23'),
         'ADA': Decimal('0.53'),
         'DOGE': Decimal('0.163'),
+        'AVAX': Decimal('38'),
+        'LTC': Decimal('105'),
+        'MATIC': Decimal('0.55'),
     }
     
     fallback_price = fallback_prices.get(symbol.upper(), Decimal('1'))
@@ -315,7 +322,8 @@ def get_crypto_price(symbol):
 # Home page
 def home(request):
     """Landing page"""
-    return render(request, 'home.html')
+    plans = InvestmentPlan.objects.filter(is_active=True).order_by('minimum_amount')[:4]
+    return render(request, 'home.html', {'plans': plans})
 
 
 # Authentication views
@@ -328,7 +336,6 @@ def register(request):
         password = request.POST.get('password')
         legal_first_name = request.POST.get('legal_first_name')
         legal_last_name = request.POST.get('legal_last_name')
-        phone_number = request.POST.get('phone_number')
         preferred_currency = request.POST.get('preferred_currency', 'USD')
         
         if User.objects.filter(username=username).exists():
@@ -345,7 +352,6 @@ def register(request):
             password=password,
             legal_first_name=legal_first_name,
             legal_last_name=legal_last_name,
-            phone_number=phone_number,
             preferred_currency=preferred_currency
         )
         
@@ -365,7 +371,7 @@ def register(request):
         
         # Auto-login the new user and redirect to onboarding
         login(request, user)
-        messages.success(request, 'Account created successfully! Welcome to Influxfinancetrading Global.')
+        messages.success(request, 'Account created successfully! Welcome to Mirrorwavetrades Global.')
         return redirect('onboarding')
     
     return render(request, 'register.html')
@@ -921,20 +927,44 @@ def transactions(request):
 
 
 # API endpoint for live crypto prices
-@login_required
 def get_crypto_prices(request):
-    """API endpoint for real-time crypto prices"""
-    symbols = ['BTC', 'ETH', 'SOL', 'USDT', 'BNB', 'XRP', 'ADA', 'DOGE']
+    """API endpoint for real-time crypto prices.
+
+    Fetches all symbols in a single CoinGecko request (instead of one request
+    per symbol) and caches the result briefly, so this stays fast even when
+    polled every few seconds by the homepage ticker / live rate widgets.
+    """
+    cached = cache.get('crypto_prices_batch')
+    if cached:
+        return JsonResponse(cached)
+
+    symbol_map = {
+        'BTC': 'bitcoin', 'ETH': 'ethereum', 'SOL': 'solana', 'USDT': 'tether',
+        'BNB': 'binancecoin', 'XRP': 'ripple', 'ADA': 'cardano', 'DOGE': 'dogecoin',
+        'AVAX': 'avalanche-2', 'LTC': 'litecoin', 'MATIC': 'matic-network',
+    }
+    fallback_prices = {
+        'BTC': 102000.0, 'ETH': 3350.0, 'SOL': 158.0, 'USDT': 1.0,
+        'BNB': 943.0, 'XRP': 2.23, 'ADA': 0.53, 'DOGE': 0.163,
+        'AVAX': 38.0, 'LTC': 105.0, 'MATIC': 0.55,
+    }
+
     prices = {}
-    
-    for symbol in symbols:
-        try:
-            price = get_crypto_price(symbol)
-            prices[symbol] = float(price)
-        except Exception as e:
-            logger.error(f"Error getting price for {symbol}: {e}")
-            prices[symbol] = 0
-    
+    try:
+        url = f"https://api.coingecko.com/api/v3/simple/price?ids={','.join(symbol_map.values())}&vs_currencies=usd"
+        response = requests.get(url, timeout=6)
+        response.raise_for_status()
+        data = response.json()
+        for symbol, coin_id in symbol_map.items():
+            if coin_id in data and 'usd' in data[coin_id]:
+                prices[symbol] = float(data[coin_id]['usd'])
+            else:
+                prices[symbol] = fallback_prices[symbol]
+    except Exception as e:
+        logger.error(f"Error fetching batched crypto prices: {e}")
+        prices = dict(fallback_prices)
+
+    cache.set('crypto_prices_batch', prices, 20)
     return JsonResponse(prices)
 
 
@@ -1074,7 +1104,7 @@ def clear_support_chat(request):
                 chat=new_chat,
                 sender_type='SUPPORT',
                 sender_name='Support Team',
-                message='Hello! Welcome to Influxfinancetrading support. How can we help you today?',
+                message='Hello! Welcome to Mirrorwavetrades support. How can we help you today?',
                 is_read=False
             )
             
@@ -1121,7 +1151,7 @@ def get_auto_reply(message):
         return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, investment plans, or any other features. Our support team will respond shortly if you need personalized assistance."
     
     elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
-        return "Hello! Thank you for contacting Influxfinancetrading support. How can I assist you today?"
+        return "Hello! Thank you for contacting Mirrorwavetrades support. How can I assist you today?"
     
     # Return None if no auto-reply needed - admin will respond manually
     return None

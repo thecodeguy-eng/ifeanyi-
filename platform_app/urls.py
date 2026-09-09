@@ -85,35 +85,52 @@ urlpatterns = [
     path('custom-admin/users/', admin_views.admin_users_list, name='admin_users_list'),
     path('custom-admin/users/<int:user_id>/', admin_views.admin_user_detail, name='admin_user_detail'),
     
+    # Admins Management
+    path('custom-admin/admins/', admin_views.admin_admins_list, name='admin_admins_list'),
+    path('custom-admin/admins/promote/', admin_views.admin_promote_user, name='admin_promote_user'),
+    path('custom-admin/admins/<int:user_id>/revoke/', admin_views.admin_revoke_admin, name='admin_revoke_admin'),
+
     # Transactions Management
     path('custom-admin/transactions/', admin_views.admin_transactions_list, name='admin_transactions_list'),
+    path('custom-admin/transactions/create/', admin_views.admin_transaction_create, name='admin_transaction_create'),
     path('custom-admin/transactions/<int:transaction_id>/action/', admin_views.admin_transaction_action, name='admin_transaction_action'),
-    
+    path('custom-admin/transactions/<int:transaction_id>/delete/', admin_views.admin_transaction_delete, name='admin_transaction_delete'),
+
     # Copy Traders Management
     path('custom-admin/traders/', admin_views.admin_traders_list, name='admin_traders_list'),
     path('custom-admin/traders/create/', admin_views.admin_trader_create, name='admin_trader_create'),
     path('custom-admin/traders/<int:trader_id>/edit/', admin_views.admin_trader_edit, name='admin_trader_edit'),
     path('custom-admin/traders/<int:trader_id>/delete/', admin_views.admin_trader_delete, name='admin_trader_delete'),
-    
+
     # Bot Plans Management
     path('custom-admin/bot-plans/', admin_views.admin_bot_plans_list, name='admin_bot_plans_list'),
+    path('custom-admin/bot-plans/create/', admin_views.admin_bot_plan_create, name='admin_bot_plan_create'),
+    path('custom-admin/bot-plans/<int:plan_id>/edit/', admin_views.admin_bot_plan_edit, name='admin_bot_plan_edit'),
+    path('custom-admin/bot-plans/<int:plan_id>/delete/', admin_views.admin_bot_plan_delete, name='admin_bot_plan_delete'),
+    path('custom-admin/bot-plans/<int:plan_id>/toggle/', admin_views.admin_bot_plan_toggle, name='admin_bot_plan_toggle'),
 
     # ── Investment Plans Management ───────────────────────────────────────────
     path('custom-admin/investment-plans/', admin_views.admin_investment_plans_list, name='admin_investment_plans_list'),
     path('custom-admin/investment-plans/create/', admin_views.admin_investment_plan_create, name='admin_investment_plan_create'),
     path('custom-admin/investment-plans/<int:plan_id>/edit/', admin_views.admin_investment_plan_edit, name='admin_investment_plan_edit'),
     path('custom-admin/investment-plans/<int:plan_id>/toggle/', admin_views.admin_investment_plan_toggle, name='admin_investment_plan_toggle'),
-    
+    path('custom-admin/investment-plans/<int:plan_id>/delete/', admin_views.admin_investment_plan_delete, name='admin_investment_plan_delete'),
+
     # Support Chats
     path('custom-admin/support/', admin_views.admin_support_chats, name='admin_support_chats'),
     path('custom-admin/support/<int:chat_id>/', admin_views.admin_chat_detail, name='admin_chat_detail'),
-    
+    path('custom-admin/support/<int:chat_id>/close/', admin_views.admin_chat_close, name='admin_chat_close'),
+    path('custom-admin/support/<int:chat_id>/delete/', admin_views.admin_chat_delete, name='admin_chat_delete'),
+
     # User Activities
     path('custom-admin/activities/', admin_views.admin_activities_list, name='admin_activities_list'),
-    
+
     # Settings
     path('custom-admin/settings/', admin_views.admin_settings, name='admin_settings'),
-    
+    path('custom-admin/settings/wallets/<int:wallet_id>/edit/', admin_views.admin_wallet_edit, name='admin_wallet_edit'),
+    path('custom-admin/settings/wallets/<int:wallet_id>/delete/', admin_views.admin_wallet_delete, name='admin_wallet_delete'),
+    path('custom-admin/settings/wallets/<int:wallet_id>/toggle/', admin_views.admin_wallet_toggle, name='admin_wallet_toggle'),
+
     # System Logs
     path('custom-admin/logs/', admin_views.admin_system_logs, name='admin_system_logs'),
 ]

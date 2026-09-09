@@ -1,17 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Options Trading - Influxfinancetrading{% endblock %}
+{% block title %}Options Trading - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
 .hero-options { background: linear-gradient(135deg, #1a0533 0%, #2d0a5e 50%, #4c1d95 100%); }
 .glass-chip { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13); border-radius: 12px; }
-.feature-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.75rem; transition: all .2s; }
-.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.07); transform: translateY(-2px); }
-.strategy-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 12px; padding: 1.5rem; transition: all .2s; }
-.strategy-card:hover { border-color: #7c3aed; box-shadow: 0 4px 16px rgba(124,58,237,.1); }
+.feature-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.75rem; transition: all .2s; }
+.feature-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.4); border-color: rgba(124,58,237,.3); transform: translateY(-2px); }
+.strategy-card { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 12px; padding: 1.5rem; transition: all .2s; }
+.strategy-card:hover { border-color: #7c3aed; box-shadow: 0 4px 20px rgba(124,58,237,.18); }
 .risk-badge { display: inline-flex; align-items: center; padding: .2rem .7rem; border-radius: 99px; font-size: .7rem; font-weight: 600; }
-.risk-low { background: #dcfce7; color: #16a34a; }
-.risk-med { background: #fef9c3; color: #ca8a04; }
-.risk-high { background: #fee2e2; color: #dc2626; }
+.risk-low { background: rgba(34,197,94,.15); color: #4ade80; }
+.risk-med { background: rgba(234,179,8,.15); color: #facc15; }
+.risk-high { background: rgba(239,68,68,.15); color: #f87171; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-600 { color: var(--text-muted) !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.bg-gray-50 { background: var(--bg-elevated) !important; }
+.bg-gray-100 { background: rgba(255,255,255,.06) !important; }
+.bg-violet-50 { background: rgba(139,92,246,.14) !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
+.bg-amber-50 { background: rgba(245,158,11,.12) !important; }
+.bg-red-50 { background: rgba(239,68,68,.12) !important; }
+.bg-cyan-50 { background: rgba(6,182,212,.14) !important; }
+.border-gray-200 { border-color: var(--border) !important; }
+.border-gray-400 { border-color: #4b5563 !important; }
 </style>
 {% endblock %}
 {% block content %}

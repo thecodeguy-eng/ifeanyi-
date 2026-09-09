@@ -175,8 +175,8 @@ MESSAGE_TAGS = {
 # BREVO (SENDINBLUE) EMAIL CONFIGURATION
 # ============================================
 BREVO_API_KEY = config('BREVO_API_KEY', default='')
-BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@Influxfinancetrading.com')
-BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='Influxfinancetrading')
+BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@Mirrorwavetrades.com')
+BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='Mirrorwavetrades')
 
 # Logging Configuration
 LOGGING = {
@@ -216,8 +216,8 @@ LOGGING = {
 
 # zohomail: 
 #   mail: nchukwugozirim@gmail.com
-#   password: @Influxfinancetrading1
-#   name: Influxfinancetrading
+#   password: @Mirrorwavetrades1
+#   name: Mirrorwavetrades
 
 # brevo:
 #   email:ibeawuchinzechukwu@gmail.com

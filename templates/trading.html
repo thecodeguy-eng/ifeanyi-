@@ -1,15 +1,27 @@
 {% extends 'base.html' %}
-{% block title %}Trading - Influxfinancetrading{% endblock %}
+{% block title %}Trading - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.form-input { width:100%; padding:.65rem 1rem; border:1px solid #e5e7eb; border-radius:8px; font-size:.875rem; color:#111827; background:#f9fafb; transition:all .2s; font-family:'DM Sans',sans-serif; }
-.form-input:focus { outline:none; border-color:#9ca3af; background:#fff; }
-.trade-tab { flex:1; padding:.55rem; font-size:.8rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; transition:all .2s; background:transparent; color:#6b7280; }
-.trade-tab.buy { background:#dcfce7; color:#16a34a; }
-.trade-tab.sell { background:#fee2e2; color:#dc2626; }
-.trade-tab.swap { background:#dbeafe; color:#2563eb; }
-.market-chip { padding:.75rem; background:#fff; border:1px solid #e5e7eb; border-radius:10px; transition:box-shadow .2s; }
-.market-chip:hover { box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.form-input { width:100%; padding:.65rem 1rem; border:1px solid var(--border); border-radius:8px; font-size:.875rem; color:var(--text-main); background:rgba(255,255,255,.04); transition:all .2s; font-family:'Poppins',sans-serif; }
+.form-input:focus { outline:none; border-color:#4b5563; background:rgba(255,255,255,.07); }
+.form-input option { background:#0e131c; color:var(--text-main); }
+.trade-tab { flex:1; padding:.55rem; font-size:.8rem; font-weight:600; border-radius:6px; border:none; cursor:pointer; transition:all .2s; background:transparent; color:#9aa3b2; }
+.trade-tab.buy { background:rgba(34,197,94,.15); color:#4ade80; }
+.trade-tab.sell { background:rgba(239,68,68,.15); color:#f87171; }
+.trade-tab.swap { background:rgba(37,99,235,.15); color:#60a5fa; }
+.market-chip { padding:.75rem; background:var(--bg-card); border:1px solid var(--border); border-radius:10px; transition:box-shadow .2s, border-color .2s; }
+.market-chip:hover { box-shadow:0 4px 14px rgba(0,0,0,.4); border-color:rgba(56,189,248,.3); }
+.trade-panel { background:var(--bg-card); border:1px solid var(--border); border-radius:12px; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.bg-white { background: var(--bg-card) !important; }
+.bg-gray-100 { background: rgba(255,255,255,.06) !important; }
+.bg-gray-50 { background: rgba(255,255,255,.04) !important; }
+.border-gray-200 { border-color: var(--border) !important; }
+.border-gray-100 { border-color: var(--border) !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -118,7 +130,7 @@
 
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-new TradingView.widget({ "width":"100%","height":480,"symbol":"BINANCE:BTCUSDT","interval":"5","timezone":"Etc/UTC","theme":"light","style":"1","locale":"en","toolbar_bg":"#fff","enable_publishing":false,"allow_symbol_change":true,"container_id":"tradingview_chart_trading","backgroundColor":"#ffffff" });
+new TradingView.widget({ "width":"100%","height":480,"symbol":"BINANCE:BTCUSDT","interval":"5","timezone":"Etc/UTC","theme":"dark","style":"1","locale":"en","toolbar_bg":"#0d1117","enable_publishing":false,"allow_symbol_change":true,"container_id":"tradingview_chart_trading","backgroundColor":"#0d1117" });
 
 function setType(type, btn) {
     document.getElementById('trade_type').value = type;
@@ -131,15 +143,25 @@ function setType(type, btn) {
 }
 
 let cryptoPrices = {};
+// Real session-start prices, tracked from actual API polls, so the % shown is a genuine
+// change since page load — not randomized.
+let priceHistory = {};
 
 async function fetchPrices() {
-    try { const r = await fetch('/api/crypto-prices/'); cryptoPrices = await r.json(); updateMarket(); calculateExchange(); } catch(e) {}
+    try { const r = await fetch('/api/crypto-prices/'); cryptoPrices = await r.json(); trackPriceHistory(); updateMarket(); calculateExchange(); } catch(e) {}
+}
+
+function trackPriceHistory() {
+    Object.entries(cryptoPrices).forEach(([sym, price]) => {
+        if (!priceHistory[sym]) priceHistory[sym] = price;
+    });
 }
 
 function updateMarket() {
     const el = document.getElementById('market_prices');
     el.innerHTML = Object.entries(cryptoPrices).map(([sym, price]) => {
-        const ch = (Math.random()*10-5).toFixed(2), up = ch >= 0;
+        const first = priceHistory[sym] || price;
+        const ch = (((price - first) / first) * 100).toFixed(2), up = ch >= 0;
         return `<div class="market-chip"><p class="text-xs text-gray-400 mb-0.5">${sym}</p><p class="font-semibold text-sm text-gray-900">$${price.toLocaleString()}</p><p class="text-xs ${up?'text-green-500':'text-red-500'}">${up?'↑':'↓'}${Math.abs(ch)}%</p></div>`;
     }).join('');
 }

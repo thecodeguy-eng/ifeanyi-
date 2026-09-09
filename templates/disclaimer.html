@@ -1,9 +1,16 @@
 {% extends 'base.html' %}
-{% block title %}Disclaimer - Influxfinancetrading{% endblock %}
+{% block title %}Disclaimer - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2rem; }
 .legal-section:last-child { border-bottom: none; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -19,7 +26,7 @@
 
         <div class="legal-section">
             <h2 class="font-semibold text-gray-900 text-lg mb-3">1. No Financial Advice</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">The content, tools, charts, news, data, and other materials available on the Influxfinancetrading Platform are provided for informational and educational purposes only. Nothing on this Platform constitutes financial advice, investment advice, trading advice, or any other form of advice. We are not a licensed financial advisor, broker-dealer, or investment advisor.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">The content, tools, charts, news, data, and other materials available on the Mirrorwavetrades Platform are provided for informational and educational purposes only. Nothing on this Platform constitutes financial advice, investment advice, trading advice, or any other form of advice. We are not a licensed financial advisor, broker-dealer, or investment advisor.</p>
         </div>
 
         <div class="legal-section">
@@ -51,7 +58,7 @@
 
         <div class="legal-section">
             <h2 class="font-semibold text-gray-900 text-lg mb-3">6. Third-Party Information</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">Our Platform may display market data, news, analysis, and other content from third-party providers. We do not verify the accuracy or completeness of third-party content and are not responsible for any errors or omissions therein. Third-party content does not constitute an endorsement by Influxfinancetrading.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">Our Platform may display market data, news, analysis, and other content from third-party providers. We do not verify the accuracy or completeness of third-party content and are not responsible for any errors or omissions therein. Third-party content does not constitute an endorsement by Mirrorwavetrades.</p>
         </div>
 
         <div class="legal-section">
@@ -66,7 +73,7 @@
 
         <div>
             <h2 class="font-semibold text-gray-900 text-lg mb-3">9. Seek Independent Advice</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">Before making any trading or investment decisions, we strongly recommend seeking independent financial advice from a qualified and authorized financial advisor. Consider your investment objectives, experience level, and risk tolerance carefully before trading. For questions, contact us at <a href="mailto:legal@influxfinancetrading.com" class="text-blue-600 hover:underline">legal@influxfinancetrading.com</a>.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">Before making any trading or investment decisions, we strongly recommend seeking independent financial advice from a qualified and authorized financial advisor. Consider your investment objectives, experience level, and risk tolerance carefully before trading. For questions, contact us at <a href="mailto:legal@Mirrorwavetrades.com" class="text-blue-600 hover:underline">legal@Mirrorwavetrades.com</a>.</p>
         </div>
 
     </div>

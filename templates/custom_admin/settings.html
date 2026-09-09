@@ -62,12 +62,49 @@
         <div class="space-y-3 mb-4">
             {% for wallet in wallets %}
             <div class="p-3 bg-slate-800/50 rounded-lg">
-                <p class="text-white font-semibold">{{ wallet.cryptocurrency }}</p>
+                <div class="flex items-center justify-between mb-2">
+                    <p class="text-white font-semibold">
+                        {{ wallet.cryptocurrency }}
+                        <span class="ml-2 px-2 py-0.5 rounded-full text-xs {% if wallet.is_active %}bg-green-500/20 text-green-400{% else %}bg-gray-500/20 text-gray-400{% endif %}">
+                            {% if wallet.is_active %}Active{% else %}Inactive{% endif %}
+                        </span>
+                    </p>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button type="button" onclick="document.getElementById('wallet-edit-{{ wallet.id }}').classList.toggle('hidden')"
+                                class="bg-blue-600 hover:bg-blue-700 px-2.5 py-1 rounded text-white text-xs">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form method="POST" action="{% url 'admin_wallet_toggle' wallet.id %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="{% if wallet.is_active %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-2.5 py-1 rounded text-white text-xs">
+                                <i class="fas {% if wallet.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                            </button>
+                        </form>
+                        <form method="POST" action="{% url 'admin_wallet_delete' wallet.id %}" class="inline"
+                              onsubmit="return confirm('Delete the {{ wallet.cryptocurrency }} wallet address?')">
+                            {% csrf_token %}
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 px-2.5 py-1 rounded text-white text-xs">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
                 <p class="text-gray-400 text-sm break-all">{{ wallet.wallet_address }}</p>
+
+                <form id="wallet-edit-{{ wallet.id }}" method="POST" action="{% url 'admin_wallet_edit' wallet.id %}" class="hidden mt-3 flex gap-2">
+                    {% csrf_token %}
+                    <input type="text" name="wallet_address" value="{{ wallet.wallet_address }}"
+                           class="flex-1 bg-slate-900 border border-slate-600 rounded-lg px-3 py-1.5 text-white text-sm">
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-lg text-white text-sm">
+                        <i class="fas fa-save"></i>
+                    </button>
+                </form>
             </div>
+            {% empty %}
+            <p class="text-gray-400 text-sm">No wallet addresses configured yet.</p>
             {% endfor %}
         </div>
-        
+
         <form method="POST" class="space-y-3">
             {% csrf_token %}
             <input type="hidden" name="action" value="add_wallet">
@@ -75,9 +112,15 @@
                 <option value="BTC">Bitcoin</option>
                 <option value="ETH">Ethereum</option>
                 <option value="SOL">Solana</option>
-                <option value="USDT">Tether</option>
+                <option value="USDT">Tether (Trc)</option>
+                <option value="BNB">Binance Coin</option>
+                <option value="XRP">Ripple</option>
+                <option value="ADA">Cardano</option>
+                <option value="DOGE">Dogecoin</option>
+                <option value="USDC (Sol)">USDC (Sol)</option>
+                <option value="USDC (Eth)">USDC (Eth)</option>
             </select>
-            <input type="text" name="wallet_address" placeholder="Wallet Address"
+            <input type="text" name="wallet_address" placeholder="Wallet Address" required
                    class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
             <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-lg text-white font-semibold">
                 <i class="fas fa-plus mr-2"></i> Add Wallet

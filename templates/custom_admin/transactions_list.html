@@ -3,9 +3,15 @@
 {% block title %}Transactions Management - Admin{% endblock %}
 
 {% block admin_content %}
-<div class="mb-8">
-    <h2 class="text-3xl font-bold gradient-text mb-2">Transactions Management</h2>
-    <p class="text-gray-400">Review and manage all platform transactions</p>
+<div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h2 class="text-3xl font-bold gradient-text mb-2">Transactions Management</h2>
+        <p class="text-gray-400">Review and manage all platform transactions</p>
+    </div>
+    <button type="button" onclick="document.getElementById('createTxModal').classList.remove('hidden')"
+            class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add Transaction
+    </button>
 </div>
 
 <!-- Stats -->
@@ -17,7 +23,7 @@
             </div>
             <div>
                 <p class="text-gray-400 text-xs">Pending</p>
-                <p class="text-2xl font-bold text-white">{{ transactions|length }}</p>
+                <p class="text-2xl font-bold text-white">{{ pending_count }}</p>
             </div>
         </div>
     </div>
@@ -28,7 +34,7 @@
             </div>
             <div>
                 <p class="text-gray-400 text-xs">Approved Today</p>
-                <p class="text-2xl font-bold text-white">0</p>
+                <p class="text-2xl font-bold text-white">{{ approved_today }}</p>
             </div>
         </div>
     </div>
@@ -39,7 +45,7 @@
             </div>
             <div>
                 <p class="text-gray-400 text-xs">Total Deposits</p>
-                <p class="text-2xl font-bold text-white">$0.00</p>
+                <p class="text-2xl font-bold text-white">${{ total_deposits|floatformat:2 }}</p>
             </div>
         </div>
     </div>
@@ -50,9 +56,55 @@
             </div>
             <div>
                 <p class="text-gray-400 text-xs">Total Withdrawals</p>
-                <p class="text-2xl font-bold text-white">$0.00</p>
+                <p class="text-2xl font-bold text-white">${{ total_withdrawals|floatformat:2 }}</p>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Add Transaction Modal -->
+<div id="createTxModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="admin-card p-6 rounded-xl max-w-md w-full">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Add Transaction</h3>
+            <button type="button" onclick="document.getElementById('createTxModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-xl">&times;</button>
+        </div>
+        <form method="POST" action="{% url 'admin_transaction_create' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Username or Email</label>
+                <input type="text" name="username" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Type</label>
+                <select name="transaction_type" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                    <option value="DEPOSIT">Deposit</option>
+                    <option value="WITHDRAWAL">Withdrawal</option>
+                    <option value="BONUS">Bonus</option>
+                    <option value="PROFIT">Profit</option>
+                    <option value="COMMISSION">Commission</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Amount ($)</label>
+                <input type="number" name="amount" step="0.01" min="0.01" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Status</label>
+                <select name="status" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                    <option value="PENDING">Pending</option>
+                    <option value="APPROVED">Approved (applies balance immediately)</option>
+                    <option value="COMPLETED">Completed (applies balance immediately)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Note <span class="text-gray-500">optional</span></label>
+                <input type="text" name="description" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 px-6 py-2.5 rounded-lg text-white font-semibold">
+                <i class="fas fa-save mr-2"></i> Create Transaction
+            </button>
+        </form>
     </div>
 </div>
 
@@ -143,10 +195,17 @@
                             </form>
                             <form method="POST" action="{% url 'admin_transaction_action' transaction.id %}" class="inline">
                                 {% csrf_token %}
-                                <button type="submit" name="action" value="reject" 
+                                <button type="submit" name="action" value="reject"
                                         class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm"
                                         onclick="return confirm('Reject this transaction?')">
                                     <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="{% url 'admin_transaction_delete' transaction.id %}" class="inline">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-gray-600 hover:bg-gray-700 px-3 py-1 rounded text-white text-sm"
+                                        onclick="return confirm('Delete this pending transaction?')">
+                                    <i class="fas fa-trash"></i>
                                 </button>
                             </form>
                             {% else %}

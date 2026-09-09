@@ -10,9 +10,24 @@
         <h2 class="text-3xl font-bold gradient-text mb-2">Support Chat #{{ chat.id }}</h2>
         <p class="text-gray-400">Conversation with {{ chat.user.username }}</p>
     </div>
-    <a href="{% url 'admin_support_chats' %}" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white">
-        <i class="fas fa-arrow-left mr-2"></i> Back to Chats
-    </a>
+    <div class="flex items-center gap-2">
+        <form method="POST" action="{% url 'admin_chat_close' chat.id %}">
+            {% csrf_token %}
+            <button type="submit" class="{% if chat.status == 'ACTIVE' %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-4 py-2 rounded-lg text-white">
+                <i class="fas {% if chat.status == 'ACTIVE' %}fa-lock{% else %}fa-lock-open{% endif %} mr-2"></i>
+                {% if chat.status == 'ACTIVE' %}Close Chat{% else %}Reopen Chat{% endif %}
+            </button>
+        </form>
+        <form method="POST" action="{% url 'admin_chat_delete' chat.id %}" onsubmit="return confirm('Delete this chat and all its messages?')">
+            {% csrf_token %}
+            <button type="submit" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-white">
+                <i class="fas fa-trash mr-2"></i> Delete
+            </button>
+        </form>
+        <a href="{% url 'admin_support_chats' %}" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg text-white">
+            <i class="fas fa-arrow-left mr-2"></i> Back
+        </a>
+    </div>
 </div>
 
 <!-- Chat Info -->

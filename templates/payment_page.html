@@ -1,27 +1,45 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
-{% block title %}Payment - Influxfinancetrading{% endblock %}
+{% block title %}Payment - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.crypto-btn { padding:.9rem; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; cursor:pointer; transition:all .2s; text-align:center; }
-.crypto-btn:hover { border-color:#9ca3af; }
-.crypto-btn.selected { border-color:#111827; background:#f9fafb; }
+.crypto-btn { padding:.9rem; border:1.5px solid var(--border); border-radius:10px; background:var(--bg-card); cursor:pointer; transition:all .2s; text-align:center; }
+.crypto-btn:hover { border-color:#4b5563; }
+.crypto-btn.selected { border-color:var(--primary); background:rgba(37,99,235,.1); }
 
 /* Timer */
-.timer-bar { height:4px; border-radius:4px; background:#e5e7eb; overflow:hidden; margin-top:.6rem; }
-.timer-fill { height:100%; border-radius:4px; transition:width 1s linear, background-color .5s ease; background:#16a34a; }
+.timer-bar { height:4px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:.6rem; }
+.timer-fill { height:100%; border-radius:4px; transition:width 1s linear, background-color .5s ease; background:#22c55e; }
 .timer-urgent { background:#ef4444 !important; }
 .timer-warning { background:#f59e0b !important; }
 
 /* Buy Crypto platforms */
-.platform-btn { display:flex; align-items:center; gap:.6rem; padding:.65rem 1rem; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; cursor:pointer; text-decoration:none; transition:all .2s; font-size:.8rem; font-weight:600; color:#374151; }
-.platform-btn:hover { border-color:#9ca3af; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+.platform-btn { display:flex; align-items:center; gap:.6rem; padding:.65rem 1rem; border:1.5px solid var(--border); border-radius:10px; background:var(--bg-card); cursor:pointer; text-decoration:none; transition:all .2s; font-size:.8rem; font-weight:600; color:#c7ccd6; }
+.platform-btn:hover { border-color:#4b5563; box-shadow:0 4px 14px rgba(0,0,0,.35); }
 .platform-logo { width:28px; height:28px; border-radius:6px; object-fit:contain; flex-shrink:0; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-gray-300 { color: #4b5563 !important; }
+.bg-white { background: var(--bg-card) !important; }
+.bg-gray-50 { background: rgba(255,255,255,.04) !important; }
+.bg-gray-200 { background: rgba(255,255,255,.09) !important; }
+.border-gray-200 { border-color: var(--border) !important; }
+.bg-amber-50 { background: rgba(245,158,11,.1) !important; }
+.border-amber-100 { border-color: rgba(245,158,11,.25) !important; }
+.text-amber-700 { color: #fbbf24 !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.border-blue-100 { border-color: rgba(37,99,235,.3) !important; }
+.text-blue-700 { color: #60a5fa !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
 </style>
 {% endblock %}
 {% block content %}
 {% include 'partials/_dashboard_sidebar.html' with active_page='dashboard' %}
-<section class="py-10" style="background:#f8f9fb;">
+<section class="py-10" style="background:var(--bg);">
     <div class="max-w-3xl mx-auto px-4">
 
         <div class="text-center mb-8">
@@ -138,7 +156,7 @@
 
             <div class="mb-5">
                 <label class="block text-sm font-medium text-gray-700 mb-1.5">Upload Payment Screenshot <span class="text-red-500">*</span></label>
-                <div class="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-gray-400 transition">
+                <div class="border-2 border-dashed rounded-xl p-8 text-center transition" style="border-color:var(--border);" onmouseover="this.style.borderColor='#4b5563'" onmouseout="this.style.borderColor='var(--border)'">
                     <input type="file" name="proof_image" accept="image/*" required class="hidden" id="proof_image_input" onchange="previewImage(event)">
                     <label for="proof_image_input" class="cursor-pointer">
                         <i class="fas fa-cloud-upload-alt text-4xl text-gray-300 mb-3 block"></i>
@@ -191,8 +209,8 @@
             fill.style.width = '0%';
             fill.classList.add('timer-urgent');
             status.textContent = 'Session expired — please refresh';
-            card.style.background = '#fff1f2';
-            card.style.borderColor = '#fecaca';
+            card.style.background = 'rgba(239,68,68,.08)';
+            card.style.borderColor = 'rgba(239,68,68,.35)';
             icon.className = 'fas fa-clock text-red-600 text-sm';
             clearInterval(timer);
             return;
@@ -209,13 +227,13 @@
         if (remaining <= 60) {
             fill.classList.add('timer-urgent');   // last 60 s → red
             status.textContent = 'Hurry! Rate expiring soon';
-            card.style.background = '#fff1f2';
-            card.style.borderColor = '#fecaca';
+            card.style.background = 'rgba(239,68,68,.08)';
+            card.style.borderColor = 'rgba(239,68,68,.35)';
         } else if (remaining <= 3 * 60) {
             fill.classList.add('timer-warning');  // last 3 min → amber
             status.textContent = 'Rate expiring soon';
-            card.style.background = '#fffbeb';
-            card.style.borderColor = '#fde68a';
+            card.style.background = 'rgba(245,158,11,.08)';
+            card.style.borderColor = 'rgba(245,158,11,.35)';
         } else {
             status.textContent = 'Rates are live';
             card.style.background = '';
@@ -254,7 +272,8 @@ function copyAddress() { navigator.clipboard.writeText(selectedWalletAddress); s
 
 function showToast(msg, type='success') {
     const t = document.createElement('div');
-    t.className = `fixed top-20 right-4 z-50 px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg ${type==='error'?'bg-red-600':'bg-gray-900'} text-white`;
+    t.className = `fixed top-20 right-4 z-50 px-4 py-2.5 rounded-lg text-sm font-medium shadow-lg ${type==='error'?'bg-red-600':'bg-blue-600'} text-white`;
+    t.style.boxShadow = '0 8px 28px rgba(0,0,0,.5)';
     t.textContent = msg;
     document.body.appendChild(t);
     setTimeout(() => { t.style.opacity='0'; t.style.transition='opacity .3s'; setTimeout(()=>t.remove(),300); }, 2500);

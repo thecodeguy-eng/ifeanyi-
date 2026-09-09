@@ -1,10 +1,25 @@
 {% extends 'base.html' %}
-{% block title %}Cookie Policy - Influxfinancetrading{% endblock %}
+{% block title %}Cookie Policy - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2rem; }
 .legal-section:last-child { border-bottom: none; }
-.cookie-type { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 1.25rem; }
+.cookie-type { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
+.bg-green-50 { background: rgba(34,197,94,.14) !important; }
+.text-green-700 { color: #4ade80 !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.text-blue-700 { color: #60a5fa !important; }
+.bg-purple-50 { background: rgba(168,85,247,.14) !important; }
+.text-purple-700 { color: #c084fc !important; }
+.bg-orange-50 { background: rgba(249,115,22,.14) !important; }
+.text-orange-700 { color: #fb923c !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -91,7 +106,7 @@
 
         <div>
             <h2 class="font-semibold text-gray-900 text-lg mb-3">Contact</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">For questions about our use of cookies, contact us at <a href="mailto:privacy@influxfinancetrading.com" class="text-blue-600 hover:underline">privacy@influxfinancetrading.com</a>.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">For questions about our use of cookies, contact us at <a href="mailto:privacy@Mirrorwavetrades.com" class="text-blue-600 hover:underline">privacy@Mirrorwavetrades.com</a>.</p>
         </div>
 
     </div>

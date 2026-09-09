@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Admin Dashboard{% endblock %} - Influxfinancetrading</title>
+    <title>{% block title %}Admin Dashboard{% endblock %} - Mirrorwavetrades</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -142,7 +142,7 @@
                     <i class="fas fa-shield-alt text-3xl gradient-text"></i>
                     <div>
                         <h1 class="text-xl font-bold gradient-text">Admin Panel</h1>
-                        <p class="text-xs text-gray-400">Influxfinancetrading</p>
+                        <p class="text-xs text-gray-400">Mirrorwavetrades</p>
                     </div>
                 </div>
                 
@@ -180,27 +180,37 @@
                         <i class="fas fa-robot w-5"></i>
                         <span>Bot Plans</span>
                     </a>
-                    
+
+                    <a href="{% url 'admin_investment_plans_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'investment-plans' in request.path %}active{% endif %}">
+                        <i class="fas fa-chart-pie w-5"></i>
+                        <span>Investment Plans</span>
+                    </a>
+
                     <a href="{% url 'admin_support_chats' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'support' in request.path %}active{% endif %}">
                         <i class="fas fa-comments w-5"></i>
                         <span>Support Chats</span>
                     </a>
-                    
+
                     <a href="{% url 'admin_activities_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'activities' in request.path %}active{% endif %}">
                         <i class="fas fa-history w-5"></i>
                         <span>User Activities</span>
                     </a>
-                    
+
+                    <a href="{% url 'admin_admins_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'admins' in request.path %}active{% endif %}">
+                        <i class="fas fa-user-shield w-5"></i>
+                        <span>Admins</span>
+                    </a>
+
                     <a href="{% url 'admin_settings' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'settings' in request.path %}active{% endif %}">
                         <i class="fas fa-cog w-5"></i>
                         <span>Settings</span>
                     </a>
-                    
+
                     <a href="{% url 'admin_system_logs' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'logs' in request.path %}active{% endif %}">
                         <i class="fas fa-file-alt w-5"></i>
                         <span>System Logs</span>
                     </a>
-                    
+
                     <div class="border-t border-gray-700 my-4"></div>
                     
                     <a href="{% url 'home' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300">

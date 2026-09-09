@@ -1,13 +1,43 @@
 {% extends 'base.html' %}
-{% block title %}Careers - Influxfinancetrading{% endblock %}
+{% block title %}Careers - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.hero-careers { background: linear-gradient(135deg, #111827 0%, #1f2937 100%); }
-.job-card { background: #fff; border: 1.5px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; transition: all .2s; cursor: pointer; }
-.job-card:hover { border-color: #1d4ed8; box-shadow: 0 6px 20px rgba(29,78,216,.1); }
-.perk-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1.5rem; text-align: center; transition: all .2s; }
-.perk-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.07); }
+.hero-careers { background: linear-gradient(135deg, #0a0f1a 0%, #101a2c 100%); border-bottom: 1px solid var(--border); }
+.job-card { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 14px; padding: 1.5rem; transition: all .2s; cursor: pointer; }
+.job-card:hover { border-color: rgba(56,189,248,.35); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
+.perk-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 1.5rem; text-align: center; transition: all .2s; }
+.perk-card:hover { border-color: rgba(56,189,248,.3); box-shadow: 0 6px 20px rgba(0,0,0,.4); }
 .dept-pill { display: inline-flex; align-items: center; padding: .25rem .85rem; border-radius: 99px; font-size: .7rem; font-weight: 600; }
+.cta-white-btn { background:#fff; color:#0b0f17; transition: background .2s; }
+.cta-white-btn:hover { background:#e5e7eb; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-gray-600 { color: var(--text-muted) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
+.bg-purple-50 { background: rgba(168,85,247,.14) !important; }
+.bg-orange-50 { background: rgba(249,115,22,.14) !important; }
+.bg-amber-50 { background: rgba(245,158,11,.12) !important; }
+.bg-red-50 { background: rgba(239,68,68,.14) !important; }
+.bg-cyan-50 { background: rgba(6,182,212,.14) !important; }
+.bg-indigo-50 { background: rgba(99,102,241,.14) !important; }
+.perk-card i.text-blue-600 { color: #60a5fa !important; }
+.perk-card i.text-green-600 { color: #4ade80 !important; }
+.perk-card i.text-purple-600 { color: #c084fc !important; }
+.perk-card i.text-amber-600 { color: #f59e0b !important; }
+.perk-card i.text-red-600 { color: #f87171 !important; }
+.perk-card i.text-cyan-600 { color: #22d3ee !important; }
+.perk-card i.text-indigo-600 { color: #818cf8 !important; }
+.perk-card i.text-orange-600 { color: #fb923c !important; }
+.dept-pill.bg-gray-100 { background: rgba(255,255,255,.08) !important; }
+.dept-pill.bg-blue-50 { color: #60a5fa !important; }
+.dept-pill.bg-purple-50 { color: #c084fc !important; }
+.dept-pill.bg-green-50 { color: #4ade80 !important; }
+.dept-pill.bg-orange-50 { color: #fb923c !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -18,7 +48,7 @@
         <h1 class="title-font text-5xl md:text-6xl mb-5">Build the Future<br>of Finance</h1>
         <p class="text-gray-400 text-lg max-w-2xl mx-auto mb-8">We're a remote-first team of traders, engineers, and designers on a mission to democratize global markets. If you're passionate about fintech, we want to hear from you.</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="#open-roles" class="px-8 py-3.5 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition text-sm">View Open Roles</a>
+            <a href="#open-roles" class="px-8 py-3.5 cta-white-btn font-semibold rounded-xl transition text-sm">View Open Roles</a>
         </div>
     </div>
 </div>

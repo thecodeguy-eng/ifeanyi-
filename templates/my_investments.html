@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}My Investments – Influxfinancetrading{% endblock %}
+{% block title %}My Investments – Mirrorwavetrades{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -25,8 +25,8 @@
 }
 
 .stat-card {
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.1rem 1.25rem;
     min-width: 0;
@@ -63,15 +63,15 @@
 
 /* ── Investment row ────────────────────────────────────── */
 .inv-row {
-    background: #fff;
-    border: 1px solid #e5e7eb;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
     border-radius: 12px;
     padding: 1.1rem 1.25rem;
-    transition: box-shadow .2s;
+    transition: box-shadow .2s, border-color .2s;
     min-width: 0;
     box-sizing: border-box;
 }
-.inv-row:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+.inv-row:hover { box-shadow: 0 6px 20px rgba(0,0,0,.4); border-color: rgba(56,189,248,.25); }
 
 /* ── Investment row inner layout ───────────────────────── */
 .inv-inner {
@@ -98,7 +98,7 @@
 @media (max-width: 639px) {
     .inv-amounts {
         justify-content: space-between;
-        border-top: 1px solid #f3f4f6;
+        border-top: 1px solid var(--border);
         padding-top: .75rem;
         width: 100%;
     }
@@ -119,13 +119,13 @@
 }
 
 /* ── Progress bar ──────────────────────────────────────── */
-.progress-wrap { background: #f3f4f6; border-radius: 99px; height: 7px; overflow: hidden; }
+.progress-wrap { background: rgba(255,255,255,.06); border-radius: 99px; height: 7px; overflow: hidden; }
 .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #2563eb, #06b6d4); transition: width .4s ease; }
 
 /* ── Status badges ─────────────────────────────────────── */
-.badge-active    { background:#dbeafe; color:#1d4ed8; }
-.badge-completed { background:#dcfce7; color:#16a34a; }
-.badge-cancelled { background:#fee2e2; color:#dc2626; }
+.badge-active    { background:rgba(37,99,235,.15); color:#60a5fa; }
+.badge-completed { background:rgba(34,197,94,.15); color:#4ade80; }
+.badge-cancelled { background:rgba(239,68,68,.15); color:#f87171; }
 .status-badge {
     display: inline-flex;
     align-items: center;
@@ -141,11 +141,11 @@
 }
 
 /* ── Tier badges ───────────────────────────────────────── */
-.tier-STARTER  { background: #f0fdf4; color: #16a34a; }
-.tier-SILVER   { background: #f8fafc; color: #475569; }
-.tier-GOLD     { background: #fffbeb; color: #b45309; }
-.tier-PLATINUM { background: #eff6ff; color: #1d4ed8; }
-.tier-DIAMOND  { background: #fdf4ff; color: #9333ea; }
+.tier-STARTER  { background: rgba(34,197,94,.14); color: #4ade80; }
+.tier-SILVER   { background: rgba(148,163,184,.16); color: #cbd5e1; }
+.tier-GOLD     { background: rgba(245,158,11,.14); color: #fbbf24; }
+.tier-PLATINUM { background: rgba(37,99,235,.14); color: #60a5fa; }
+.tier-DIAMOND  { background: rgba(168,85,247,.14); color: #c084fc; }
 .tier-badge {
     display: inline-block;
     font-size: .63rem;
@@ -220,6 +220,14 @@
         max-width: 100%;
     }
 }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.bg-blue-50 { background: rgba(37,99,235,.14) !important; }
+.bg-green-50 { background: rgba(34,197,94,.12) !important; }
+.bg-indigo-50 { background: rgba(99,102,241,.14) !important; }
+.bg-orange-50 { background: rgba(249,115,22,.14) !important; }
 </style>
 {% endblock %}
 
@@ -233,7 +241,7 @@
     <!-- Header -->
     <div class="page-header">
         <div>
-            <h1 class="title-font text-2xl text-gray-900 mb-0.5">My Investments</h1>
+            <h1 class="title-font text-2xl mb-0.5" style="color:#fff;">My Investments</h1>
             <p class="text-gray-400 text-sm">Track all your investment plans and returns.</p>
         </div>
         <a href="{% url 'investment_plans' %}" class="new-inv-btn">
@@ -275,7 +283,7 @@
                 <div style="flex:1;min-width:0;">
                     <div class="plan-name-row">
                         <span class="tier-badge tier-{{ inv.plan.tier }}">{{ inv.plan.tier }}</span>
-                        <h3 style="font-weight:600;color:#111827;font-size:.875rem;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inv.plan.name }}</h3>
+                        <h3 style="font-weight:600;color:#fff;font-size:.875rem;margin:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ inv.plan.name }}</h3>
                         <span class="status-badge badge-{{ inv.status|lower }}">
                             {% if inv.status == 'ACTIVE' %}<i class="fas fa-circle" style="font-size:.4rem;"></i>
                             {% elif inv.status == 'COMPLETED' %}<i class="fas fa-check" style="font-size:.6rem;"></i>
@@ -285,7 +293,7 @@
                         </span>
                     </div>
 
-                    <p style="font-size:.72rem;color:#9ca3af;margin:0;">
+                    <p style="font-size:.72rem;color:#6b7280;margin:0;">
                         Started {{ inv.start_date|date:"M d, Y" }} &nbsp;·&nbsp;
                         {% if inv.status == 'ACTIVE' %}
                             Matures {{ inv.end_date|date:"M d, Y" }} ({{ inv.days_remaining }}d left)
@@ -298,7 +306,7 @@
 
                     {% if inv.status == 'ACTIVE' %}
                     <div class="progress-container">
-                        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#9ca3af;margin-bottom:.3rem;">
+                        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:#6b7280;margin-bottom:.3rem;">
                             <span>Progress</span>
                             <span>{{ inv.progress_percentage }}%</span>
                         </div>
@@ -312,15 +320,15 @@
                 <!-- Amounts -->
                 <div class="inv-amounts">
                     <div>
-                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">Invested</p>
-                        <p style="font-weight:700;color:#111827;font-size:.875rem;margin:0;white-space:nowrap;">${{ inv.amount_invested|floatformat:2 }}</p>
+                        <p style="font-size:.7rem;color:#6b7280;margin-bottom:.2rem;">Invested</p>
+                        <p style="font-weight:700;color:#fff;font-size:.875rem;margin:0;white-space:nowrap;">${{ inv.amount_invested|floatformat:2 }}</p>
                     </div>
                     <div>
-                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">ROI</p>
+                        <p style="font-size:.7rem;color:#6b7280;margin-bottom:.2rem;">ROI</p>
                         <p style="font-weight:700;color:#16a34a;font-size:.875rem;margin:0;white-space:nowrap;">+${{ inv.profit_amount|floatformat:2 }}</p>
                     </div>
                     <div>
-                        <p style="font-size:.7rem;color:#9ca3af;margin-bottom:.2rem;">Total Return</p>
+                        <p style="font-size:.7rem;color:#6b7280;margin-bottom:.2rem;">Total Return</p>
                         <p style="font-weight:700;color:#1d4ed8;font-size:.875rem;margin:0;white-space:nowrap;">${{ inv.expected_return|floatformat:2 }}</p>
                     </div>
                 </div>
@@ -328,9 +336,9 @@
             </div>
         </div>
         {% empty %}
-        <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:4rem 1.5rem;text-align:center;">
-            <i class="fas fa-chart-pie" style="font-size:2.5rem;color:#d1d5db;display:block;margin-bottom:1rem;"></i>
-            <p style="color:#9ca3af;font-size:.875rem;margin-bottom:.75rem;">You haven't made any investments yet.</p>
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:4rem 1.5rem;text-align:center;">
+            <i class="fas fa-chart-pie" style="font-size:2.5rem;color:#4b5563;display:block;margin-bottom:1rem;"></i>
+            <p style="color:#6b7280;font-size:.875rem;margin-bottom:.75rem;">You haven't made any investments yet.</p>
             <a href="{% url 'investment_plans' %}"
                style="display:inline-block;background:#2563eb;color:#fff;font-size:.875rem;font-weight:600;padding:.6rem 1.25rem;border-radius:10px;text-decoration:none;transition:background .18s;"
                onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">

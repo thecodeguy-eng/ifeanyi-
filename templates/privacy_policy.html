@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Privacy Policy - Influxfinancetrading{% endblock %}
+{% block title %}Privacy Policy - Mirrorwavetrades{% endblock %}
 {% block extra_css %}
 <style>
-.legal-section { border-bottom: 1px solid #f1f5f9; padding-bottom: 2rem; margin-bottom: 2rem; }
+.legal-section { border-bottom: 1px solid var(--border); padding-bottom: 2rem; margin-bottom: 2rem; }
 .legal-section:last-child { border-bottom: none; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-700 { color: #c7ccd6 !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+.text-blue-600 { color: var(--accent-light) !important; }
+.bg-amber-50 { background: rgba(245,158,11,.1) !important; }
+.border-amber-200 { border-color: rgba(245,158,11,.3) !important; }
+.text-amber-600 { color: #fbbf24 !important; }
+.text-amber-800 { color: #fde68a !important; }
 </style>
 {% endblock %}
 {% block content %}
@@ -20,7 +31,7 @@
         <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-10">
             <div class="flex items-start gap-3">
                 <i class="fas fa-info-circle text-amber-600 mt-0.5"></i>
-                <p class="text-amber-800 text-sm leading-relaxed">This Privacy Policy describes how Influxfinancetrading ("we," "us," or "our") collects, uses, and protects your personal information when you use our platform. By using our services, you agree to the collection and use of information in accordance with this policy.</p>
+                <p class="text-amber-800 text-sm leading-relaxed">This Privacy Policy describes how Mirrorwavetrades ("we," "us," or "our") collects, uses, and protects your personal information when you use our platform. By using our services, you agree to the collection and use of information in accordance with this policy.</p>
             </div>
         </div>
 
@@ -79,7 +90,7 @@
                 <li>Receive a portable copy of your data</li>
                 <li>Withdraw consent at any time where processing is based on consent</li>
             </ul>
-            <p class="text-gray-500 text-sm mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@influxfinancetrading.com" class="text-blue-600 hover:underline">privacy@influxfinancetrading.com</a>.</p>
+            <p class="text-gray-500 text-sm mt-3">To exercise any of these rights, contact us at <a href="mailto:privacy@Mirrorwavetrades.com" class="text-blue-600 hover:underline">privacy@Mirrorwavetrades.com</a>.</p>
         </div>
 
         <div class="legal-section">
@@ -94,7 +105,7 @@
 
         <div>
             <h2 class="font-semibold text-gray-900 text-lg mb-3">9. Contact Us</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">If you have questions about this Privacy Policy or our data practices, contact us at <a href="mailto:privacy@influxfinancetrading.com" class="text-blue-600 hover:underline">privacy@influxfinancetrading.com</a> or through our <a href="{% url 'contact' %}" class="text-blue-600 hover:underline">contact form</a>.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">If you have questions about this Privacy Policy or our data practices, contact us at <a href="mailto:privacy@Mirrorwavetrades.com" class="text-blue-600 hover:underline">privacy@Mirrorwavetrades.com</a> or through our <a href="{% url 'contact' %}" class="text-blue-600 hover:underline">contact form</a>.</p>
         </div>
 
     </div>

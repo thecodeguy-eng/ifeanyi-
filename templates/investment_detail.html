@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ plan.name }} Plan – Influxfinancetrading{% endblock %}
+{% block title %}{{ plan.name }} Plan – Mirrorwavetrades{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -24,7 +24,7 @@
 
 /* ── ROI big number ────────────────────────────────────── */
 .roi-big {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 3.5rem;
     font-weight: 800;
     line-height: 1;
@@ -81,18 +81,18 @@
     align-items: flex-start;
     gap: .75rem;
     padding: .65rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    border-bottom: 1px solid var(--border);
     font-size: .875rem;
-    color: #374151;
+    color: #c7ccd6;
     word-break: break-word;
 }
 .feature-row:last-child { border-bottom: none; }
-.feature-row i { color: #22c55e; width: 16px; text-align: center; flex-shrink: 0; margin-top: 2px; }
+.feature-row i { color: #4ade80; width: 16px; text-align: center; flex-shrink: 0; margin-top: 2px; }
 
 /* ── Invest card ───────────────────────────────────────── */
 .invest-card {
-    background: #fff;
-    border: 1.5px solid #e5e7eb;
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
     border-radius: 16px;
     padding: 1.75rem;
     box-sizing: border-box;
@@ -107,8 +107,8 @@
 
 /* ── Amount preview ────────────────────────────────────── */
 .amount-preview {
-    background: #f0fdf4;
-    border: 1px solid #bbf7d0;
+    background: rgba(34,197,94,.08);
+    border: 1px solid rgba(34,197,94,.3);
     border-radius: 12px;
     padding: 1rem 1.25rem;
     display: none;
@@ -116,15 +116,15 @@
 .amount-preview.visible { display: block; }
 
 /* ── Tier / risk badges ────────────────────────────────── */
-.tier-STARTER  { background: #f0fdf4; color: #16a34a; }
-.tier-SILVER   { background: #f8fafc; color: #475569; }
-.tier-GOLD     { background: #fffbeb; color: #b45309; }
-.tier-PLATINUM { background: #eff6ff; color: #1d4ed8; }
-.tier-DIAMOND  { background: #fdf4ff; color: #9333ea; }
+.tier-STARTER  { background: rgba(34,197,94,.14); color: #4ade80; }
+.tier-SILVER   { background: rgba(148,163,184,.16); color: #cbd5e1; }
+.tier-GOLD     { background: rgba(245,158,11,.14); color: #fbbf24; }
+.tier-PLATINUM { background: rgba(37,99,235,.14); color: #60a5fa; }
+.tier-DIAMOND  { background: rgba(168,85,247,.14); color: #c084fc; }
 
-.risk-LOW    { background: #dcfce7; color: #166534; }
-.risk-MEDIUM { background: #fef9c3; color: #92400e; }
-.risk-HIGH   { background: #fee2e2; color: #991b1b; }
+.risk-LOW    { background: rgba(34,197,94,.15); color: #4ade80; }
+.risk-MEDIUM { background: rgba(234,179,8,.15); color: #facc15; }
+.risk-HIGH   { background: rgba(239,68,68,.15); color: #f87171; }
 
 .tier-badge, .risk-badge {
     display: inline-flex;
@@ -183,11 +183,12 @@
     align-items: center;
     gap: .5rem;
     font-size: .75rem;
-    color: #9ca3af;
+    color: var(--text-muted);
     margin-bottom: 1.25rem;
     flex-wrap: wrap;
 }
-.breadcrumb a:hover { color: #4b5563; }
+.breadcrumb a { color: var(--text-muted); text-decoration: none; }
+.breadcrumb a:hover { color: #fff; }
 
 /* ── Page overflow guard ───────────────────────────────── */
 .dashboard-main {
@@ -214,7 +215,7 @@ section {
         <i class="fas fa-chevron-right text-xs"></i>
         <a href="{% url 'investment_plans' %}">Investment Plans</a>
         <i class="fas fa-chevron-right text-xs"></i>
-        <span style="color:#4b5563;">{{ plan.name }}</span>
+        <span style="color:#c7ccd6;">{{ plan.name }}</span>
     </div>
 
     <div class="detail-grid">
@@ -265,8 +266,8 @@ section {
 
             <!-- Features -->
             {% if plan.features %}
-            <div style="background:#fff;border:1.5px solid #e5e7eb;border-radius:14px;padding:1.25rem;">
-                <h3 style="font-weight:600;color:#111827;font-size:.875rem;margin-bottom:.75rem;">Plan Features</h3>
+            <div style="background:var(--bg-card);border:1.5px solid var(--border);border-radius:14px;padding:1.25rem;">
+                <h3 style="font-weight:600;color:#fff;font-size:.875rem;margin-bottom:.75rem;">Plan Features</h3>
                 {% for feature in plan.features %}
                 <div class="feature-row">
                     <i class="fas fa-check-circle"></i>
@@ -277,11 +278,11 @@ section {
             {% endif %}
 
             <!-- How it works -->
-            <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:14px;padding:1.25rem;">
-                <h3 style="font-weight:600;color:#1e40af;font-size:.875rem;margin-bottom:.75rem;">
+            <div style="background:rgba(37,99,235,.08);border:1px solid rgba(37,99,235,.3);border-radius:14px;padding:1.25rem;">
+                <h3 style="font-weight:600;color:#93c5fd;font-size:.875rem;margin-bottom:.75rem;">
                     <i class="fas fa-info-circle" style="margin-right:.4rem;"></i>How It Works
                 </h3>
-                <ol style="font-size:.875rem;color:#1d4ed8;padding-left:1.25rem;margin:0;display:flex;flex-direction:column;gap:.5rem;list-style:decimal;">
+                <ol style="font-size:.875rem;color:#bfdbfe;padding-left:1.25rem;margin:0;display:flex;flex-direction:column;gap:.5rem;list-style:decimal;">
                     <li>Enter the amount you want to invest (within the plan limits).</li>
                     <li>Funds are deducted from your account balance immediately.</li>
                     <li>Your investment grows over <strong>{{ plan.duration_days }} days</strong>.</li>
@@ -293,9 +294,9 @@ section {
         <!-- RIGHT: Invest form -->
         <div style="min-width:0;">
             <div class="invest-card invest-card-sticky">
-                <h3 class="title-font text-lg text-gray-900 mb-1">Invest in {{ plan.name }}</h3>
-                <p style="font-size:.75rem;color:#9ca3af;margin-bottom:1.25rem;">
-                    Your balance: <strong style="color:#374151;">${{ user.account_balance|floatformat:2 }}</strong>
+                <h3 class="title-font text-lg mb-1" style="color:#fff;">Invest in {{ plan.name }}</h3>
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                    Your balance: <strong style="color:#c7ccd6;">${{ user.account_balance|floatformat:2 }}</strong>
                 </p>
 
                 <!-- Alert messages -->
@@ -303,61 +304,61 @@ section {
 
                 <form id="invest-form">
                     {% csrf_token %}
-                    <label style="display:block;font-size:.75rem;font-weight:600;color:#6b7280;margin-bottom:.4rem;">
+                    <label style="display:block;font-size:.75rem;font-weight:600;color:#9aa3b2;margin-bottom:.4rem;">
                         Investment Amount (USD)
                     </label>
                     <div style="position:relative;margin-bottom:.75rem;">
-                        <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:#9ca3af;font-weight:700;">$</span>
-                        <input 
-                            type="number" 
+                        <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:#6b7280;font-weight:700;">$</span>
+                        <input
+                            type="number"
                             id="amount-input"
                             name="amount"
                             min="{{ plan.minimum_amount }}"
                             {% if plan.maximum_amount %}max="{{ plan.maximum_amount }}"{% endif %}
                             step="0.01"
                             placeholder="{{ plan.minimum_amount|floatformat:0 }}"
-                            style="width:100%;border:1.5px solid #e5e7eb;border-radius:10px;padding:.65rem .75rem .65rem 2rem;font-size:.875rem;box-sizing:border-box;outline:none;transition:border-color .15s;"
-                            onfocus="this.style.borderColor='#3b82f6'" 
-                            onblur="this.style.borderColor='#e5e7eb'"
+                            style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:.65rem .75rem .65rem 2rem;font-size:.875rem;box-sizing:border-box;outline:none;transition:border-color .15s;background:rgba(255,255,255,.04);color:#fff;"
+                            onfocus="this.style.borderColor='#3b82f6'"
+                            onblur="this.style.borderColor='var(--border)'"
                         >
                     </div>
 
                     <!-- Quick fill buttons -->
                     <div class="quick-fill-row">
                         {% if plan.minimum_amount %}
-                        <button type="button" onclick="setAmount({{ plan.minimum_amount }})" 
-                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
-                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">
+                        <button type="button" onclick="setAmount({{ plan.minimum_amount }})"
+                            style="font-size:.75rem;background:rgba(255,255,255,.06);border:none;color:#c7ccd6;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">
                             Min ${{ plan.minimum_amount|floatformat:0 }}
                         </button>
                         {% endif %}
-                        <button type="button" onclick="setAmount(500)" 
-                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
-                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$500</button>
-                        <button type="button" onclick="setAmount(1000)" 
-                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
-                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$1,000</button>
-                        <button type="button" onclick="setAmount(5000)" 
-                            style="font-size:.75rem;background:#f3f4f6;border:none;color:#4b5563;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
-                            onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#f3f4f6'">$5,000</button>
+                        <button type="button" onclick="setAmount(500)"
+                            style="font-size:.75rem;background:rgba(255,255,255,.06);border:none;color:#c7ccd6;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">$500</button>
+                        <button type="button" onclick="setAmount(1000)"
+                            style="font-size:.75rem;background:rgba(255,255,255,.06);border:none;color:#c7ccd6;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">$1,000</button>
+                        <button type="button" onclick="setAmount(5000)"
+                            style="font-size:.75rem;background:rgba(255,255,255,.06);border:none;color:#c7ccd6;padding:.35rem .75rem;border-radius:8px;cursor:pointer;transition:background .15s;"
+                            onmouseover="this.style.background='rgba(255,255,255,.1)'" onmouseout="this.style.background='rgba(255,255,255,.06)'">$5,000</button>
                     </div>
 
                     <!-- Return preview -->
                     <div id="preview" class="amount-preview mb-4">
-                        <p style="font-size:.75rem;color:#16a34a;font-weight:600;margin-bottom:.5rem;">Estimated Returns</p>
+                        <p style="font-size:.75rem;color:#4ade80;font-weight:600;margin-bottom:.5rem;">Estimated Returns</p>
                         <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.25rem;">
-                            <span style="color:#6b7280;">You invest</span>
-                            <span style="font-weight:600;color:#111827;" id="p-invested">–</span>
+                            <span style="color:#9aa3b2;">You invest</span>
+                            <span style="font-weight:600;color:#fff;" id="p-invested">–</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;font-size:.875rem;margin-bottom:.25rem;">
-                            <span style="color:#6b7280;">ROI ({{ plan.roi_percentage }}%)</span>
-                            <span style="font-weight:600;color:#16a34a;" id="p-profit">–</span>
+                            <span style="color:#9aa3b2;">ROI ({{ plan.roi_percentage }}%)</span>
+                            <span style="font-weight:600;color:#4ade80;" id="p-profit">–</span>
                         </div>
-                        <div style="display:flex;justify-content:space-between;font-size:.875rem;padding-top:.5rem;border-top:1px solid #bbf7d0;">
-                            <span style="color:#374151;font-weight:600;">Total at maturity</span>
-                            <span style="font-weight:700;color:#15803d;" id="p-total">–</span>
+                        <div style="display:flex;justify-content:space-between;font-size:.875rem;padding-top:.5rem;border-top:1px solid rgba(34,197,94,.3);">
+                            <span style="color:#c7ccd6;font-weight:600;">Total at maturity</span>
+                            <span style="font-weight:700;color:#4ade80;" id="p-total">–</span>
                         </div>
-                        <p style="font-size:.7rem;color:#9ca3af;margin-top:.5rem;">Credited after {{ plan.duration_days }} days</p>
+                        <p style="font-size:.7rem;color:#6b7280;margin-top:.5rem;">Credited after {{ plan.duration_days }} days</p>
                     </div>
 
                     <button type="submit" id="submit-btn"
@@ -367,7 +368,7 @@ section {
                     </button>
                 </form>
 
-                <p style="text-align:center;font-size:.7rem;color:#9ca3af;margin-top:.75rem;">
+                <p style="text-align:center;font-size:.7rem;color:#6b7280;margin-top:.75rem;">
                     <i class="fas fa-shield-alt" style="margin-right:.25rem;"></i> Funds secured &amp; insured
                 </p>
             </div>
@@ -453,9 +454,10 @@ document.getElementById('invest-form').addEventListener('submit', async function
 function showAlert(msg, type) {
     const el = document.getElementById('alert-box');
     el.textContent = msg;
-    el.className = type === 'success'
-        ? 'mb-4 p-3 rounded-lg text-sm font-medium bg-green-50 text-green-700 border border-green-200'
-        : 'mb-4 p-3 rounded-lg text-sm font-medium bg-red-50 text-red-700 border border-red-200';
+    el.className = 'mb-4 p-3 rounded-lg text-sm font-medium';
+    el.style.cssText = type === 'success'
+        ? 'background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);'
+        : 'background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.3);';
     el.classList.remove('hidden');
     el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }

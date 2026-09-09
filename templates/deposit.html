@@ -1,105 +1,106 @@
 {% extends 'base.html' %}
 
-{% block title %}Deposit - Influxfinancetrading{% endblock %}
+{% block title %}Deposit - Mirrorwavetrades{% endblock %}
 
 {% block content %}
 {% include 'partials/_dashboard_sidebar.html' with active_page='dashboard' %}
-<section class="py-12 bg-gray-50 min-h-screen">
+<section class="py-12 min-h-screen" style="background:var(--bg);">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl mb-4 shadow-lg">
                 <i class="fas fa-plus-circle text-white text-4xl"></i>
             </div>
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">
+            <h1 class="text-4xl font-bold mb-2" style="color:#fff;">
                 Add Funds
             </h1>
-            <p class="text-gray-600 text-lg">Choose an amount to start trading</p>
+            <p class="text-lg" style="color:var(--text-muted);">Choose an amount to start trading</p>
         </div>
-        
-        <div class="bg-white border border-gray-200 rounded-2xl shadow-lg p-8">
+
+        <div class="card p-8" style="box-shadow:0 8px 28px rgba(0,0,0,.4);">
             <form method="post">
                 {% csrf_token %}
-                
+
                 <!-- Quick Amount Selection -->
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-gray-900 mb-4">Select Amount</label>
+                    <label class="block text-sm font-bold mb-4" style="color:#fff;">Select Amount</label>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <button type="button" onclick="setAmount(500)" class="amount-btn p-6 bg-gradient-to-br text-dark from-emerald-50 to-cyan-50 hover:from-emerald-100 hover:to-cyan-100 border-2 border-emerald-200 rounded-xl transition-all font-bold text-xl text-gray-900">
+                        <button type="button" onclick="setAmount(500)" class="amount-btn p-6 rounded-xl transition-all font-bold text-xl" style="background:rgba(16,185,129,.1); border:2px solid rgba(16,185,129,.3); color:#fff;" onmouseover="this.style.background='rgba(16,185,129,.18)'" onmouseout="this.style.background='rgba(16,185,129,.1)'">
                             $500
                         </button>
-                        <button type="button" onclick="setAmount(1000)" class="amount-btn p-6 bg-gradient-to-br text-dark from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 border-2 border-blue-200 rounded-xl transition-all font-bold text-xl text-gray-900">
+                        <button type="button" onclick="setAmount(1000)" class="amount-btn p-6 rounded-xl transition-all font-bold text-xl" style="background:rgba(37,99,235,.1); border:2px solid rgba(37,99,235,.3); color:#fff;" onmouseover="this.style.background='rgba(37,99,235,.18)'" onmouseout="this.style.background='rgba(37,99,235,.1)'">
                             $1000
                         </button>
-                        <button type="button" onclick="setAmount(5000)" class="amount-btn p-6 bg-gradient-to-br text-dark from-purple-50 to-pink-50 hover:from-purple-100 hover:to-pink-100 border-2 border-purple-200 rounded-xl transition-all font-bold text-xl text-gray-900">
+                        <button type="button" onclick="setAmount(5000)" class="amount-btn p-6 rounded-xl transition-all font-bold text-xl" style="background:rgba(168,85,247,.1); border:2px solid rgba(168,85,247,.3); color:#fff;" onmouseover="this.style.background='rgba(168,85,247,.18)'" onmouseout="this.style.background='rgba(168,85,247,.1)'">
                             $5000
                         </button>
-                        <button type="button" onclick="setAmount(10000)" class="amount-btn p-6 bg-gradient-to-br text-dark from-orange-50 to-yellow-50 hover:from-orange-100 hover:to-yellow-100 border-2 border-orange-200 rounded-xl transition-all font-bold text-xl text-gray-900">
+                        <button type="button" onclick="setAmount(10000)" class="amount-btn p-6 rounded-xl transition-all font-bold text-xl" style="background:rgba(251,146,60,.1); border:2px solid rgba(251,146,60,.3); color:#fff;" onmouseover="this.style.background='rgba(251,146,60,.18)'" onmouseout="this.style.background='rgba(251,146,60,.1)'">
                             $10000
                         </button>
                     </div>
                 </div>
-                
+
                 <!-- Custom Amount -->
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-gray-900 mb-3">Or Enter Custom Amount</label>
+                    <label class="block text-sm font-bold mb-3" style="color:#fff;">Or Enter Custom Amount</label>
                     <div class="relative">
-                        <span class="absolute left-5 top-1/2 transform -translate-y-1/2 text-3xl text-gray-400 font-bold">$</span>
+                        <span class="absolute left-5 top-1/2 transform -translate-y-1/2 text-3xl font-bold" style="color:var(--text-muted);">$</span>
                         <input type="number" name="amount" min="50" step="0.01" required
-                               class="w-full pl-16 pr-6 py-5 text-3xl font-bold bg-gray-50 border-2 border-gray-300 text-black rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+                               class="w-full pl-16 pr-6 py-5 text-3xl font-bold rounded-xl focus:outline-none transition"
+                               style="background:rgba(255,255,255,.04); border:2px solid var(--border); color:#fff;"
+                               onfocus="this.style.borderColor='#10b981'" onblur="this.style.borderColor='var(--border)'"
                                placeholder="0.00">
                     </div>
-                    <div class="flex items-center mt-3 text-sm text-gray-600">
-                        <i class="fas fa-info-circle text-emerald-600 mr-2"></i>
-                        <span>Minimum deposit: <strong>$500.00</strong></span>
+                    <div class="flex items-center mt-3 text-sm" style="color:var(--text-muted);">
+                        <i class="fas fa-info-circle mr-2" style="color:#34d399;"></i>
+                        <span>Minimum deposit: <strong style="color:#fff;">$500.00</strong></span>
                     </div>
                 </div>
-                
+
                 <!-- Benefits Grid -->
                 <div class="grid md:grid-cols-2 gap-4 mb-8">
-                    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <div class="rounded-xl p-4" style="background:rgba(16,185,129,.08); border:1px solid rgba(16,185,129,.25);">
                         <div class="flex items-start">
                             <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                 <i class="fas fa-robot text-white"></i>
                             </div>
                             <div>
-                                <div class="font-bold text-gray-900">AI Trading Bots</div>
-                                <div class="text-sm text-gray-600">Automated 24/7 trading</div>
+                                <div class="font-bold" style="color:#fff;">AI Trading Bots</div>
+                                <div class="text-sm" style="color:var(--text-muted);">Automated 24/7 trading</div>
                             </div>
                         </div>
                     </div>
-                    </div>
-                    <div class="bg-purple-50 border border-purple-200 rounded-xl p-4">
+                    <div class="rounded-xl p-4" style="background:rgba(168,85,247,.08); border:1px solid rgba(168,85,247,.25);">
                         <div class="flex items-start">
                             <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                 <i class="fas fa-chart-line text-white"></i>
                             </div>
                             <div>
-                                <div class="font-bold text-gray-900">Advanced Tools</div>
-                                <div class="text-sm text-gray-600">Professional analytics</div>
+                                <div class="font-bold" style="color:#fff;">Advanced Tools</div>
+                                <div class="text-sm" style="color:var(--text-muted);">Professional analytics</div>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                    <div class="rounded-xl p-4" style="background:rgba(251,146,60,.08); border:1px solid rgba(251,146,60,.25);">
                         <div class="flex items-start">
                             <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
                                 <i class="fas fa-headset text-white"></i>
                             </div>
                             <div>
-                                <div class="font-bold text-gray-900">24/7 Support</div>
-                                <div class="text-sm text-gray-600">Always here to help</div>
+                                <div class="font-bold" style="color:#fff;">24/7 Support</div>
+                                <div class="text-sm" style="color:var(--text-muted);">Always here to help</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                
+
                 <button type="submit" class="w-full py-5 bg-gradient-to-r from-emerald-600 to-cyan-600 hover:from-emerald-700 hover:to-cyan-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all text-lg">
                     Continue to Payment
                     <i class="fas fa-arrow-right ml-2"></i>
                 </button>
             </form>
         </div>
-        
+
     </div>
 </section>
 
