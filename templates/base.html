@@ -5,6 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Mirrorwavetrades{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Trade Stocks, Crypto, Forex and Options all in one place — with copy trading, AI trading bots, and 24/7 global market access.{% endblock %}">
+
+    <!-- Open Graph / link preview (WhatsApp, Twitter, Facebook, iMessage, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Mirrorwavetrades">
+    <meta property="og:title" content="{% block og_title %}Mirrorwavetrades — Trade the Future{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Trade Stocks, Crypto, Forex and Options all in one place — with copy trading, AI trading bots, and 24/7 global market access. Join 150,000+ traders worldwide.{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'platform_app/img/logo-512.png' %}">
+    <meta property="og:image:width" content="512">
+    <meta property="og:image:height" content="512">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{% block twitter_title %}Mirrorwavetrades — Trade the Future{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Trade Stocks, Crypto, Forex and Options all in one place — with copy trading, AI trading bots, and 24/7 global market access.{% endblock %}">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'platform_app/img/logo-512.png' %}">
 
     <link rel="icon" type="image/svg+xml" href="{% static 'platform_app/img/logo-mark.svg' %}">
     <link rel="icon" type="image/png" href="{% static 'platform_app/img/favicon.png' %}">
