@@ -14,7 +14,7 @@ media
 # Build process runs collectstatic --noinput on every deploy, so this is
 # generated output, not source — don't track it (a stale committed manifest
 # is exactly what caused the "Missing staticfiles manifest entry" 500).
-staticfiles/
+
 
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
