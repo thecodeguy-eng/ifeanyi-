@@ -113,8 +113,14 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# WhiteNoise configuration - This is critical!
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# WhiteNoise configuration.
+# Vercel's serverless build doesn't reliably bundle files collectstatic
+# generates at build time (they kept vanishing at runtime even after
+# collectstatic succeeded), so skip the hashed-manifest storage entirely
+# and have WhiteNoise serve straight from each app's static/ source dir,
+# which is already tracked in git and guaranteed present in the deployment.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+WHITENOISE_USE_FINDERS = True
 
 # Media files
 MEDIA_URL = '/media/'
