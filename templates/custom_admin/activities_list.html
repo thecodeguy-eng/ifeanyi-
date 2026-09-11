@@ -75,6 +75,7 @@
         <div>
             <select name="action" class="bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
                 <option value="all" {% if action_type == 'all' %}selected{% endif %}>All Actions</option>
+                <option value="register" {% if action_type == 'register' %}selected{% endif %}>Registrations</option>
                 <option value="page_view" {% if action_type == 'page_view' %}selected{% endif %}>Page Views</option>
                 <option value="login" {% if action_type == 'login' %}selected{% endif %}>Logins</option>
                 <option value="logout" {% if action_type == 'logout' %}selected{% endif %}>Logouts</option>
@@ -105,26 +106,29 @@
     <div class="space-y-4 max-h-[800px] overflow-y-auto">
         {% for activity in activities %}
         <div class="flex items-start space-x-4 p-4 bg-slate-800/50 rounded-lg hover:bg-slate-800 transition-colors border-l-4
-            {% if activity.action_type == 'LOGIN' %}border-green-500
+            {% if activity.action_type == 'REGISTER' %}border-cyan-400
+            {% elif activity.action_type == 'LOGIN' %}border-green-500
             {% elif activity.action_type == 'LOGOUT' %}border-red-500
             {% elif activity.action_type == 'DEPOSIT_PAGE' %}border-yellow-500
             {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}border-orange-500
             {% elif activity.action_type == 'TRADING_PAGE' %}border-purple-500
             {% elif activity.action_type == 'DASHBOARD' %}border-blue-500
             {% else %}border-gray-500{% endif %}">
-            
+
             <!-- Icon -->
             <div class="flex-shrink-0 mt-1">
                 <div class="w-10 h-10 rounded-full flex items-center justify-center
-                    {% if activity.action_type == 'LOGIN' %}bg-green-500/20
+                    {% if activity.action_type == 'REGISTER' %}bg-cyan-400/20
+                    {% elif activity.action_type == 'LOGIN' %}bg-green-500/20
                     {% elif activity.action_type == 'LOGOUT' %}bg-red-500/20
                     {% elif activity.action_type == 'DEPOSIT_PAGE' %}bg-yellow-500/20
                     {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}bg-orange-500/20
                     {% elif activity.action_type == 'TRADING_PAGE' %}bg-purple-500/20
                     {% elif activity.action_type == 'DASHBOARD' %}bg-blue-500/20
                     {% else %}bg-gray-500/20{% endif %}">
-                    <i class="fas 
-                        {% if activity.action_type == 'LOGIN' %}fa-sign-in-alt text-green-400
+                    <i class="fas
+                        {% if activity.action_type == 'REGISTER' %}fa-user-plus text-cyan-300
+                        {% elif activity.action_type == 'LOGIN' %}fa-sign-in-alt text-green-400
                         {% elif activity.action_type == 'LOGOUT' %}fa-sign-out-alt text-red-400
                         {% elif activity.action_type == 'DEPOSIT_PAGE' %}fa-dollar-sign text-yellow-400
                         {% elif activity.action_type == 'WITHDRAWAL_PAGE' %}fa-money-bill-wave text-orange-400
@@ -167,6 +171,11 @@
                     <span class="bg-slate-900 px-3 py-1 rounded-full text-gray-400">
                         <i class="fas fa-network-wired mr-1"></i> {{ activity.ip_address }}
                     </span>
+                    {% if activity.country %}
+                    <span class="bg-slate-900 px-3 py-1 rounded-full text-cyan-300">
+                        <i class="fas fa-globe-americas mr-1"></i> {{ activity.country }}
+                    </span>
+                    {% endif %}
                     {% if activity.session_id %}
                     <span class="bg-slate-900 px-3 py-1 rounded-full text-gray-400">
                         <i class="fas fa-fingerprint mr-1"></i> Session: {{ activity.session_id|slice:":8" }}...

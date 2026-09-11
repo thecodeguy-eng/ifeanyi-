@@ -6,19 +6,21 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django.db.models import Sum, Q
+from django.urls import reverse
 from decimal import Decimal
 import json
 import requests
 from datetime import datetime, timedelta
 import logging
 from django.utils import timezone
-from .email_service import send_password_reset_code
+from .email_service import send_password_reset_code, send_welcome_email, send_deposit_reminder, send_admin_new_registration_email
+from .geoip import get_country_from_ip, get_client_ip
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
     Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
-    InvestmentPlan, UserInvestment,
+    InvestmentPlan, UserInvestment, UserActivity,
 )
 
 # Set up logging
@@ -346,29 +348,68 @@ def register(request):
             messages.error(request, 'Email already exists')
             return redirect('register')
         
+        # Resolve the registrant's country from their IP (best-effort, never blocks signup)
+        ip_address = get_client_ip(request)
+        country = get_country_from_ip(ip_address)
+
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password,
             legal_first_name=legal_first_name,
             legal_last_name=legal_last_name,
-            preferred_currency=preferred_currency
+            preferred_currency=preferred_currency,
+            country=country,
         )
-        
+
+        full_name = f"{legal_first_name} {legal_last_name}".strip() or username
+
+        # Log this as its own activity so it shows up in the admin Activity Center
+        # (registration is a POST, which UserActivityMiddleware doesn't track)
+        try:
+            if not request.session.session_key:
+                request.session.create()
+            UserActivity.objects.create(
+                user=user,
+                session_id=request.session.session_key,
+                ip_address=ip_address[:45] if ip_address else None,
+                country=country,
+                user_agent=request.META.get('HTTP_USER_AGENT', '')[:500],
+                page_url='/register/',
+                page_title='Registration',
+                action_type='REGISTER',
+            )
+        except Exception as e:
+            logger.error(f"Failed to log registration activity: {e}")
+
         # Send welcome email immediately
         try:
-            email_service.send_welcome_email(user)
+            send_welcome_email(user.email, full_name)
             logger.info(f"Welcome email sent to {user.email}")
         except Exception as e:
             logger.error(f"Failed to send welcome email: {e}")
-        
+
         # Schedule deposit reminder email
         try:
-            email_service.send_deposit_reminder_email(user)
+            send_deposit_reminder(user.email, full_name)
             logger.info(f"Deposit reminder email sent to {user.email}")
         except Exception as e:
             logger.error(f"Failed to send deposit reminder email: {e}")
-        
+
+        # Notify the admin inbox of the new registration
+        try:
+            admin_url = request.build_absolute_uri(reverse('admin_user_detail', args=[user.id]))
+            send_admin_new_registration_email(
+                username=user.username,
+                email=user.email,
+                account_id=user.id,
+                country=country,
+                registered_at=timezone.now().strftime('%B %d, %Y %H:%M UTC'),
+                admin_url=admin_url,
+            )
+        except Exception as e:
+            logger.error(f"Failed to send admin registration notification: {e}")
+
         # Auto-login the new user and redirect to onboarding
         login(request, user)
         messages.success(request, 'Account created successfully! Welcome to Mirrorwavetrades Global.')

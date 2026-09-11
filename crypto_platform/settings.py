@@ -182,6 +182,7 @@ MESSAGE_TAGS = {
 BREVO_API_KEY = config('BREVO_API_KEY', default='')
 BREVO_SENDER_EMAIL = config('BREVO_SENDER_EMAIL', default='noreply@Mirrorwavetrades.com')
 BREVO_SENDER_NAME = config('BREVO_SENDER_NAME', default='Mirrorwavetrades')
+ADMIN_NOTIFICATION_EMAIL = config('ADMIN_NOTIFICATION_EMAIL', default='')
 
 # Logging Configuration
 LOGGING = {
@@ -218,3 +219,5 @@ LOGGING = {
 # database (supabase): udsn.defence@gmail.com
 
 # cloudinary: ibchukwugirim@gmail.com (shared)
+
+# brevo email vercel: mainwesthern@gmail.com
