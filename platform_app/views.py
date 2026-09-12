@@ -7,6 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
 from django.db.models import Sum, Q
 from django.urls import reverse
+from django.templatetags.static import static
 from decimal import Decimal
 import json
 import requests
@@ -363,6 +364,7 @@ def register(request):
         )
 
         full_name = f"{legal_first_name} {legal_last_name}".strip() or username
+        logo_url = request.build_absolute_uri(static('platform_app/img/logo-512.png'))
 
         # Log this as its own activity so it shows up in the admin Activity Center
         # (registration is a POST, which UserActivityMiddleware doesn't track)
@@ -384,14 +386,16 @@ def register(request):
 
         # Send welcome email immediately
         try:
-            send_welcome_email(user.email, full_name)
+            dashboard_url = request.build_absolute_uri(reverse('dashboard'))
+            send_welcome_email(user.email, full_name, dashboard_url=dashboard_url, logo_url=logo_url)
             logger.info(f"Welcome email sent to {user.email}")
         except Exception as e:
             logger.error(f"Failed to send welcome email: {e}")
 
         # Schedule deposit reminder email
         try:
-            send_deposit_reminder(user.email, full_name)
+            deposit_url = request.build_absolute_uri(reverse('deposit'))
+            send_deposit_reminder(user.email, full_name, deposit_url=deposit_url, logo_url=logo_url)
             logger.info(f"Deposit reminder email sent to {user.email}")
         except Exception as e:
             logger.error(f"Failed to send deposit reminder email: {e}")
@@ -406,6 +410,7 @@ def register(request):
                 country=country,
                 registered_at=timezone.now().strftime('%B %d, %Y %H:%M UTC'),
                 admin_url=admin_url,
+                logo_url=logo_url,
             )
         except Exception as e:
             logger.error(f"Failed to send admin registration notification: {e}")
