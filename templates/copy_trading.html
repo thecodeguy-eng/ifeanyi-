@@ -9,6 +9,22 @@
 .form-input { width:100%; padding:.65rem 1rem 0.65rem 1.75rem; border:1px solid var(--border); border-radius:8px; font-size:.9rem; color:var(--text-main); background:rgba(255,255,255,.04); transition:all .2s; font-family:'Poppins',sans-serif; }
 .form-input:focus { outline:none; border-color:#4b5563; background:rgba(255,255,255,.07); }
 
+.trader-search-wrap { position:relative; max-width:420px; margin:0 auto 2rem auto; }
+.trader-search-wrap i.fa-search { position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-light); font-size:.85rem; }
+.trader-search-input {
+    width:100%; padding:.8rem 1rem .8rem 2.6rem; border-radius:12px;
+    border:1.5px solid var(--border); background:var(--bg-card); color:var(--text-main);
+    font-size:.9rem; font-family:'Poppins',sans-serif; transition:border-color .2s, background .2s;
+}
+.trader-search-input:focus { outline:none; border-color:#38bdf8; background:rgba(56,189,248,.05); }
+.trader-search-input::placeholder { color:var(--text-light); }
+.trader-search-clear {
+    position:absolute; right:.85rem; top:50%; transform:translateY(-50%);
+    color:var(--text-light); background:none; border:none; cursor:pointer; font-size:.85rem; display:none;
+}
+.trader-search-clear:hover { color:var(--text-main); }
+#no-trader-results { display:none; }
+
 /* ── Dark-theme utility overrides ─────────────────────── */
 .text-gray-900 { color: #fff !important; }
 .text-gray-700 { color: #c7ccd6 !important; }
@@ -31,9 +47,19 @@
             <p class="text-gray-500 text-sm">Follow and copy trades from top-performing experts</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div class="trader-search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="trader-search" class="trader-search-input"
+                   placeholder="Search traders by name or country..." autocomplete="off"
+                   oninput="filterTraders(this.value)">
+            <button type="button" class="trader-search-clear" id="trader-search-clear" onclick="clearTraderSearch()">
+                <i class="fas fa-times-circle"></i>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="traders-grid">
             {% for trader in traders %}
-            <div class="trader-card">
+            <div class="trader-card" data-name="{{ trader.name|lower }}" data-country="{{ trader.country|lower }}">
                 <!-- Trader Image -->
                 <div class="relative" style="padding-bottom:56%; background:linear-gradient(135deg,#1e3a5f,#1d4ed8);">
                     {% if trader.profile_image %}
@@ -86,6 +112,37 @@
             </div>
             {% endfor %}
         </div>
+
+        <div id="no-trader-results" class="text-center py-16">
+            <i class="fas fa-user-slash text-4xl text-gray-500 mb-4 block"></i>
+            <p class="text-gray-400">No traders match "<span id="no-trader-results-term"></span>".</p>
+        </div>
     </div>
 </section>
+
+<script>
+function filterTraders(term) {
+    term = term.trim().toLowerCase();
+    const cards = document.querySelectorAll('#traders-grid .trader-card');
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+        const matches = !term || card.dataset.name.includes(term) || card.dataset.country.includes(term);
+        card.style.display = matches ? '' : 'none';
+        if (matches) visibleCount++;
+    });
+
+    document.getElementById('trader-search-clear').style.display = term ? 'block' : 'none';
+    document.getElementById('no-trader-results-term').textContent = term;
+    document.getElementById('no-trader-results').style.display = (term && visibleCount === 0) ? 'block' : 'none';
+    document.getElementById('traders-grid').style.display = (term && visibleCount === 0) ? 'none' : 'grid';
+}
+
+function clearTraderSearch() {
+    const input = document.getElementById('trader-search');
+    input.value = '';
+    filterTraders('');
+    input.focus();
+}
+</script>
 {% endblock %}
