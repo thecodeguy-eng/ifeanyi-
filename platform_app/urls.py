@@ -101,6 +101,11 @@ urlpatterns = [
     path('custom-admin/traders/create/', admin_views.admin_trader_create, name='admin_trader_create'),
     path('custom-admin/traders/<int:trader_id>/edit/', admin_views.admin_trader_edit, name='admin_trader_edit'),
     path('custom-admin/traders/<int:trader_id>/delete/', admin_views.admin_trader_delete, name='admin_trader_delete'),
+    path('custom-admin/traders/<int:trader_id>/plans/', admin_views.admin_trader_plans_list, name='admin_trader_plans_list'),
+    path('custom-admin/traders/<int:trader_id>/plans/create/', admin_views.admin_trader_plan_create, name='admin_trader_plan_create'),
+    path('custom-admin/traders/<int:trader_id>/plans/<int:plan_id>/edit/', admin_views.admin_trader_plan_edit, name='admin_trader_plan_edit'),
+    path('custom-admin/traders/<int:trader_id>/plans/<int:plan_id>/delete/', admin_views.admin_trader_plan_delete, name='admin_trader_plan_delete'),
+    path('custom-admin/traders/<int:trader_id>/plans/<int:plan_id>/toggle/', admin_views.admin_trader_plan_toggle, name='admin_trader_plan_toggle'),
 
     # Bot Plans Management
     path('custom-admin/bot-plans/', admin_views.admin_bot_plans_list, name='admin_bot_plans_list'),

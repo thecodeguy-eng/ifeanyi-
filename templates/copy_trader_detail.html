@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ trader.name }} - Copy Trading Plans | Mirrorwavetrades{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Hero ──────────────────────────────────────────────── */
+.trader-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+.trader-hero-avatar {
+    width: 84px; height: 84px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,.15); border: 2px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; font-weight: 800; overflow: hidden;
+}
+.trader-hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.trader-hero-stats { display: flex; gap: 1.75rem; flex-wrap: wrap; margin-top: .5rem; }
+.trader-hero-stats .stat p:first-child { font-size: .72rem; opacity: .75; margin: 0 0 .15rem 0; }
+.trader-hero-stats .stat p:last-child { font-size: 1.2rem; font-weight: 800; margin: 0; }
+
+/* ── Plan card (same visual language as Investment Plans) ─ */
+.plan-card {
+    background: var(--bg-card);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    min-width: 0;
+}
+.plan-card:hover { box-shadow: 0 8px 28px rgba(0,0,0,.4); transform: translateY(-2px); }
+.plan-card.selected { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37,99,235,.3); }
+
+.tier-badge {
+    display: inline-flex; align-items: center; gap: .35rem;
+    font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    padding: .28rem .75rem; border-radius: 99px; white-space: nowrap;
+}
+.tier-SILVER   { background: rgba(148,163,184,.16); color: #cbd5e1; }
+.tier-GOLD     { background: rgba(245,158,11,.14); color: #fbbf24; }
+.tier-PLATINUM { background: rgba(37,99,235,.14); color: #60a5fa; }
+.tier-DIAMOND  { background: rgba(168,85,247,.14); color: #c084fc; }
+
+.feature-item { display: flex; align-items: flex-start; gap: .5rem; font-size: .8rem; color: #c7ccd6; margin-bottom: .4rem; }
+.feature-item i { color: #4ade80; margin-top: 2px; flex-shrink: 0; }
+
+.plans-grid { display: grid; grid-template-columns: 1fr; gap: 1.1rem; }
+@media (min-width: 640px) { .plans-grid { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Sticky invest form ───────────────────────────────── */
+.invest-card { background: var(--bg-card); border: 1.5px solid var(--border); border-radius: 16px; padding: 1.5rem; box-sizing: border-box; }
+.invest-card-sticky { position: sticky; top: 88px; }
+.amount-preview { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.25); border-radius: 12px; padding: .9rem 1rem; display: none; }
+.amount-preview.visible { display: block; }
+
+/* ── Dark-theme utility overrides ─────────────────────── */
+.text-gray-900 { color: #fff !important; }
+.text-gray-500 { color: var(--text-muted) !important; }
+.text-gray-400 { color: var(--text-light) !important; }
+</style>
+{% endblock %}
+
+{% block content %}
+{% include 'partials/_dashboard_sidebar.html' with active_page='dashboard' %}
+
+<main class="dashboard-main">
+<section class="py-6 px-4 sm:px-6">
+<div class="max-w-6xl mx-auto">
+
+    <a href="{% url 'copy_trading' %}" class="inline-flex items-center gap-1.5 text-xs text-gray-400 hover:text-white mb-5">
+        <i class="fas fa-arrow-left"></i> Back to Traders
+    </a>
+
+    <!-- Hero -->
+    <div class="trader-hero mb-8">
+        <div class="trader-hero-avatar">
+            {% if trader.profile_image %}
+                <img src="{{ trader.profile_image.url }}" alt="{{ trader.name }}">
+            {% else %}
+                {{ trader.name|slice:":1" }}
+            {% endif %}
+        </div>
+        <div style="flex:1; min-width:200px;">
+            <h1 class="title-font text-2xl mb-1">{{ trader.name }}</h1>
+            <p style="opacity:.8; font-size:.85rem; margin:0;">
+                {{ trader.country_flag }} {{ trader.country }}
+                &nbsp;·&nbsp; <i class="fas fa-star text-yellow-400"></i> {{ trader.rating }}
+                &nbsp;·&nbsp; <i class="fas fa-users"></i> {{ trader.followers_count }} followers
+            </p>
+            <div class="trader-hero-stats">
+                <div class="stat"><p>Total ROI</p><p>{{ trader.roi }}%</p></div>
+                <div class="stat"><p>Daily Profit</p><p>{{ trader.profit_percentage_per_day }}%</p></div>
+                <div class="stat"><p>Total Trades</p><p>{{ trader.total_trades }}</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid gap-8" style="grid-template-columns: 1fr; display:grid;" id="detail-grid">
+        <!-- LEFT: Plans -->
+        <div style="min-width:0;">
+            <h2 class="title-font text-lg mb-1" style="color:#fff;">Choose a Plan</h2>
+            <p class="text-gray-400 text-sm mb-5">Pick the tier that fits your budget - each comes with its own minimum investment and commission rate.</p>
+
+            <div class="plans-grid">
+                {% for plan in plans %}
+                <div class="plan-card" id="plan-card-{{ plan.id }}"
+                     onclick="selectPlan({{ plan.id }}, '{{ plan.display_name|escapejs }}', {{ plan.price }}, {{ plan.commission_percentage }})">
+                    <div class="flex items-center justify-between mb-3" style="gap:.5rem;flex-wrap:wrap;">
+                        <span class="tier-badge tier-{{ plan.tier }}">
+                            {% if plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
+                            {% elif plan.tier == 'GOLD' %}<i class="fas fa-star"></i>
+                            {% elif plan.tier == 'PLATINUM' %}<i class="fas fa-gem"></i>
+                            {% elif plan.tier == 'DIAMOND' %}<i class="fas fa-crown"></i>
+                            {% endif %}
+                            {{ plan.get_tier_display }}
+                        </span>
+                        <span class="text-xs text-gray-400">{{ plan.commission_percentage }}% commission</span>
+                    </div>
+
+                    <h3 class="title-font text-lg text-gray-900 mb-1">{{ plan.display_name }}</h3>
+                    {% if plan.description %}
+                    <p class="text-xs text-gray-400 mb-3 leading-relaxed">{{ plan.description }}</p>
+                    {% endif %}
+
+                    <p class="mb-3">
+                        <span style="font-size:1.6rem; font-weight:800; color:#fff;">${{ plan.price|floatformat:0 }}</span>
+                        <span class="text-gray-400 text-xs">minimum</span>
+                    </p>
+
+                    {% if plan.features %}
+                    <div class="mb-2">
+                        {% for feature in plan.features %}
+                        <div class="feature-item"><i class="fas fa-check-circle"></i> {{ feature }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div style="grid-column:1/-1;" class="text-center py-16">
+                    <i class="fas fa-layer-group text-4xl text-gray-500 mb-4 block"></i>
+                    <p class="text-gray-400">This trader doesn't have any plans available yet. Check back soon.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- RIGHT: Invest form -->
+        {% if plans %}
+        <div style="min-width:0;">
+            <div class="invest-card invest-card-sticky">
+                <h3 class="title-font text-lg mb-1" style="color:#fff;">Confirm Investment</h3>
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                    Your balance: <strong style="color:#c7ccd6;">${{ user.account_balance|floatformat:2 }}</strong>
+                </p>
+
+                <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+                <div id="no-plan-selected" style="font-size:.85rem;color:#6b7280;text-align:center;padding:2rem 0;">
+                    <i class="fas fa-hand-pointer" style="font-size:1.5rem;display:block;margin-bottom:.5rem;opacity:.6;"></i>
+                    Select a plan on the left to continue.
+                </div>
+
+                <form id="copy-form" class="hidden">
+                    {% csrf_token %}
+                    <input type="hidden" id="plan-id-input" name="plan_id">
+
+                    <p style="font-size:.8rem;color:#9aa3b2;margin-bottom:.75rem;">
+                        Selected plan: <strong id="selected-plan-name" style="color:#fff;"></strong>
+                        (<span id="selected-plan-commission"></span>% commission)
+                    </p>
+
+                    <label style="display:block;font-size:.75rem;font-weight:600;color:#9aa3b2;margin-bottom:.4rem;">
+                        Investment Amount (USD)
+                    </label>
+                    <div style="position:relative;margin-bottom:.75rem;">
+                        <span style="position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:#6b7280;font-weight:700;">$</span>
+                        <input
+                            type="number"
+                            id="amount-input"
+                            name="amount"
+                            step="0.01"
+                            style="width:100%;border:1.5px solid var(--border);border-radius:10px;padding:.65rem .75rem .65rem 2rem;font-size:.875rem;box-sizing:border-box;outline:none;transition:border-color .15s;background:rgba(255,255,255,.04);color:#fff;"
+                            onfocus="this.style.borderColor='#3b82f6'"
+                            onblur="this.style.borderColor='var(--border)'"
+                        >
+                    </div>
+                    <p id="min-amount-hint" style="font-size:.7rem;color:#6b7280;margin-bottom:1rem;"></p>
+
+                    <div id="preview" class="amount-preview mb-4">
+                        <div style="display:flex;justify-content:space-between;font-size:.875rem;">
+                            <span style="color:#9aa3b2;">Commission on this investment</span>
+                            <span style="font-weight:600;color:#fbbf24;" id="p-commission">-</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn"
+                        style="width:100%;background:#2563eb;color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;border:none;cursor:pointer;transition:background .18s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-sizing:border-box;"
+                        onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                        <i class="fas fa-copy" style="font-size:.7rem;opacity:.7;"></i> Start Copying
+                    </button>
+                </form>
+
+                <p style="text-align:center;font-size:.7rem;color:#6b7280;margin-top:.75rem;">
+                    <i class="fas fa-shield-alt" style="margin-right:.25rem;"></i> Funds secured &amp; insured
+                </p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+</section>
+</main>
+
+<style>
+@media (min-width: 900px) {
+    #detail-grid { grid-template-columns: 1.6fr 1fr !important; }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const CSRF = document.querySelector('[name=csrfmiddlewaretoken]').value;
+let selectedPlanId = null, selectedPlanPrice = 0, selectedPlanCommission = 0;
+
+function selectPlan(id, name, price, commission) {
+    selectedPlanId = id;
+    selectedPlanPrice = price;
+    selectedPlanCommission = commission;
+
+    document.querySelectorAll('.plan-card').forEach(el => el.classList.remove('selected'));
+    document.getElementById('plan-card-' + id).classList.add('selected');
+
+    document.getElementById('no-plan-selected').classList.add('hidden');
+    document.getElementById('copy-form').classList.remove('hidden');
+
+    document.getElementById('plan-id-input').value = id;
+    document.getElementById('selected-plan-name').textContent = name;
+    document.getElementById('selected-plan-commission').textContent = commission;
+
+    const input = document.getElementById('amount-input');
+    input.min = price;
+    input.placeholder = price;
+    input.value = price;
+    document.getElementById('min-amount-hint').textContent = 'Minimum for this plan: $' + price.toLocaleString('en-US');
+    updatePreview(price);
+}
+
+function updatePreview(val) {
+    val = parseFloat(val);
+    if (!val || val <= 0) {
+        document.getElementById('preview').classList.remove('visible');
+        return;
+    }
+    const commission = val * selectedPlanCommission / 100;
+    document.getElementById('p-commission').textContent = '$' + commission.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    document.getElementById('preview').classList.add('visible');
+}
+
+document.getElementById('amount-input').addEventListener('input', function () {
+    updatePreview(this.value);
+});
+
+document.getElementById('copy-form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const amount = document.getElementById('amount-input').value;
+    const btn = document.getElementById('submit-btn');
+
+    if (!selectedPlanId) { showAlert('Please select a plan first.', 'error'); return; }
+    if (!amount || parseFloat(amount) < selectedPlanPrice) {
+        showAlert('Minimum investment for this plan is $' + selectedPlanPrice.toLocaleString('en-US') + '.', 'error');
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:.5rem;"></i> Processing…';
+
+    try {
+        const res = await fetch(window.location.pathname, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ amount, plan_id: selectedPlanId, csrfmiddlewaretoken: CSRF }),
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            showAlert(data.message, 'success');
+            setTimeout(() => { window.location.href = '/copy-trading/'; }, 2000);
+        } else {
+            showAlert(data.message || 'Something went wrong. Please try again.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+        }
+    } catch (err) {
+        showAlert('Network error. Please try again.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+    }
+});
+
+function showAlert(msg, type) {
+    const el = document.getElementById('alert-box');
+    el.textContent = msg;
+    el.className = 'mb-4 p-3 rounded-lg text-sm font-medium';
+    el.style.cssText = type === 'success'
+        ? 'background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.3);'
+        : 'background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.3);';
+    el.classList.remove('hidden');
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+</script>
+{% endblock %}

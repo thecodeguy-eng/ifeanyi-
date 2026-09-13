@@ -1,0 +1,69 @@
+<!-- trader_plans_list.html -->
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}{{ trader.name }} - Plans{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <a href="{% url 'admin_traders_list' %}" class="text-gray-400 hover:text-white text-sm mb-2 inline-block">
+            <i class="fas fa-arrow-left mr-1"></i> Back to Traders
+        </a>
+        <h2 class="text-3xl font-bold gradient-text mb-2">{{ trader.name }} - Plans</h2>
+        <p class="text-gray-400">Tiered copy-trading plans users can subscribe to under this trader</p>
+    </div>
+    <a href="{% url 'admin_trader_plan_create' trader.id %}" class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add New Plan
+    </a>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for plan in plans %}
+    <div class="admin-card p-6 rounded-xl flex flex-col">
+        <div class="flex items-start justify-between mb-2">
+            <h3 class="text-xl font-bold text-white">{{ plan.display_name }}</h3>
+            <span class="px-2 py-1 rounded-full text-xs {% if plan.is_active %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                {% if plan.is_active %}Active{% else %}Inactive{% endif %}
+            </span>
+        </div>
+        <p class="text-xs text-gray-500 uppercase tracking-wide mb-3">{{ plan.get_tier_display }}</p>
+        <p class="text-3xl font-bold gradient-text mb-1">${{ plan.price }}</p>
+        <p class="text-gray-400 text-xs mb-4">minimum investment</p>
+        <p class="text-purple-400 mb-4">{{ plan.commission_percentage }}% commission</p>
+        {% if plan.description %}
+        <p class="text-gray-400 text-sm mb-4">{{ plan.description }}</p>
+        {% endif %}
+        <div class="space-y-2 mb-4 flex-1">
+            {% for feature in plan.features %}
+            <p class="text-gray-400 text-sm"><i class="fas fa-check text-green-400 mr-2"></i>{{ feature }}</p>
+            {% empty %}
+            <p class="text-gray-500 text-sm italic">No features listed</p>
+            {% endfor %}
+        </div>
+        <div class="flex items-center gap-2 pt-4 border-t border-slate-700">
+            <a href="{% url 'admin_trader_plan_edit' trader.id plan.id %}" class="flex-1 text-center bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg text-white text-sm">
+                <i class="fas fa-edit mr-1"></i> Edit
+            </a>
+            <form method="POST" action="{% url 'admin_trader_plan_toggle' trader.id plan.id %}">
+                {% csrf_token %}
+                <button type="submit" class="{% if plan.is_active %}bg-yellow-600 hover:bg-yellow-700{% else %}bg-green-600 hover:bg-green-700{% endif %} px-3 py-2 rounded-lg text-white text-sm">
+                    <i class="fas {% if plan.is_active %}fa-pause{% else %}fa-play{% endif %}"></i>
+                </button>
+            </form>
+            <form method="POST" action="{% url 'admin_trader_plan_delete' trader.id plan.id %}"
+                  onsubmit="return confirm('Delete the {{ plan.display_name }} plan? This cannot be undone.')">
+                {% csrf_token %}
+                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg text-white text-sm">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+    {% empty %}
+    <div class="admin-card p-10 rounded-xl col-span-full text-center">
+        <i class="fas fa-layer-group text-4xl text-gray-500 mb-3"></i>
+        <p class="text-gray-400">No plans yet for {{ trader.name }}. Create the first one - e.g. Silver, Gold, Platinum.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

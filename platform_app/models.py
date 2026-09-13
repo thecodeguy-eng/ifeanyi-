@@ -131,20 +131,56 @@ class CopyTrader(models.Model):
         return self.name
 
 
+class CopyTraderPlan(models.Model):
+    """Tiered subscription plans offered under a specific copy trader."""
+    TIER_CHOICES = [
+        ('SILVER', 'Silver'),
+        ('GOLD', 'Gold'),
+        ('PLATINUM', 'Platinum'),
+        ('DIAMOND', 'Diamond'),
+    ]
+
+    trader = models.ForeignKey(CopyTrader, on_delete=models.CASCADE, related_name='plans')
+    tier = models.CharField(max_length=20, choices=TIER_CHOICES)
+    name = models.CharField(max_length=100, blank=True, help_text="Optional custom name; defaults to the tier name")
+    price = models.DecimalField(max_digits=20, decimal_places=2, validators=[MinValueValidator(Decimal('1'))],
+                                 help_text="Minimum amount a user must invest to subscribe at this tier")
+    commission_percentage = models.DecimalField(max_digits=5, decimal_places=2,
+                                                  help_text="Commission charged for this tier (overrides the trader's default)")
+    description = models.TextField(blank=True)
+    features = models.JSONField(default=list, help_text='List of feature strings, e.g. ["Priority support", "Weekly reports"]')
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'copy_trader_plans'
+        unique_together = [('trader', 'tier')]
+        ordering = ['price']
+
+    def __str__(self):
+        return f"{self.trader.name} - {self.get_tier_display()}"
+
+    @property
+    def display_name(self):
+        return self.name or self.get_tier_display()
+
+
 class CopyTradingSubscription(models.Model):
     """User's copy trading subscriptions"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='copy_trading_subs')
     trader = models.ForeignKey(CopyTrader, on_delete=models.CASCADE)
+    plan = models.ForeignKey(CopyTraderPlan, on_delete=models.SET_NULL, null=True, blank=True, related_name='subscriptions')
     amount_invested = models.DecimalField(max_digits=20, decimal_places=2)
     commission_paid = models.DecimalField(max_digits=20, decimal_places=2)
     is_active = models.BooleanField(default=True)
     start_date = models.DateTimeField(auto_now_add=True)
     end_date = models.DateTimeField(null=True, blank=True)
     total_earned = models.DecimalField(max_digits=20, decimal_places=2, default=0)
-    
+
     class Meta:
         db_table = 'copy_trading_subscriptions'
-    
+
     def __str__(self):
         return f"{self.user.username} copying {self.trader.name}"
 

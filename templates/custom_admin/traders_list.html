@@ -46,6 +46,9 @@
                     <td class="px-6 py-4 text-purple-400">{{ trader.commission_percentage }}%</td>
                     <td class="px-6 py-4">
                         <div class="flex justify-center space-x-2">
+                            <a href="{% url 'admin_trader_plans_list' trader.id %}" class="bg-purple-600 hover:bg-purple-700 px-3 py-1 rounded text-white text-sm" title="Manage Plans">
+                                <i class="fas fa-layer-group mr-1"></i>{{ trader.plans.count }}
+                            </a>
                             <a href="{% url 'admin_trader_edit' trader.id %}" class="bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded text-white text-sm">
                                 <i class="fas fa-edit"></i>
                             </a>

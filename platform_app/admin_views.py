@@ -12,7 +12,7 @@ import json
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
-    CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
+    CopyTrader, CopyTraderPlan, CopyTradingSubscription, Transaction, Portfolio,
     Trade, PlatformSettings, SupportChat, SupportMessage,
     UserActivity, AdminUser, SystemLog,
     InvestmentPlan, UserInvestment,
@@ -439,6 +439,113 @@ def admin_trader_delete(request, trader_id):
         return redirect('admin_traders_list')
     
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+def _save_trader_plan(request, trader, plan):
+    """Parse POST data and create/update a CopyTraderPlan.
+
+    Returns an error message string if the save was rejected (e.g. this
+    trader already has a plan of that tier), or None on success.
+    """
+    data = request.POST
+    raw_features = data.get('features_text', '')
+    features = [line.strip() for line in raw_features.splitlines() if line.strip()]
+
+    tier = data.get('tier', 'SILVER')
+    dupe = CopyTraderPlan.objects.filter(trader=trader, tier=tier)
+    if plan is not None:
+        dupe = dupe.exclude(id=plan.id)
+    if dupe.exists():
+        return f'{trader.name} already has a "{tier}" plan. Edit that one instead, or choose a different tier.'
+
+    fields = dict(
+        trader=trader,
+        tier=tier,
+        name=data.get('name', '').strip(),
+        price=Decimal(data.get('price', '0')),
+        commission_percentage=Decimal(data.get('commission_percentage', '0')),
+        description=data.get('description', '').strip(),
+        features=features,
+        is_active=bool(data.get('is_active')),
+    )
+
+    if plan is None:
+        CopyTraderPlan.objects.create(**fields)
+    else:
+        for key, value in fields.items():
+            setattr(plan, key, value)
+        plan.save()
+    return None
+
+
+@user_passes_test(is_admin)
+def admin_trader_plans_list(request, trader_id):
+    """List the tiered plans belonging to one copy trader."""
+    trader = get_object_or_404(CopyTrader, id=trader_id)
+    plans = trader.plans.all().order_by('price')
+
+    context = {'trader': trader, 'plans': plans}
+    return render(request, 'custom_admin/trader_plans_list.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_trader_plan_create(request, trader_id):
+    """Create a new plan under a copy trader."""
+    trader = get_object_or_404(CopyTrader, id=trader_id)
+
+    if request.method == 'POST':
+        error = _save_trader_plan(request, trader, plan=None)
+        if error:
+            messages.error(request, error)
+            context = {'trader': trader, 'plan': None, 'action': 'create', 'tier_choices': CopyTraderPlan.TIER_CHOICES}
+            return render(request, 'custom_admin/trader_plan_form.html', context)
+        messages.success(request, 'Plan created successfully.')
+        return redirect('admin_trader_plans_list', trader_id=trader.id)
+
+    context = {'trader': trader, 'plan': None, 'action': 'create', 'tier_choices': CopyTraderPlan.TIER_CHOICES}
+    return render(request, 'custom_admin/trader_plan_form.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_trader_plan_edit(request, trader_id, plan_id):
+    """Edit an existing trader plan."""
+    trader = get_object_or_404(CopyTrader, id=trader_id)
+    plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader=trader)
+
+    if request.method == 'POST':
+        error = _save_trader_plan(request, trader, plan=plan)
+        if error:
+            messages.error(request, error)
+        else:
+            messages.success(request, f'Plan "{plan.display_name}" updated successfully.')
+            return redirect('admin_trader_plans_list', trader_id=trader.id)
+
+    context = {'trader': trader, 'plan': plan, 'action': 'edit', 'tier_choices': CopyTraderPlan.TIER_CHOICES}
+    return render(request, 'custom_admin/trader_plan_form.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_trader_plan_delete(request, trader_id, plan_id):
+    """Delete a trader plan."""
+    if request.method == 'POST':
+        plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader_id=trader_id)
+        name = plan.display_name
+        plan.delete()
+        messages.success(request, f'Plan "{name}" deleted successfully.')
+        return redirect('admin_trader_plans_list', trader_id=trader_id)
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@user_passes_test(is_admin)
+def admin_trader_plan_toggle(request, trader_id, plan_id):
+    """Toggle active/inactive status of a trader plan."""
+    if request.method == 'POST':
+        plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader_id=trader_id)
+        plan.is_active = not plan.is_active
+        plan.save()
+        status = 'activated' if plan.is_active else 'deactivated'
+        messages.success(request, f'Plan "{plan.display_name}" {status}.')
+    return redirect('admin_trader_plans_list', trader_id=trader_id)
 
 
 @user_passes_test(is_admin)

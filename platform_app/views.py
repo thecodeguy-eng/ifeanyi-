@@ -19,7 +19,7 @@ from .geoip import get_country_from_ip, get_client_ip
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
-    CopyTrader, CopyTradingSubscription, Transaction, Portfolio,
+    CopyTrader, CopyTraderPlan, CopyTradingSubscription, Transaction, Portfolio,
     Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
     InvestmentPlan, UserInvestment, UserActivity,
 )
@@ -627,40 +627,50 @@ def copy_trading(request):
 
 @login_required
 def copy_trader_detail(request, trader_id):
-    """Copy trader detail and subscription"""
+    """Copy trader detail: choose a tier plan and subscribe"""
     trader = get_object_or_404(CopyTrader, id=trader_id, is_active=True)
-    
+
     if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount', '0'))
-        
-        if amount < 100:
-            return JsonResponse({'success': False, 'message': 'Minimum investment is $100'})
-        
+        plan_id = request.POST.get('plan_id')
+        plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader=trader, is_active=True)
+
+        try:
+            amount = Decimal(request.POST.get('amount', '0'))
+        except Exception:
+            return JsonResponse({'success': False, 'message': 'Invalid amount.'})
+
+        if amount < plan.price:
+            return JsonResponse({
+                'success': False,
+                'message': f'Minimum investment for the {plan.display_name} plan is ${plan.price:,.2f}.'
+            })
+
         # Check if user has sufficient balance
         if request.user.account_balance < amount:
             return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
-        
+
         # Deduct amount from user balance
         request.user.account_balance -= amount
         request.user.save()
-        
-        # Calculate commission
-        commission = (amount * trader.commission_percentage) / 100
-        
+
+        # Calculate commission using the plan's rate
+        commission = (amount * plan.commission_percentage) / 100
+
         # Create copy trading subscription
-        subscription = CopyTradingSubscription.objects.create(
+        CopyTradingSubscription.objects.create(
             user=request.user,
             trader=trader,
+            plan=plan,
             amount_invested=amount,
             commission_paid=commission,
             is_active=True,
             total_earned=Decimal('0')
         )
-        
+
         # Update trader followers count
         trader.followers_count += 1
         trader.save()
-        
+
         # Create transaction record
         Transaction.objects.create(
             user=request.user,
@@ -668,13 +678,17 @@ def copy_trader_detail(request, trader_id):
             amount=amount,
             currency=request.user.preferred_currency,
             status='COMPLETED',
-            description=f'Copy trading investment with {trader.name}'
+            description=f'Copy trading investment with {trader.name} ({plan.display_name} plan)'
         )
-        
-        messages.success(request, f'Successfully copying {trader.name}\'s trades!')
-        return JsonResponse({'success': True, 'message': f'Successfully copying {trader.name}\'s trades! Investment: ${amount}'})
-    
-    context = {'trader': trader}
+
+        messages.success(request, f'Successfully copying {trader.name}\'s trades on the {plan.display_name} plan!')
+        return JsonResponse({
+            'success': True,
+            'message': f'Successfully copying {trader.name}\'s trades on the {plan.display_name} plan! Investment: ${amount:,.2f}'
+        })
+
+    plans = trader.plans.filter(is_active=True).order_by('price')
+    context = {'trader': trader, 'plans': plans}
     return render(request, 'copy_trader_detail.html', context)
 
 
