@@ -16,6 +16,9 @@ media
 # is exactly what caused the "Missing staticfiles manifest entry" 500).
 staticfiles/
 
+# Marketing/ad screenshots generated for review - not project source.
+marketing_screenshots/
+
 ### Django.Python Stack ###
 # Byte-compiled / optimized / DLL files
 *.py[cod]
