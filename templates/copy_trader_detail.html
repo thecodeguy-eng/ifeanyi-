@@ -81,6 +81,8 @@
         <i class="fas fa-arrow-left"></i> Back to Traders
     </a>
 
+    {% csrf_token %}
+
     <!-- Hero -->
     <div class="trader-hero mb-8">
         <div class="trader-hero-avatar">
@@ -108,13 +110,18 @@
     <div class="grid gap-8" style="grid-template-columns: 1fr; display:grid;" id="detail-grid">
         <!-- LEFT: Plans -->
         <div style="min-width:0;">
+            {% if auto_invest %}
+            <h2 class="title-font text-lg mb-1" style="color:#fff;">Commission Tiers</h2>
+            <p class="text-gray-400 text-sm mb-5">Your full balance is invested automatically - the tier below is picked for you based on how much you have, so a bigger balance earns a lower commission rate.</p>
+            {% else %}
             <h2 class="title-font text-lg mb-1" style="color:#fff;">Choose a Plan</h2>
             <p class="text-gray-400 text-sm mb-5">Pick the tier that fits your budget - each comes with its own minimum investment and commission rate.</p>
+            {% endif %}
 
             <div class="plans-grid">
                 {% for plan in plans %}
                 <div class="plan-card" id="plan-card-{{ plan.id }}"
-                     onclick="selectPlan({{ plan.id }}, '{{ plan.display_name|escapejs }}', {{ plan.price }}, {{ plan.commission_percentage }})">
+                     {% if not auto_invest %}onclick="selectPlan({{ plan.id }}, '{{ plan.display_name|escapejs }}', {{ plan.price }}, {{ plan.commission_percentage }})"{% else %}style="cursor:default;"{% endif %}>
                     <div class="flex items-center justify-between mb-3" style="gap:.5rem;flex-wrap:wrap;">
                         <span class="tier-badge tier-{{ plan.tier }}">
                             {% if plan.tier == 'SILVER' %}<i class="fas fa-star-half-alt"></i>
@@ -134,7 +141,7 @@
 
                     <p class="mb-3">
                         <span style="font-size:1.6rem; font-weight:800; color:#fff;">${{ plan.price|floatformat:0 }}</span>
-                        <span class="text-gray-400 text-xs">minimum</span>
+                        <span class="text-gray-400 text-xs">{% if auto_invest %}balance to unlock{% else %}minimum{% endif %}</span>
                     </p>
 
                     {% if plan.features %}
@@ -155,7 +162,38 @@
         </div>
 
         <!-- RIGHT: Invest form -->
-        {% if plans %}
+        {% if auto_invest %}
+        <div style="min-width:0;">
+            <div class="invest-card invest-card-sticky">
+                <h3 class="title-font text-lg mb-1" style="color:#fff;">Start Copying</h3>
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                    Your balance: <strong style="color:#c7ccd6;">${{ user.account_balance|floatformat:2 }}</strong>
+                </p>
+
+                <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
+
+                <p style="font-size:.8rem;color:#9aa3b2;margin-bottom:1rem;line-height:1.5;">
+                    One click invests your <strong style="color:#fff;">entire account balance</strong> in {{ trader.name }}. No minimum, no manual amount entry.
+                </p>
+
+                {% if user.account_balance <= 0 %}
+                <a href="{% url 'deposit' %}" class="block text-center" style="width:100%;background:rgba(255,255,255,.08);color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;box-sizing:border-box;">
+                    <i class="fas fa-wallet" style="margin-right:.4rem;"></i> Deposit Funds First
+                </a>
+                {% else %}
+                <button type="button" id="auto-invest-btn" onclick="startAutoInvest()"
+                    style="width:100%;background:#2563eb;color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;border:none;cursor:pointer;transition:background .18s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-sizing:border-box;"
+                    onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+                    <i class="fas fa-copy" style="font-size:.7rem;opacity:.7;"></i> Start Copying with ${{ user.account_balance|floatformat:2 }}
+                </button>
+                {% endif %}
+
+                <p style="text-align:center;font-size:.7rem;color:#6b7280;margin-top:.75rem;">
+                    <i class="fas fa-shield-alt" style="margin-right:.25rem;"></i> Funds secured &amp; insured
+                </p>
+            </div>
+        </div>
+        {% elif plans %}
         <div style="min-width:0;">
             <div class="invest-card invest-card-sticky">
                 <h3 class="title-font text-lg mb-1" style="color:#fff;">Confirm Investment</h3>
@@ -268,20 +306,57 @@ function updatePreview(val) {
     document.getElementById('preview').classList.add('visible');
 }
 
-document.getElementById('amount-input').addEventListener('input', function () {
-    updatePreview(this.value);
-});
+const amountInputEl = document.getElementById('amount-input');
+if (amountInputEl) {
+    amountInputEl.addEventListener('input', function () {
+        updatePreview(this.value);
+    });
+}
 
-document.getElementById('copy-form').addEventListener('submit', async function (e) {
-    e.preventDefault();
-    const amount = document.getElementById('amount-input').value;
-    const btn = document.getElementById('submit-btn');
+const copyFormEl = document.getElementById('copy-form');
+if (copyFormEl) {
+    copyFormEl.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const amount = document.getElementById('amount-input').value;
+        const btn = document.getElementById('submit-btn');
 
-    if (!selectedPlanId) { showAlert('Please select a plan first.', 'error'); return; }
-    if (!amount || parseFloat(amount) < selectedPlanPrice) {
-        showAlert('Minimum investment for this plan is $' + selectedPlanPrice.toLocaleString('en-US') + '.', 'error');
-        return;
-    }
+        if (!selectedPlanId) { showAlert('Please select a plan first.', 'error'); return; }
+        if (!amount || parseFloat(amount) < selectedPlanPrice) {
+            showAlert('Minimum investment for this plan is $' + selectedPlanPrice.toLocaleString('en-US') + '.', 'error');
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:.5rem;"></i> Processing…';
+
+        try {
+            const res = await fetch(window.location.pathname, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ amount, plan_id: selectedPlanId, csrfmiddlewaretoken: CSRF }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                showAlert(data.message, 'success');
+                setTimeout(() => { window.location.href = '/copy-trading/'; }, 2000);
+            } else {
+                showAlert(data.message || 'Something went wrong. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+            }
+        } catch (err) {
+            showAlert('Network error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+        }
+    });
+}
+
+async function startAutoInvest() {
+    const btn = document.getElementById('auto-invest-btn');
+    if (!btn) return;
+    const originalHtml = btn.innerHTML;
 
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right:.5rem;"></i> Processing…';
@@ -290,7 +365,7 @@ document.getElementById('copy-form').addEventListener('submit', async function (
         const res = await fetch(window.location.pathname, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ amount, plan_id: selectedPlanId, csrfmiddlewaretoken: CSRF }),
+            body: new URLSearchParams({ csrfmiddlewaretoken: CSRF }),
         });
         const data = await res.json();
 
@@ -300,14 +375,14 @@ document.getElementById('copy-form').addEventListener('submit', async function (
         } else {
             showAlert(data.message || 'Something went wrong. Please try again.', 'error');
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+            btn.innerHTML = originalHtml;
         }
     } catch (err) {
         showAlert('Network error. Please try again.', 'error');
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-copy" style="font-size:.7rem;opacity:.7;margin-right:.4rem;"></i> Start Copying';
+        btn.innerHTML = originalHtml;
     }
-});
+}
 
 function showAlert(msg, type) {
     const el = document.getElementById('alert-box');

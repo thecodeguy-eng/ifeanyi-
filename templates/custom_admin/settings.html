@@ -20,12 +20,21 @@
             <div class="space-y-4">
                 <div>
                     <label class="flex items-center space-x-3">
-                        <input type="checkbox" name="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %} 
+                        <input type="checkbox" name="maintenance_mode" {% if settings.maintenance_mode %}checked{% endif %}
                                class="w-4 h-4 bg-slate-800 border-slate-600 rounded">
                         <span class="text-white">Maintenance Mode</span>
                     </label>
                 </div>
-                
+
+                <div class="p-3 rounded-lg bg-slate-800/50 border border-slate-700">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" name="copy_trade_auto_invest" {% if settings.copy_trade_auto_invest %}checked{% endif %}
+                               class="w-4 h-4 bg-slate-800 border-slate-600 rounded">
+                        <span class="text-white">Copy Trading: One-click, full-balance invest</span>
+                    </label>
+                    <p class="text-gray-500 text-xs mt-1.5 ml-7">When on, clicking a trader instantly invests the user's full account balance (no minimum, no plan picking). When off, users choose a tier plan and type an amount.</p>
+                </div>
+
                 <div>
                     <label class="block text-gray-400 mb-2">Minimum Deposit</label>
                     <input type="number" name="minimum_deposit" value="{{ settings.minimum_deposit }}" step="0.01"

@@ -896,6 +896,7 @@ def admin_settings(request):
             settings.minimum_withdrawal = Decimal(request.POST.get('minimum_withdrawal'))
             settings.trading_fee_percentage = Decimal(request.POST.get('trading_fee'))
             settings.withdrawal_fee_percentage = Decimal(request.POST.get('withdrawal_fee'))
+            settings.copy_trade_auto_invest = request.POST.get('copy_trade_auto_invest') == 'on'
             settings.save()
             
             messages.success(request, 'Settings updated successfully')

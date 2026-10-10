@@ -281,11 +281,16 @@ class Trade(models.Model):
 class PlatformSettings(models.Model):
     """Global platform settings"""
     maintenance_mode = models.BooleanField(default=False)
-    minimum_deposit = models.DecimalField(max_digits=20, decimal_places=2, default=50)
+    minimum_deposit = models.DecimalField(max_digits=20, decimal_places=2, default=0)
     minimum_withdrawal = models.DecimalField(max_digits=20, decimal_places=2, default=50)
     trading_fee_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.5)
     withdrawal_fee_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=1)
     referral_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=5)
+    copy_trade_auto_invest = models.BooleanField(
+        default=True,
+        help_text='When on, clicking a copy trader instantly invests the user\'s full account balance '
+                   '(no minimum, no amount entry). When off, users pick a tier plan and type an amount.'
+    )
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:

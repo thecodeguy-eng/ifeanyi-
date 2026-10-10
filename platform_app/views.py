@@ -14,7 +14,7 @@ import requests
 from datetime import datetime, timedelta
 import logging
 from django.utils import timezone
-from .email_service import send_password_reset_code, send_welcome_email, send_deposit_reminder, send_admin_new_registration_email
+from .email_service import send_password_reset_code, send_welcome_email, send_deposit_reminder, send_admin_new_registration_email, send_admin_support_message_email
 from .geoip import get_country_from_ip, get_client_ip
 
 from .models import (
@@ -628,12 +628,65 @@ def copy_trading(request):
     return render(request, 'copy_trading.html', context)
 
 
+def _start_copy_trading(user, trader, plan, amount):
+    """Shared logic: deduct balance, create subscription + transaction record."""
+    commission_rate = plan.commission_percentage if plan else trader.commission_percentage
+    commission = (amount * commission_rate) / 100
+    plan_label = plan.display_name if plan else 'Standard'
+
+    user.account_balance -= amount
+    user.save()
+
+    CopyTradingSubscription.objects.create(
+        user=user,
+        trader=trader,
+        plan=plan,
+        amount_invested=amount,
+        commission_paid=commission,
+        is_active=True,
+        total_earned=Decimal('0')
+    )
+
+    trader.followers_count += 1
+    trader.save()
+
+    Transaction.objects.create(
+        user=user,
+        transaction_type='COPY_TRADE',
+        amount=amount,
+        currency=user.preferred_currency,
+        status='COMPLETED',
+        description=f'Copy trading investment with {trader.name} ({plan_label} plan)'
+    )
+
+    return plan_label
+
+
 @login_required
 def copy_trader_detail(request, trader_id):
-    """Copy trader detail: choose a tier plan and subscribe"""
+    """Copy trader detail: subscribe either with one click (full balance) or by picking a tier plan."""
     trader = get_object_or_404(CopyTrader, id=trader_id, is_active=True)
+    settings = PlatformSettings.objects.first()
+    auto_invest = settings.copy_trade_auto_invest if settings else True
+    plans = trader.plans.filter(is_active=True).order_by('price')
 
     if request.method == 'POST':
+        if auto_invest:
+            amount = request.user.account_balance
+            if amount <= 0:
+                return JsonResponse({'success': False, 'message': 'Please deposit funds first.'})
+
+            # Use the richest tier the balance qualifies for, so bigger
+            # balances still earn the lower commission rate of higher tiers.
+            plan = plans.filter(price__lte=amount).order_by('-price').first() or plans.first()
+
+            plan_label = _start_copy_trading(request.user, trader, plan, amount)
+            messages.success(request, f'Successfully copying {trader.name}\'s trades!')
+            return JsonResponse({
+                'success': True,
+                'message': f'Successfully copying {trader.name}\'s trades with your full balance of ${amount:,.2f}!'
+            })
+
         plan_id = request.POST.get('plan_id')
         plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader=trader, is_active=True)
 
@@ -648,50 +701,17 @@ def copy_trader_detail(request, trader_id):
                 'message': f'Minimum investment for the {plan.display_name} plan is ${plan.price:,.2f}.'
             })
 
-        # Check if user has sufficient balance
         if request.user.account_balance < amount:
             return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
 
-        # Deduct amount from user balance
-        request.user.account_balance -= amount
-        request.user.save()
-
-        # Calculate commission using the plan's rate
-        commission = (amount * plan.commission_percentage) / 100
-
-        # Create copy trading subscription
-        CopyTradingSubscription.objects.create(
-            user=request.user,
-            trader=trader,
-            plan=plan,
-            amount_invested=amount,
-            commission_paid=commission,
-            is_active=True,
-            total_earned=Decimal('0')
-        )
-
-        # Update trader followers count
-        trader.followers_count += 1
-        trader.save()
-
-        # Create transaction record
-        Transaction.objects.create(
-            user=request.user,
-            transaction_type='COPY_TRADE',
-            amount=amount,
-            currency=request.user.preferred_currency,
-            status='COMPLETED',
-            description=f'Copy trading investment with {trader.name} ({plan.display_name} plan)'
-        )
-
-        messages.success(request, f'Successfully copying {trader.name}\'s trades on the {plan.display_name} plan!')
+        plan_label = _start_copy_trading(request.user, trader, plan, amount)
+        messages.success(request, f'Successfully copying {trader.name}\'s trades on the {plan_label} plan!')
         return JsonResponse({
             'success': True,
-            'message': f'Successfully copying {trader.name}\'s trades on the {plan.display_name} plan! Investment: ${amount:,.2f}'
+            'message': f'Successfully copying {trader.name}\'s trades on the {plan_label} plan! Investment: ${amount:,.2f}'
         })
 
-    plans = trader.plans.filter(is_active=True).order_by('price')
-    context = {'trader': trader, 'plans': plans}
+    context = {'trader': trader, 'plans': plans, 'auto_invest': auto_invest}
     return render(request, 'copy_trader_detail.html', context)
 
 
@@ -828,11 +848,15 @@ def deposit(request):
     """Deposit initiation"""
     if request.method == 'POST':
         amount = Decimal(request.POST.get('amount'))
-        
+
+        if amount <= 0:
+            messages.error(request, 'Please enter a valid deposit amount.')
+            return redirect('deposit')
+
         settings = PlatformSettings.objects.first()
-        min_deposit = settings.minimum_deposit if settings else Decimal('50')
-        
-        if amount < min_deposit:
+        min_deposit = settings.minimum_deposit if settings else Decimal('0')
+
+        if min_deposit > 0 and amount < min_deposit:
             messages.error(request, f'Minimum deposit is ${min_deposit}')
             return redirect('deposit')
         
@@ -1095,7 +1119,14 @@ def send_support_message(request):
                 message=message_text,
                 is_read=False
             )
-            
+
+            # Notify the admin inbox so a real person can jump in
+            try:
+                chat_url = request.build_absolute_uri(reverse('admin_chat_detail', args=[chat.id]))
+                send_admin_support_message_email(request.user.username, message_text[:300], chat_url=chat_url)
+            except Exception as e:
+                logger.error(f"Failed to send support message admin notification: {e}")
+
             # Greet once per chat - after that, a real agent takes over
             if not chat.messages.filter(sender_type='SUPPORT').exists():
                 SupportMessage.objects.create(

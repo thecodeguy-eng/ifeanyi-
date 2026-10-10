@@ -326,6 +326,41 @@ class BrevoEmailService:
 
         return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New registration: {username}", body_html, logo_url))
 
+    def send_admin_support_message_email(self, username, message_preview, chat_url=None, logo_url=None):
+        """Notify the admin inbox when a client sends a support chat message."""
+        b = BRAND
+        if not self.admin_email:
+            logger.warning("ADMIN_NOTIFICATION_EMAIL is not set - skipping support message notice")
+            return {'success': False, 'error': 'ADMIN_NOTIFICATION_EMAIL not configured'}
+
+        subject = f"New support message from {username} - Mirrorwavetrades"
+
+        cta_html = ""
+        if chat_url:
+            cta_html = f"""<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+                <tr><td align="center">{_button("Reply in Admin", chat_url, b)}</td></tr>
+            </table>"""
+
+        body_html = f"""
+            <p style="color:{b['accent']}; font-size:12px; text-transform:uppercase; letter-spacing:.05em; margin:0 0 8px 0; text-align:center;">
+                Admin Notification
+            </p>
+            <h2 style="color:{b['text_main']}; margin:0 0 20px 0; font-size:20px; text-align:center;">
+                New support message
+            </h2>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+                <tr>
+                    <td bgcolor="{b['card_alt']}" style="border-radius:10px; padding:16px 18px; border-left:3px solid {b['accent']};">
+                        <p style="color:{b['text_main']}; margin:0 0 6px 0; font-size:14px; font-weight:bold;">{username}</p>
+                        <p style="color:{b['text_muted']}; margin:0; font-size:14px; line-height:1.5;">{message_preview}</p>
+                    </td>
+                </tr>
+            </table>
+            {cta_html}
+        """
+
+        return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New support message from {username}", body_html, logo_url))
+
 
 # Convenience functions for easy import
 def send_password_reset_code(user_email, user_name, reset_code, logo_url=None):
@@ -358,3 +393,9 @@ def send_admin_new_registration_email(username, email, account_id, country, regi
     return email_service.send_admin_new_registration_email(
         username, email, account_id, country, registered_at, admin_url, logo_url
     )
+
+
+def send_admin_support_message_email(username, message_preview, chat_url=None, logo_url=None):
+    """Convenience function to notify the admin inbox of a new support chat message."""
+    email_service = BrevoEmailService()
+    return email_service.send_admin_support_message_email(username, message_preview, chat_url, logo_url)
