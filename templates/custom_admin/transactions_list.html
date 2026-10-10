@@ -170,6 +170,9 @@
                             {% else %}bg-red-500/20 text-red-400{% endif %}">
                             {{ transaction.transaction_type }}
                         </span>
+                        {% if transaction.description %}
+                        <p class="text-gray-500 text-xs mt-1">{{ transaction.description }}</p>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 text-white font-semibold">${{ transaction.amount|floatformat:2 }}</td>
                     <td class="px-6 py-4 text-gray-400">{{ transaction.crypto_currency|default:"—" }}</td>

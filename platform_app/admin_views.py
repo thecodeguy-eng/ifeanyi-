@@ -330,7 +330,11 @@ def admin_transaction_action(request, transaction_id):
                     user.account_balance -= transaction.amount
                     user.total_withdrawal += transaction.amount
                     user.save()
-            
+            elif transaction.transaction_type == 'BOT_PURCHASE' and transaction.bot_plan:
+                UserBotSubscription.objects.get_or_create(
+                    user=user, plan=transaction.bot_plan, is_active=True
+                )
+
             transaction.save()
             
             SystemLog.objects.create(

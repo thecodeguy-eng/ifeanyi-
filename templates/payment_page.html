@@ -84,13 +84,12 @@
             <h2 class="font-semibold text-gray-900 mb-4">Select Payment Method</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
                 {% for wallet in wallet_addresses %}
-                <button type="button" onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}', {{ crypto_amounts|get_item:wallet.cryptocurrency }})"
+                <button type="button" onclick="selectCrypto('{{ wallet.cryptocurrency }}', '{{ wallet.wallet_address }}')"
                     class="crypto-btn" data-crypto="{{ wallet.cryptocurrency }}">
                     <div class="text-2xl mb-2">
                         {% if wallet.cryptocurrency == 'BTC' %}₿{% elif wallet.cryptocurrency == 'ETH' %}Ξ{% elif wallet.cryptocurrency == 'SOL' %}◎{% elif wallet.cryptocurrency == 'USDT' %}₮{% else %}<i class="fas fa-coins"></i>{% endif %}
                     </div>
                     <div class="text-xs font-bold text-gray-700">{{ wallet.cryptocurrency }}</div>
-                    <div class="text-xs text-gray-400 mt-0.5" id="amount_{{ wallet.cryptocurrency }}">{{ crypto_amounts|get_item:wallet.cryptocurrency|floatformat:8 }}</div>
                 </button>
                 {% endfor %}
             </div>
@@ -106,9 +105,9 @@
                         <span id="selected_crypto" class="text-xs font-bold bg-gray-200 text-gray-700 px-2.5 py-1 rounded-full">BTC</span>
                     </div>
                     <div class="mb-3">
-                        <p class="text-xs text-gray-400 mb-1.5">Send Exactly</p>
+                        <p class="text-xs text-gray-400 mb-1.5">Amount to Send</p>
                         <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-                            <span class="font-bold text-gray-900 break-all" id="crypto_amount_display">0.00000000</span>
+                            <span class="font-bold text-gray-900 break-all">${{ amount|floatformat:2 }} <span class="text-gray-400 font-normal">in <span id="selected_crypto_inline">{{ wallet_addresses.0.cryptocurrency }}</span></span></span>
                             <button onclick="copyAmount()" class="text-gray-400 hover:text-gray-600 ml-2 flex-shrink-0"><i class="fas fa-copy text-sm"></i></button>
                         </div>
                     </div>
@@ -144,7 +143,7 @@
 
             <div class="mt-4 p-3 bg-blue-50 border border-blue-100 rounded-lg flex items-start gap-2">
                 <i class="fas fa-info-circle text-blue-500 text-xs mt-0.5 flex-shrink-0"></i>
-                <p class="text-xs text-blue-700">After purchasing, send the exact crypto amount shown in Payment Details above to our wallet address. Keep your receipt as proof of purchase.</p>
+                <p class="text-xs text-blue-700">After purchasing, send the equivalent of ${{ amount|floatformat:2 }} to our wallet address shown in Payment Details above. Keep your receipt as proof of purchase.</p>
             </div>
         </div>
 
@@ -246,16 +245,17 @@
 })();
 // ────────────────────────────────────────────────────────────────────────────
 
-let selectedWalletAddress='', selectedCryptoAmount='', selectedCryptoSymbol='';
+let selectedWalletAddress='', selectedCryptoSymbol='';
+const PAY_AMOUNT = '{{ amount|floatformat:2 }}';
 
-function selectCrypto(crypto, address, amount) {
-    selectedCryptoSymbol = crypto; selectedWalletAddress = address; selectedCryptoAmount = amount;
+function selectCrypto(crypto, address) {
+    selectedCryptoSymbol = crypto; selectedWalletAddress = address;
     document.querySelectorAll('.crypto-btn').forEach(b => b.classList.remove('selected'));
     document.querySelector(`[data-crypto="${crypto}"]`).classList.add('selected');
     document.getElementById('walletDetails').classList.remove('hidden');
     document.getElementById('selectionNotice').classList.add('hidden');
     document.getElementById('selected_crypto').textContent = crypto;
-    document.getElementById('crypto_amount_display').textContent = parseFloat(amount).toFixed(8);
+    document.getElementById('selected_crypto_inline').textContent = crypto;
     document.getElementById('wallet_address_display').textContent = address;
     document.getElementById('notice_crypto').textContent = crypto;
     document.getElementById('selected_cryptocurrency').value = crypto;
@@ -267,7 +267,7 @@ function validateForm() {
     return true;
 }
 
-function copyAmount() { navigator.clipboard.writeText(parseFloat(selectedCryptoAmount).toFixed(8)); showToast('Amount copied!'); }
+function copyAmount() { navigator.clipboard.writeText('$' + PAY_AMOUNT); showToast('Amount copied!'); }
 function copyAddress() { navigator.clipboard.writeText(selectedWalletAddress); showToast('Address copied!'); }
 
 function showToast(msg, type='success') {

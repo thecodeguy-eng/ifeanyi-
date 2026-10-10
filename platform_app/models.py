@@ -218,6 +218,9 @@ class Transaction(models.Model):
     description = models.TextField(null=True, blank=True)
     crypto_currency = models.CharField(max_length=10, null=True, blank=True)
     crypto_amount = models.DecimalField(max_digits=20, decimal_places=8, null=True, blank=True)
+    bot_plan = models.ForeignKey('TradingBotPlan', on_delete=models.SET_NULL, null=True, blank=True,
+                                  related_name='purchase_transactions',
+                                  help_text='Which bot plan this BOT_PURCHASE transaction is for')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

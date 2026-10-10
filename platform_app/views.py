@@ -612,8 +612,11 @@ def purchase_bot(request, plan_id):
         request.session['purchase_id'] = plan_id
         request.session['purchase_amount'] = str(plan.price)
         return redirect('payment_page')
-    
-    return render(request, 'purchase_bot.html', {'plan': plan})
+
+    # Purchases are initiated via POST from trading_bot.html; a direct GET
+    # just sends the user back to pick a plan instead of 500ing on a
+    # template that was never built for this dead branch.
+    return redirect('trading_bot')
 
 
 # Copy Trading
@@ -898,7 +901,14 @@ def payment_page(request):
         
         crypto_price = get_crypto_price(selected_crypto)
         actual_crypto_amount = amount / crypto_price if crypto_price > 0 else Decimal('0')
-        
+
+        bot_plan = None
+        description = None
+        if purchase_type == 'bot':
+            bot_plan = TradingBotPlan.objects.filter(id=request.session.get('purchase_id')).first()
+            if bot_plan:
+                description = f'Bot plan purchase: {bot_plan.get_plan_type_display()}'
+
         transaction = Transaction.objects.create(
             user=request.user,
             transaction_type='DEPOSIT' if purchase_type == 'deposit' else 'BOT_PURCHASE' if purchase_type == 'bot' else 'COPY_TRADE',
@@ -908,6 +918,8 @@ def payment_page(request):
             crypto_amount=actual_crypto_amount,
             proof_image=proof_image,
             blockchain_transaction_id=blockchain_tx_id,
+            bot_plan=bot_plan,
+            description=description,
             status='PENDING'
         )
         
@@ -1084,14 +1096,13 @@ def send_support_message(request):
                 is_read=False
             )
             
-            # Optional: Auto-reply for immediate response
-            auto_reply = get_auto_reply(message_text)
-            if auto_reply:
+            # Greet once per chat - after that, a real agent takes over
+            if not chat.messages.filter(sender_type='SUPPORT').exists():
                 SupportMessage.objects.create(
                     chat=chat,
                     sender_type='SUPPORT',
                     sender_name='Support Bot',
-                    message=auto_reply,
+                    message=get_auto_reply(message_text),
                     is_read=False
                 )
             
@@ -1164,7 +1175,7 @@ def clear_support_chat(request):
                 chat=new_chat,
                 sender_type='SUPPORT',
                 sender_name='Support Team',
-                message='Hello! Welcome to Mirrorwavetrades support. How can we help you today?',
+                message='Hello! Thanks for reaching out to Mirrorwavetrades support. Our support team will get back to you shortly.',
                 is_read=False
             )
             
@@ -1186,35 +1197,8 @@ def clear_support_chat(request):
 
 
 def get_auto_reply(message):
-    """Generate automatic replies based on keywords (optional)"""
-    message_lower = message.lower()
-    
-    if any(word in message_lower for word in ['deposit', 'payment', 'fund']):
-        return "To make a deposit, navigate to Dashboard > Deposit. We support Bitcoin, Ethereum, Solana, and other major cryptocurrencies. Deposits are processed within 10-30 minutes after confirmation."
-    
-    elif any(word in message_lower for word in ['withdrawal', 'withdraw', 'cashout']):
-        return "For withdrawals, go to Dashboard > Withdrawal. Please ensure your account is verified and withdrawal is approved by admin. Minimum withdrawal is $50. Processing time is 24-48 hours."
-    
-    elif any(word in message_lower for word in ['trading bot', 'bot', 'automated']):
-        return "Our Trading Bots offer automated trading with daily profits. Visit Trading Bot section to view available plans: Basic, Intermediate, Advanced, and Pro with different profit percentages."
-    
-    elif any(word in message_lower for word in ['copy trading', 'copy trade', 'follow trader']):
-        return "Copy Trading allows you to automatically copy trades from professional traders. Visit the Copy Trading section to browse top traders and their performance metrics."
-    
-    elif any(word in message_lower for word in ['invest', 'investment', 'plan']):
-        return "We offer investment plans ranging from Starter to Diamond tier with guaranteed ROI over fixed durations. Visit the Investment Plans section to browse available options."
-
-    elif any(word in message_lower for word in ['verification', 'verify', 'kyc']):
-        return "Account verification is handled by our admin team. Your account will be reviewed within 24 hours. You will receive an email notification once approved."
-    
-    elif any(word in message_lower for word in ['help', 'support', 'assistance']):
-        return "I am here to help! You can ask about deposits, withdrawals, trading bots, copy trading, investment plans, or any other features. Our support team will respond shortly if you need personalized assistance."
-    
-    elif any(word in message_lower for word in ['hello', 'hi', 'hey']):
-        return "Hello! Thank you for contacting Mirrorwavetrades support. How can I assist you today?"
-    
-    # Return None if no auto-reply needed - admin will respond manually
-    return None
+    """Simple canned acknowledgement - a real support agent follows up manually."""
+    return "Hello! Thanks for reaching out to Mirrorwavetrades support. Our support team will get back to you shortly."
 
 # ============================================================
 # PRODUCT PAGES
