@@ -58,11 +58,16 @@
             <h3 class="text-xl font-bold text-white">Add Trade Entry</h3>
             <button type="button" onclick="document.getElementById('createTradeModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-xl">&times;</button>
         </div>
-        <form method="POST" action="{% url 'admin_trade_history_create' %}" class="space-y-4">
+        <form method="POST" action="{% url 'admin_trade_history_create' %}" class="space-y-4" id="addTradeForm">
             {% csrf_token %}
-            <div>
-                <label class="block text-gray-400 mb-1.5 text-sm">Username or Email</label>
-                <input type="text" name="username" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            <div class="relative">
+                <label class="block text-gray-400 mb-1.5 text-sm">User</label>
+                <input type="text" id="user-search-input" placeholder="Click to browse, or type to search..."
+                       autocomplete="off" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                <input type="hidden" name="user_id" id="user-search-id" required>
+                <div id="user-search-dropdown"
+                     class="hidden absolute z-10 mt-1 w-full max-h-56 overflow-y-auto bg-slate-800 border border-slate-600 rounded-lg shadow-xl"></div>
             </div>
             <div>
                 <label class="block text-gray-400 mb-1.5 text-sm">What was traded</label>
@@ -160,4 +165,67 @@
         </table>
     </div>
 </div>
+
+{{ all_users|json_script:"all-users-data" }}
+<script>
+(function () {
+    const users = JSON.parse(document.getElementById('all-users-data').textContent);
+    const searchInput = document.getElementById('user-search-input');
+    const hiddenId = document.getElementById('user-search-id');
+    const dropdown = document.getElementById('user-search-dropdown');
+
+    function renderOptions(list) {
+        if (!list.length) {
+            dropdown.innerHTML = '<div class="px-4 py-3 text-gray-500 text-sm">No users match</div>';
+            return;
+        }
+        dropdown.innerHTML = list.map(u => `
+            <div class="px-4 py-2.5 hover:bg-slate-700 cursor-pointer text-sm user-option" data-id="${u.id}" data-label="${u.username}">
+                <span class="text-white font-medium">${u.username}</span>
+                <span class="text-gray-400 text-xs block">${u.email}</span>
+            </div>
+        `).join('');
+
+        dropdown.querySelectorAll('.user-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                hiddenId.value = opt.dataset.id;
+                searchInput.value = opt.dataset.label;
+                dropdown.classList.add('hidden');
+            });
+        });
+    }
+
+    function filterUsers(term) {
+        term = term.trim().toLowerCase();
+        if (!term) return users;
+        return users.filter(u =>
+            u.username.toLowerCase().includes(term) || u.email.toLowerCase().includes(term)
+        );
+    }
+
+    searchInput.addEventListener('focus', () => {
+        renderOptions(filterUsers(searchInput.value));
+        dropdown.classList.remove('hidden');
+    });
+
+    searchInput.addEventListener('input', () => {
+        hiddenId.value = '';
+        renderOptions(filterUsers(searchInput.value));
+        dropdown.classList.remove('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#user-search-input') && !e.target.closest('#user-search-dropdown')) {
+            dropdown.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('addTradeForm').addEventListener('submit', (e) => {
+        if (!hiddenId.value) {
+            e.preventDefault();
+            alert('Please pick a user from the dropdown list.');
+        }
+    });
+})();
+</script>
 {% endblock %}

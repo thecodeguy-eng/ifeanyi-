@@ -1154,25 +1154,27 @@ def admin_trade_history_list(request):
     total_profit = entries.filter(profit_loss__gt=0).aggregate(total=Sum('profit_loss'))['total'] or Decimal('0')
     total_loss = entries.filter(profit_loss__lt=0).aggregate(total=Sum('profit_loss'))['total'] or Decimal('0')
 
+    all_users = User.objects.order_by('username').values('id', 'username', 'email')
+
     context = {
         'entries': entries[:200],
         'q': q,
         'total_profit': total_profit,
         'total_loss': total_loss,
         'entries_count': entries.count(),
+        'all_users': list(all_users),
     }
     return render(request, 'custom_admin/trade_history_list.html', context)
 
 
 @user_passes_test(is_admin)
 def admin_trade_history_create(request):
-    """Add a trade history entry for a user, looked up by username or email."""
+    """Add a trade history entry for a user, picked from the dropdown by id."""
     if request.method == 'POST':
-        target = request.POST.get('username', '').strip()
-        user = User.objects.filter(Q(username__iexact=target) | Q(email__iexact=target)).first()
+        user = User.objects.filter(id=request.POST.get('user_id')).first()
 
         if not user:
-            messages.error(request, f'No user found matching "{target}".')
+            messages.error(request, 'Please pick a user from the list.')
             return redirect('admin_trade_history_list')
 
         instrument = request.POST.get('instrument', '').strip()
