@@ -20,17 +20,17 @@
 
         <div>
             <label class="block text-gray-400 mb-2">Tier</label>
-            <select name="tier" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            <select name="tier" id="tier-select" onchange="onTierChange()" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
                 {% for val, label in tier_choices %}
                 <option value="{{ val }}" {% if plan.tier == val %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
-            <p class="text-gray-500 text-xs mt-1">This trader can only have one plan per tier.</p>
+            <p class="text-gray-500 text-xs mt-1" id="tier-hint">This trader can only have one plan per tier - except Custom, which can be created as many times as you like, each with its own name.</p>
         </div>
 
         <div>
-            <label class="block text-gray-400 mb-2">Display Name <span class="text-gray-500 text-xs">optional, defaults to the tier name</span></label>
-            <input type="text" name="name" placeholder="e.g. Gold Elite"
+            <label class="block text-gray-400 mb-2">Display Name <span class="text-gray-500 text-xs" id="name-hint">optional, defaults to the tier name</span></label>
+            <input type="text" name="name" id="name-input" placeholder="e.g. Gold Elite"
                    value="{% if plan %}{{ plan.name }}{% endif %}"
                    class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
         </div>
@@ -79,4 +79,16 @@
         </div>
     </form>
 </div>
+
+<script>
+function onTierChange() {
+    const isCustom = document.getElementById('tier-select').value === 'CUSTOM';
+    const nameInput = document.getElementById('name-input');
+    const nameHint = document.getElementById('name-hint');
+    nameInput.required = isCustom;
+    nameInput.placeholder = isCustom ? 'e.g. VIP Elite Access' : 'e.g. Gold Elite';
+    nameHint.textContent = isCustom ? 'required for a Custom plan' : 'optional, defaults to the tier name';
+}
+onTierChange();
+</script>
 {% endblock %}

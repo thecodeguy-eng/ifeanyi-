@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from decimal import Decimal
@@ -138,11 +139,13 @@ class CopyTraderPlan(models.Model):
         ('GOLD', 'Gold'),
         ('PLATINUM', 'Platinum'),
         ('DIAMOND', 'Diamond'),
+        ('CUSTOM', 'Custom'),
     ]
 
     trader = models.ForeignKey(CopyTrader, on_delete=models.CASCADE, related_name='plans')
     tier = models.CharField(max_length=20, choices=TIER_CHOICES)
-    name = models.CharField(max_length=100, blank=True, help_text="Optional custom name; defaults to the tier name")
+    name = models.CharField(max_length=100, blank=True,
+                             help_text="Optional custom name; defaults to the tier name. Required for a Custom plan.")
     price = models.DecimalField(max_digits=20, decimal_places=2, validators=[MinValueValidator(Decimal('1'))],
                                  help_text="Minimum amount a user must invest to subscribe at this tier")
     commission_percentage = models.DecimalField(max_digits=5, decimal_places=2,
@@ -155,11 +158,15 @@ class CopyTraderPlan(models.Model):
 
     class Meta:
         db_table = 'copy_trader_plans'
-        unique_together = [('trader', 'tier')]
+        constraints = [
+            # One Silver/Gold/Platinum/Diamond per trader, but any number of Custom plans.
+            models.UniqueConstraint(fields=['trader', 'tier'], condition=~Q(tier='CUSTOM'),
+                                     name='unique_trader_tier_except_custom')
+        ]
         ordering = ['price']
 
     def __str__(self):
-        return f"{self.trader.name} - {self.get_tier_display()}"
+        return f"{self.trader.name} - {self.display_name}"
 
     @property
     def display_name(self):

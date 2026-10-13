@@ -511,16 +511,22 @@ def _save_trader_plan(request, trader, plan):
     features = [line.strip() for line in raw_features.splitlines() if line.strip()]
 
     tier = data.get('tier', 'SILVER')
-    dupe = CopyTraderPlan.objects.filter(trader=trader, tier=tier)
-    if plan is not None:
-        dupe = dupe.exclude(id=plan.id)
-    if dupe.exists():
-        return f'{trader.name} already has a "{tier}" plan. Edit that one instead, or choose a different tier.'
+    name = data.get('name', '').strip()
+
+    if tier == 'CUSTOM':
+        if not name:
+            return 'Custom plans need a name - that\'s what tells it apart from the others.'
+    else:
+        dupe = CopyTraderPlan.objects.filter(trader=trader, tier=tier)
+        if plan is not None:
+            dupe = dupe.exclude(id=plan.id)
+        if dupe.exists():
+            return f'{trader.name} already has a "{tier}" plan. Edit that one instead, or choose a different tier.'
 
     fields = dict(
         trader=trader,
         tier=tier,
-        name=data.get('name', '').strip(),
+        name=name,
         price=Decimal(data.get('price', '0')),
         commission_percentage=Decimal(data.get('commission_percentage', '0')),
         description=data.get('description', '').strip(),
