@@ -1140,6 +1140,103 @@ def admin_transaction_delete(request, transaction_id):
     return redirect('admin_transactions_list')
 
 
+# ── Trade History (admin-curated profit/loss log) ─────────────────────────────
+
+@user_passes_test(is_admin)
+def admin_trade_history_list(request):
+    """List every trade history entry across all users, with an add form."""
+    q = request.GET.get('q', '').strip()
+
+    entries = TradeHistory.objects.select_related('user').order_by('-created_at')
+    if q:
+        entries = entries.filter(Q(user__username__icontains=q) | Q(user__email__icontains=q) | Q(instrument__icontains=q))
+
+    total_profit = entries.filter(profit_loss__gt=0).aggregate(total=Sum('profit_loss'))['total'] or Decimal('0')
+    total_loss = entries.filter(profit_loss__lt=0).aggregate(total=Sum('profit_loss'))['total'] or Decimal('0')
+
+    context = {
+        'entries': entries[:200],
+        'q': q,
+        'total_profit': total_profit,
+        'total_loss': total_loss,
+        'entries_count': entries.count(),
+    }
+    return render(request, 'custom_admin/trade_history_list.html', context)
+
+
+@user_passes_test(is_admin)
+def admin_trade_history_create(request):
+    """Add a trade history entry for a user, looked up by username or email."""
+    if request.method == 'POST':
+        target = request.POST.get('username', '').strip()
+        user = User.objects.filter(Q(username__iexact=target) | Q(email__iexact=target)).first()
+
+        if not user:
+            messages.error(request, f'No user found matching "{target}".')
+            return redirect('admin_trade_history_list')
+
+        instrument = request.POST.get('instrument', '').strip()
+        try:
+            profit_amount = Decimal(request.POST.get('profit_amount') or 0)
+            loss_amount = Decimal(request.POST.get('loss_amount') or 0)
+            commission = Decimal(request.POST.get('commission') or 0)
+        except Exception:
+            messages.error(request, 'Enter valid numbers for profit, loss and commission.')
+            return redirect('admin_trade_history_list')
+
+        if not instrument:
+            messages.error(request, 'Enter what was traded.')
+            return redirect('admin_trade_history_list')
+
+        if profit_amount > 0 and loss_amount > 0:
+            messages.error(request, 'Enter either a profit or a loss for this trade, not both.')
+            return redirect('admin_trade_history_list')
+
+        profit_loss = profit_amount - loss_amount
+
+        entry = TradeHistory.objects.create(
+            user=user,
+            instrument=instrument,
+            profit_loss=profit_loss,
+            commission=commission,
+            notes=request.POST.get('notes', '').strip(),
+            recorded_by=request.user,
+        )
+
+        user.account_balance += entry.net_amount
+        user.total_profit += profit_loss
+        user.save()
+
+        SystemLog.objects.create(
+            level='INFO',
+            action='ADD_TRADE_HISTORY',
+            description=f'Admin logged a {"profit" if entry.is_profit else "loss"} of ${abs(profit_loss)} on {instrument} for {user.username}',
+            user=request.user,
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+
+        messages.success(request, f'Trade entry added for {user.username}')
+
+    return redirect('admin_trade_history_list')
+
+
+@user_passes_test(is_admin)
+def admin_trade_history_delete(request, entry_id):
+    """Delete a trade history entry and reverse its balance effect."""
+    if request.method == 'POST':
+        entry = get_object_or_404(TradeHistory, id=entry_id)
+        user = entry.user
+
+        user.account_balance -= entry.net_amount
+        user.total_profit -= entry.profit_loss
+        user.save()
+
+        entry.delete()
+        messages.success(request, 'Trade entry removed and balance adjusted back')
+
+    return redirect('admin_trade_history_list')
+
+
 # ── Support chats: close / delete ─────────────────────────────────────────────
 
 @user_passes_test(is_admin)

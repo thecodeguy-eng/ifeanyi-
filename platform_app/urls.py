@@ -96,6 +96,10 @@ urlpatterns = [
     path('custom-admin/transactions/<int:transaction_id>/action/', admin_views.admin_transaction_action, name='admin_transaction_action'),
     path('custom-admin/transactions/<int:transaction_id>/delete/', admin_views.admin_transaction_delete, name='admin_transaction_delete'),
 
+    path('custom-admin/trade-history/', admin_views.admin_trade_history_list, name='admin_trade_history_list'),
+    path('custom-admin/trade-history/create/', admin_views.admin_trade_history_create, name='admin_trade_history_create'),
+    path('custom-admin/trade-history/<int:entry_id>/delete/', admin_views.admin_trade_history_delete, name='admin_trade_history_delete'),
+
     # Copy Traders Management
     path('custom-admin/traders/', admin_views.admin_traders_list, name='admin_traders_list'),
     path('custom-admin/traders/create/', admin_views.admin_trader_create, name='admin_trader_create'),

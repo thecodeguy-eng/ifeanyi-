@@ -171,6 +171,11 @@
                         <span>Transactions</span>
                     </a>
                     
+                    <a href="{% url 'admin_trade_history_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'trade-history' in request.path %}active{% endif %}">
+                        <i class="fas fa-chart-line w-5"></i>
+                        <span>Trade History</span>
+                    </a>
+
                     <a href="{% url 'admin_traders_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'traders' in request.path %}active{% endif %}">
                         <i class="fas fa-user-tie w-5"></i>
                         <span>Copy Traders</span>

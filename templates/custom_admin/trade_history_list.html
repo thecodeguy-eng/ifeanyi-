@@ -1,0 +1,163 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Trade History - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8 flex items-center justify-between flex-wrap gap-4">
+    <div>
+        <h2 class="text-3xl font-bold gradient-text mb-2">Trade History</h2>
+        <p class="text-gray-400">Log a profit or loss for any user - it updates their balance immediately and shows on their Live Trading page</p>
+    </div>
+    <button type="button" onclick="document.getElementById('createTradeModal').classList.remove('hidden')"
+            class="bg-green-600 hover:bg-green-700 px-6 py-3 rounded-lg text-white font-semibold">
+        <i class="fas fa-plus mr-2"></i> Add Trade Entry
+    </button>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-blue-500/20 p-3 rounded-lg">
+                <i class="fas fa-chart-line text-2xl text-blue-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Entries</p>
+                <p class="text-2xl font-bold text-white">{{ entries_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-green-500/20 p-3 rounded-lg">
+                <i class="fas fa-arrow-trend-up text-2xl text-green-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Profit Logged</p>
+                <p class="text-2xl font-bold text-green-400">${{ total_profit|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-red-500/20 p-3 rounded-lg">
+                <i class="fas fa-arrow-trend-down text-2xl text-red-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Loss Logged</p>
+                <p class="text-2xl font-bold text-red-400">${{ total_loss|floatformat:2|cut:"-" }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Trade Entry Modal -->
+<div id="createTradeModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="admin-card p-6 rounded-xl max-w-md w-full">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xl font-bold text-white">Add Trade Entry</h3>
+            <button type="button" onclick="document.getElementById('createTradeModal').classList.add('hidden')" class="text-gray-400 hover:text-white text-xl">&times;</button>
+        </div>
+        <form method="POST" action="{% url 'admin_trade_history_create' %}" class="space-y-4">
+            {% csrf_token %}
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Username or Email</label>
+                <input type="text" name="username" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">What was traded</label>
+                <input type="text" name="instrument" placeholder="e.g. BTC/USD" required class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-green-400 mb-1.5 text-sm">Profit ($)</label>
+                    <input type="number" name="profit_amount" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                </div>
+                <div>
+                    <label class="block text-red-400 mb-1.5 text-sm">Loss ($)</label>
+                    <input type="number" name="loss_amount" step="0.01" min="0" placeholder="0.00" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+                </div>
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Commission ($)</label>
+                <input type="number" name="commission" step="0.01" value="0" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 mb-1.5 text-sm">Notes <span class="text-gray-500">optional</span></label>
+                <input type="text" name="notes" class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <p class="text-gray-500 text-xs">Fill in only Profit <em>or</em> Loss, not both.</p>
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 px-6 py-2.5 rounded-lg text-white font-semibold">
+                <i class="fas fa-save mr-2"></i> Add Entry
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="admin-card p-6 rounded-xl mb-6">
+    <form method="GET" class="flex flex-wrap gap-4">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by username, email, or instrument..."
+               class="flex-1 min-w-[240px] bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-search mr-2"></i> Search
+        </button>
+        {% if q %}
+        <a href="{% url 'admin_trade_history_list' %}" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg text-white font-semibold">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">User</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Instrument</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Result</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Commission</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Notes</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                    <th class="px-6 py-4 text-center text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for entry in entries %}
+                <tr class="hover:bg-slate-800/50">
+                    <td class="px-6 py-4">
+                        <a href="{% url 'admin_user_detail' entry.user.id %}" class="text-cyan-400 hover:underline">
+                            {{ entry.user.username }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4 text-white font-medium">{{ entry.instrument }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full {% if entry.is_profit %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                            {% if entry.is_profit %}Profit +{% else %}Loss -{% endif %}${{ entry.profit_loss|floatformat:2|cut:"-" }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400">${{ entry.commission|floatformat:2 }}</td>
+                    <td class="px-6 py-4 text-gray-400 text-sm">{{ entry.notes|default:"—" }}</td>
+                    <td class="px-6 py-4 text-gray-400 text-sm">{{ entry.created_at|date:"M d, Y H:i" }}</td>
+                    <td class="px-6 py-4">
+                        <div class="flex justify-center">
+                            <form method="POST" action="{% url 'admin_trade_history_delete' entry.id %}"
+                                  onsubmit="return confirm('Remove this entry? It will reverse the balance change too.')">
+                                {% csrf_token %}
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-400">No trade history entries yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
