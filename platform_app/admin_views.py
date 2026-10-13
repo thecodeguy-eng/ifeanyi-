@@ -13,7 +13,7 @@ import json
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTraderPlan, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage,
+    Trade, TradeHistory, PlatformSettings, SupportChat, SupportMessage,
     UserActivity, AdminUser, SystemLog,
     InvestmentPlan, UserInvestment,
 )
@@ -239,6 +239,59 @@ def admin_user_detail(request, user_id):
                 )
                 messages.success(request, f'Admin access {status} for {user.username}')
 
+        elif action == 'add_trade':
+            instrument = request.POST.get('instrument', '').strip()
+            try:
+                profit_amount = Decimal(request.POST.get('profit_amount') or 0)
+                loss_amount = Decimal(request.POST.get('loss_amount') or 0)
+                commission = Decimal(request.POST.get('commission') or 0)
+            except Exception:
+                messages.error(request, 'Enter valid numbers for profit, loss and commission.')
+                return redirect('admin_user_detail', user_id=user_id)
+
+            if not instrument:
+                messages.error(request, 'Enter what was traded.')
+                return redirect('admin_user_detail', user_id=user_id)
+
+            if profit_amount > 0 and loss_amount > 0:
+                messages.error(request, 'Enter either a profit or a loss for this trade, not both.')
+                return redirect('admin_user_detail', user_id=user_id)
+
+            profit_loss = profit_amount - loss_amount
+
+            entry = TradeHistory.objects.create(
+                user=user,
+                instrument=instrument,
+                profit_loss=profit_loss,
+                commission=commission,
+                notes=request.POST.get('notes', '').strip(),
+                recorded_by=request.user,
+            )
+
+            user.account_balance += entry.net_amount
+            user.total_profit += profit_loss
+            user.save()
+
+            SystemLog.objects.create(
+                level='INFO',
+                action='ADD_TRADE_HISTORY',
+                description=f'Admin logged a {"profit" if entry.is_profit else "loss"} of ${abs(profit_loss)} on {instrument} for {user.username}',
+                user=request.user,
+                ip_address=request.META.get('REMOTE_ADDR')
+            )
+
+            messages.success(request, f'Trade entry added for {user.username}')
+
+        elif action == 'delete_trade':
+            entry = get_object_or_404(TradeHistory, id=request.POST.get('trade_id'), user=user)
+
+            user.account_balance -= entry.net_amount
+            user.total_profit -= entry.profit_loss
+            user.save()
+
+            entry.delete()
+            messages.success(request, 'Trade entry removed and balance adjusted back')
+
         elif action == 'delete_user':
             if user.id == request.user.id:
                 messages.error(request, "You can't delete your own account.")
@@ -261,12 +314,14 @@ def admin_user_detail(request, user_id):
     # Get user statistics
     user_transactions = Transaction.objects.filter(user=user).order_by('-created_at')[:20]
     user_trades = Trade.objects.filter(user=user).order_by('-created_at')[:20]
+    user_trade_history = TradeHistory.objects.filter(user=user).order_by('-created_at')[:50]
     user_activities = UserActivity.objects.filter(user=user).order_by('-timestamp')[:50]
-    
+
     context = {
         'user_obj': user,
         'user_transactions': user_transactions,
         'user_trades': user_trades,
+        'user_trade_history': user_trade_history,
         'user_activities': user_activities,
     }
     

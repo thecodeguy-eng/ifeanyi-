@@ -278,6 +278,41 @@ class Trade(models.Model):
         return f"{self.user.username} - {self.trade_type} {self.from_currency} to {self.to_currency}"
 
 
+class TradeHistory(models.Model):
+    """
+    Admin-curated trade log shown on a user's trade history.
+    Free-form (not tied to real exchange execution): admin types what was
+    traded and the resulting profit/loss and commission, and the user's
+    balance updates to match.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='trade_history')
+    instrument = models.CharField(max_length=100, help_text='What was traded, e.g. "BTC/USD", "Gold", "Tesla Stock"')
+    profit_loss = models.DecimalField(max_digits=20, decimal_places=2,
+                                       help_text='Positive for profit, negative for a loss')
+    commission = models.DecimalField(max_digits=20, decimal_places=2, default=0)
+    notes = models.TextField(blank=True)
+    recorded_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                                     related_name='trade_entries_recorded')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'trade_history'
+        ordering = ['-created_at']
+        verbose_name_plural = 'Trade history'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.instrument} ({'profit' if self.profit_loss >= 0 else 'loss'})"
+
+    @property
+    def is_profit(self):
+        return self.profit_loss >= 0
+
+    @property
+    def net_amount(self):
+        """What actually hits the user's balance: profit/loss minus commission."""
+        return self.profit_loss - self.commission
+
+
 class PlatformSettings(models.Model):
     """Global platform settings"""
     maintenance_mode = models.BooleanField(default=False)

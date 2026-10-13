@@ -20,7 +20,7 @@ from .geoip import get_country_from_ip, get_client_ip
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
     CopyTrader, CopyTraderPlan, CopyTradingSubscription, Transaction, Portfolio,
-    Trade, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
+    Trade, TradeHistory, PlatformSettings, SupportChat, SupportMessage, PasswordResetCode,
     InvestmentPlan, UserInvestment, UserActivity,
 )
 
@@ -583,7 +583,8 @@ def trading(request):
         return redirect('portfolio')
     
     portfolio_items = Portfolio.objects.filter(user=request.user)
-    context = {'portfolio_items': portfolio_items}
+    trade_history = TradeHistory.objects.filter(user=request.user).order_by('-created_at')[:30]
+    context = {'portfolio_items': portfolio_items, 'trade_history': trade_history}
     return render(request, 'trading.html', context)
 
 

@@ -161,6 +161,9 @@
             <button class="tab-btn px-6 py-3 text-gray-400 rounded-t-lg" onclick="showTab('trades')">
                 Trades
             </button>
+            <button class="tab-btn px-6 py-3 text-gray-400 rounded-t-lg" onclick="showTab('trade-history')">
+                Trade History
+            </button>
             <button class="tab-btn px-6 py-3 text-gray-400 rounded-t-lg" onclick="showTab('activities')">
                 Activities
             </button>
@@ -240,6 +243,91 @@
         </div>
     </div>
     
+    <!-- Trade History Tab -->
+    <div id="trade-history-tab" class="tab-content p-6 hidden">
+        <h4 class="text-lg font-bold text-white mb-4">Add Trade Entry</h4>
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8 items-end">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="add_trade">
+            <div>
+                <label class="block text-gray-400 text-sm mb-1.5">What was traded</label>
+                <input type="text" name="instrument" placeholder="e.g. BTC/USD" required
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-green-400 text-sm mb-1.5">Profit ($)</label>
+                <input type="number" name="profit_amount" step="0.01" min="0" placeholder="0.00"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-red-400 text-sm mb-1.5">Loss ($)</label>
+                <input type="number" name="loss_amount" step="0.01" min="0" placeholder="0.00"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <label class="block text-gray-400 text-sm mb-1.5">Commission ($)</label>
+                <input type="number" name="commission" step="0.01" value="0"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+            <div>
+                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg text-white font-semibold">
+                    <i class="fas fa-plus mr-1.5"></i> Add Entry
+                </button>
+            </div>
+            <div class="md:col-span-5">
+                <label class="block text-gray-400 text-sm mb-1.5">Notes <span class="text-gray-500">(optional)</span></label>
+                <input type="text" name="notes" placeholder="Any extra context for this trade"
+                       class="w-full bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+            </div>
+        </form>
+        <p class="text-gray-500 text-xs mb-4 -mt-5">Fill in only Profit <em>or</em> Loss, not both. The result and commission are applied to {{ user_obj.username }}'s balance immediately.</p>
+
+        <h4 class="text-lg font-bold text-white mb-4">Entries</h4>
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-800">
+                    <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Instrument</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Result</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Commission</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Notes</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold text-gray-400 uppercase">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-700">
+                    {% for entry in user_trade_history %}
+                    <tr class="hover:bg-slate-800/50">
+                        <td class="px-4 py-3 text-sm text-white font-medium">{{ entry.instrument }}</td>
+                        <td class="px-4 py-3 text-sm">
+                            <span class="px-2 py-1 text-xs rounded-full {% if entry.is_profit %}bg-green-500/20 text-green-400{% else %}bg-red-500/20 text-red-400{% endif %}">
+                                {% if entry.is_profit %}Profit +{% else %}Loss -{% endif %}${{ entry.profit_loss|floatformat:2|cut:"-" }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3 text-sm text-gray-400">${{ entry.commission|floatformat:2 }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ entry.notes|default:"—" }}</td>
+                        <td class="px-4 py-3 text-sm text-gray-400">{{ entry.created_at|date:"M d, Y H:i" }}</td>
+                        <td class="px-4 py-3 text-center">
+                            <form method="POST" onsubmit="return confirm('Remove this entry? It will reverse the balance change too.')">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_trade">
+                                <input type="hidden" name="trade_id" value="{{ entry.id }}">
+                                <button type="submit" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white text-sm">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-4 py-8 text-center text-gray-400">No trade history entries yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <!-- Activities Tab -->
     <div id="activities-tab" class="tab-content p-6 hidden">
         <h4 class="text-lg font-bold text-white mb-4">Recent Activities</h4>
