@@ -671,10 +671,19 @@ def copy_trader_detail(request, trader_id):
     auto_invest = settings.copy_trade_auto_invest if settings else True
     plans = trader.plans.filter(is_active=True).order_by('price')
 
+    # Copy trading can only use money the user has actually deposited - not
+    # profit/bonus sitting in their balance - so a $200 deposit that grew to
+    # $700 via logged trade profit still caps out at $200 until they deposit
+    # more. total_deposit only ever grows (it's a lifetime counter), so this
+    # correctly tightens back down after money gets spent too.
+    copyable_amount = min(request.user.account_balance, request.user.total_deposit)
+
     if request.method == 'POST':
         if auto_invest:
-            amount = request.user.account_balance
+            amount = copyable_amount
             if amount <= 0:
+                if request.user.account_balance > 0:
+                    return JsonResponse({'success': False, 'message': 'Your balance includes profit, but copy trading can only use money you\'ve actually deposited. Please deposit funds first.'})
                 return JsonResponse({'success': False, 'message': 'Please deposit funds first.'})
 
             # Use the richest tier the balance qualifies for, so bigger
@@ -685,7 +694,7 @@ def copy_trader_detail(request, trader_id):
             messages.success(request, f'Successfully copying {trader.name}\'s trades!')
             return JsonResponse({
                 'success': True,
-                'message': f'Successfully copying {trader.name}\'s trades with your full balance of ${amount:,.2f}!'
+                'message': f'Successfully copying {trader.name}\'s trades with ${amount:,.2f}!'
             })
 
         plan_id = request.POST.get('plan_id')
@@ -702,7 +711,9 @@ def copy_trader_detail(request, trader_id):
                 'message': f'Minimum investment for the {plan.display_name} plan is ${plan.price:,.2f}.'
             })
 
-        if request.user.account_balance < amount:
+        if amount > copyable_amount:
+            if copyable_amount < request.user.account_balance:
+                return JsonResponse({'success': False, 'message': f'Copy trading can only use money you\'ve deposited (${copyable_amount:,.2f} available) - not profit sitting in your balance. Deposit more to invest this amount.'})
             return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
 
         plan_label = _start_copy_trading(request.user, trader, plan, amount)
@@ -712,7 +723,12 @@ def copy_trader_detail(request, trader_id):
             'message': f'Successfully copying {trader.name}\'s trades on the {plan_label} plan! Investment: ${amount:,.2f}'
         })
 
-    context = {'trader': trader, 'plans': plans, 'auto_invest': auto_invest}
+    context = {
+        'trader': trader,
+        'plans': plans,
+        'auto_invest': auto_invest,
+        'copyable_amount': copyable_amount,
+    }
     return render(request, 'copy_trader_detail.html', context)
 
 

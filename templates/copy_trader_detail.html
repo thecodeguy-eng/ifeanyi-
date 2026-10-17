@@ -168,17 +168,33 @@
         <div style="min-width:0;">
             <div class="invest-card invest-card-sticky">
                 <h3 class="title-font text-lg mb-1" style="color:#fff;">Start Copying</h3>
-                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:.25rem;">
                     Your balance: <strong style="color:#c7ccd6;">${{ user.account_balance|floatformat:2 }}</strong>
                 </p>
+                {% if copyable_amount < user.account_balance %}
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                    Available to copy trade: <strong style="color:#fbbf24;">${{ copyable_amount|floatformat:2 }}</strong>
+                </p>
+                {% else %}
+                <div style="margin-bottom:1.25rem;"></div>
+                {% endif %}
 
                 <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
                 <p style="font-size:.8rem;color:#9aa3b2;margin-bottom:1rem;line-height:1.5;">
-                    One click invests your <strong style="color:#fff;">entire account balance</strong> in {{ trader.name }}. No minimum, no manual amount entry.
+                    One click invests your <strong style="color:#fff;">deposited balance</strong> in {{ trader.name }}. No minimum, no manual amount entry.
                 </p>
 
-                {% if user.account_balance <= 0 %}
+                {% if copyable_amount < user.account_balance %}
+                <div style="background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.25); border-radius:10px; padding:.75rem .9rem; margin-bottom:1rem;">
+                    <p style="font-size:.72rem;color:#fbbf24;line-height:1.5;margin:0;">
+                        <i class="fas fa-info-circle" style="margin-right:.35rem;"></i>
+                        Copy trading only uses money you've deposited, not profit. Deposit more to unlock your full balance.
+                    </p>
+                </div>
+                {% endif %}
+
+                {% if copyable_amount <= 0 %}
                 <a href="{% url 'deposit' %}" class="block text-center" style="width:100%;background:rgba(255,255,255,.08);color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;box-sizing:border-box;">
                     <i class="fas fa-wallet" style="margin-right:.4rem;"></i> Deposit Funds First
                 </a>
@@ -186,7 +202,7 @@
                 <button type="button" id="auto-invest-btn" onclick="startAutoInvest()"
                     style="width:100%;background:#2563eb;color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;border:none;cursor:pointer;transition:background .18s;display:flex;align-items:center;justify-content:center;gap:.5rem;box-sizing:border-box;"
                     onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
-                    <i class="fas fa-copy" style="font-size:.7rem;opacity:.7;"></i> Start Copying with ${{ user.account_balance|floatformat:2 }}
+                    <i class="fas fa-copy" style="font-size:.7rem;opacity:.7;"></i> Start Copying with ${{ copyable_amount|floatformat:2 }}
                 </button>
                 {% endif %}
 
@@ -199,9 +215,22 @@
         <div style="min-width:0;">
             <div class="invest-card invest-card-sticky">
                 <h3 class="title-font text-lg mb-1" style="color:#fff;">Confirm Investment</h3>
-                <p style="font-size:.75rem;color:#6b7280;margin-bottom:1.25rem;">
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:.25rem;">
                     Your balance: <strong style="color:#c7ccd6;">${{ user.account_balance|floatformat:2 }}</strong>
                 </p>
+                {% if copyable_amount < user.account_balance %}
+                <p style="font-size:.75rem;color:#6b7280;margin-bottom:.75rem;">
+                    Available to copy trade: <strong style="color:#fbbf24;">${{ copyable_amount|floatformat:2 }}</strong>
+                </p>
+                <div style="background:rgba(251,191,36,.08); border:1px solid rgba(251,191,36,.25); border-radius:10px; padding:.6rem .8rem; margin-bottom:1.1rem;">
+                    <p style="font-size:.7rem;color:#fbbf24;line-height:1.4;margin:0;">
+                        <i class="fas fa-info-circle" style="margin-right:.3rem;"></i>
+                        Copy trading only uses deposited money, not profit.
+                    </p>
+                </div>
+                {% else %}
+                <div style="margin-bottom:1.25rem;"></div>
+                {% endif %}
 
                 <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
