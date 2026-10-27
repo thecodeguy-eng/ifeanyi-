@@ -1146,6 +1146,33 @@ def admin_transaction_delete(request, transaction_id):
     return redirect('admin_transactions_list')
 
 
+# ── Live Trades (self-service Buy/Sell/Swap on the Live Trading page) ────────
+
+@user_passes_test(is_admin)
+def admin_live_trades_list(request):
+    """List every self-service Live Trading swap across all users, read-only."""
+    q = request.GET.get('q', '').strip()
+
+    trades = Trade.objects.select_related('user').order_by('-created_at')
+    if q:
+        trades = trades.filter(
+            Q(user__username__icontains=q) | Q(user__email__icontains=q) |
+            Q(from_currency__icontains=q) | Q(to_currency__icontains=q)
+        )
+
+    total_volume = trades.aggregate(total=Sum('from_amount'))['total'] or Decimal('0')
+    total_fees = trades.aggregate(total=Sum('fee'))['total'] or Decimal('0')
+
+    context = {
+        'trades': trades[:200],
+        'q': q,
+        'trades_count': trades.count(),
+        'total_volume': total_volume,
+        'total_fees': total_fees,
+    }
+    return render(request, 'custom_admin/live_trades_list.html', context)
+
+
 # ── Trade History (admin-curated profit/loss log) ─────────────────────────────
 
 @user_passes_test(is_admin)

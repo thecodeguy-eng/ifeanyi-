@@ -1,0 +1,108 @@
+{% extends 'custom_admin/admin_base.html' %}
+
+{% block title %}Live Trades - Admin{% endblock %}
+
+{% block admin_content %}
+<div class="mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-2">Live Trades</h2>
+    <p class="text-gray-400">Every Buy / Sell / Swap users make themselves on the Live Trading page</p>
+</div>
+
+<!-- Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-blue-500/20 p-3 rounded-lg">
+                <i class="fas fa-random text-2xl text-blue-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Trades</p>
+                <p class="text-2xl font-bold text-white">{{ trades_count }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-purple-500/20 p-3 rounded-lg">
+                <i class="fas fa-coins text-2xl text-purple-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Volume Traded</p>
+                <p class="text-2xl font-bold text-white">${{ total_volume|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="stat-card p-4 rounded-xl">
+        <div class="flex items-center space-x-3">
+            <div class="bg-green-500/20 p-3 rounded-lg">
+                <i class="fas fa-sack-dollar text-2xl text-green-400"></i>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs">Total Fees Collected</p>
+                <p class="text-2xl font-bold text-green-400">${{ total_fees|floatformat:2 }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search -->
+<div class="admin-card p-6 rounded-xl mb-6">
+    <form method="GET" class="flex flex-wrap gap-4">
+        <input type="text" name="q" value="{{ q }}" placeholder="Search by username, email, or currency..."
+               class="flex-1 min-w-[240px] bg-slate-800 border border-slate-600 rounded-lg px-4 py-2 text-white">
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded-lg text-white font-semibold">
+            <i class="fas fa-search mr-2"></i> Search
+        </button>
+        {% if q %}
+        <a href="{% url 'admin_live_trades_list' %}" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded-lg text-white font-semibold">Clear</a>
+        {% endif %}
+    </form>
+</div>
+
+<div class="admin-card rounded-xl overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-slate-800">
+                <tr>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">User</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Type</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">From</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">To</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Rate</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Fee</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                    <th class="px-6 py-4 text-left text-xs font-semibold text-gray-400 uppercase">Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-700">
+                {% for trade in trades %}
+                <tr class="hover:bg-slate-800/50">
+                    <td class="px-6 py-4">
+                        <a href="{% url 'admin_user_detail' trade.user.id %}" class="text-cyan-400 hover:underline">
+                            {{ trade.user.username }}
+                        </a>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-500/20 text-blue-400">{{ trade.get_trade_type_display }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-white">{{ trade.from_amount|floatformat:4 }} {{ trade.from_currency }}</td>
+                    <td class="px-6 py-4 text-white">{{ trade.to_amount|floatformat:4 }} {{ trade.to_currency }}</td>
+                    <td class="px-6 py-4 text-gray-400 text-sm">{{ trade.exchange_rate|floatformat:4 }}</td>
+                    <td class="px-6 py-4 text-gray-400">${{ trade.fee|floatformat:2 }}</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full {% if trade.status == 'COMPLETED' %}bg-green-500/20 text-green-400{% else %}bg-yellow-500/20 text-yellow-400{% endif %}">
+                            {{ trade.status }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-400 text-sm">{{ trade.created_at|date:"M d, Y H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-8 text-center text-gray-400">No live trades yet</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

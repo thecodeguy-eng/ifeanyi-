@@ -171,6 +171,11 @@
                         <span>Transactions</span>
                     </a>
                     
+                    <a href="{% url 'admin_live_trades_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'live-trades' in request.path %}active{% endif %}">
+                        <i class="fas fa-random w-5"></i>
+                        <span>Live Trades</span>
+                    </a>
+
                     <a href="{% url 'admin_trade_history_list' %}" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-300 {% if 'trade-history' in request.path %}active{% endif %}">
                         <i class="fas fa-chart-line w-5"></i>
                         <span>Trade History</span>
