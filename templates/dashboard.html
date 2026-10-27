@@ -46,12 +46,18 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
                     <div class="stat-card">
                         <div class="stat-icon" style="background:rgba(37,99,235,.12);"><i class="fas fa-wallet" style="color:#60a5fa;"></i></div>
                         <p class="text-xs mb-1" style="color:var(--text-muted);">Account Balance</p>
                         <p class="title-font text-xl" style="color:#fff;">${{ user.account_balance|floatformat:2 }}</p>
                         <p class="text-xs mt-1" style="color:var(--text-muted);">{{ user.preferred_currency }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:rgba(20,184,166,.12);"><i class="fas fa-user-tie" style="color:#2dd4bf;"></i></div>
+                        <p class="text-xs mb-1" style="color:var(--text-muted);">In Copy Trading</p>
+                        <p class="title-font text-xl" style="color:#2dd4bf;">${{ copy_trading_balance|floatformat:2 }}</p>
+                        <p class="text-xs mt-1" style="color:var(--text-muted);">Not lost - working for you</p>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="background:rgba(34,197,94,.12);"><i class="fas fa-chart-line" style="color:#4ade80;"></i></div>

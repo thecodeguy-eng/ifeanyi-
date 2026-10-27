@@ -458,12 +458,14 @@ def dashboard(request):
     recent_transactions = Transaction.objects.filter(user=user)[:10]
     active_bots = UserBotSubscription.objects.filter(user=user, is_active=True)
     active_copy_trades = CopyTradingSubscription.objects.filter(user=user, is_active=True)
-    
+    copy_trading_balance = sum((sub.amount_invested for sub in active_copy_trades), Decimal('0'))
+
     context = {
         'user': user,
         'recent_transactions': recent_transactions,
         'active_bots': active_bots,
         'active_copy_trades': active_copy_trades,
+        'copy_trading_balance': copy_trading_balance,
         'withdrawal_enabled': user.withdrawal_approved,
     }
     
@@ -625,7 +627,15 @@ def purchase_bot(request, plan_id):
 def copy_trading(request):
     """Copy trading page"""
     traders = CopyTrader.objects.filter(is_active=True)
-    context = {'traders': traders}
+    active_copy_trades = CopyTradingSubscription.objects.filter(
+        user=request.user, is_active=True
+    ).select_related('trader', 'plan')
+    copy_trading_balance = sum((sub.amount_invested for sub in active_copy_trades), Decimal('0'))
+    context = {
+        'traders': traders,
+        'active_copy_trades': active_copy_trades,
+        'copy_trading_balance': copy_trading_balance,
+    }
     return render(request, 'copy_trading.html', context)
 
 
