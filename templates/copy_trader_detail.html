@@ -182,7 +182,8 @@
                 <div id="alert-box" class="hidden mb-4 p-3 rounded-lg text-sm font-medium"></div>
 
                 <p style="font-size:.8rem;color:#9aa3b2;margin-bottom:1rem;line-height:1.5;">
-                    One click invests your <strong style="color:#fff;">deposited balance</strong> in {{ trader.name }}. No minimum, no manual amount entry.
+                    One click invests your <strong style="color:#fff;">deposited balance</strong> in {{ trader.name }}. No manual amount entry.
+                    {% if min_investment > 0 %}Minimum: <strong style="color:#fff;">${{ min_investment|floatformat:2 }}</strong>.{% endif %}
                 </p>
 
                 {% if copyable_amount < user.account_balance %}
@@ -197,6 +198,10 @@
                 {% if copyable_amount <= 0 %}
                 <a href="{% url 'deposit' %}" class="block text-center" style="width:100%;background:rgba(255,255,255,.08);color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;box-sizing:border-box;">
                     <i class="fas fa-wallet" style="margin-right:.4rem;"></i> Deposit Funds First
+                </a>
+                {% elif copyable_amount < min_investment %}
+                <a href="{% url 'deposit' %}" class="block text-center" style="width:100%;background:rgba(255,255,255,.08);color:#fff;font-weight:600;padding:.85rem;border-radius:12px;font-size:.875rem;box-sizing:border-box;">
+                    <i class="fas fa-wallet" style="margin-right:.4rem;"></i> Deposit at Least ${{ min_investment|floatformat:2 }} to Copy
                 </a>
                 {% else %}
                 <button type="button" id="auto-invest-btn" onclick="startAutoInvest()"

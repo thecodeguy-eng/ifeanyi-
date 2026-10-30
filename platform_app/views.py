@@ -688,6 +688,10 @@ def copy_trader_detail(request, trader_id):
     # correctly tightens back down after money gets spent too.
     copyable_amount = min(request.user.account_balance, request.user.total_deposit)
 
+    # The cheapest tier's price is the least anyone can start copying with.
+    cheapest_plan = plans.first()
+    min_investment = cheapest_plan.price if cheapest_plan else Decimal('0')
+
     if request.method == 'POST':
         if auto_invest:
             amount = copyable_amount
@@ -696,9 +700,15 @@ def copy_trader_detail(request, trader_id):
                     return JsonResponse({'success': False, 'message': 'Your balance includes profit, but copy trading can only use money you\'ve actually deposited. Please deposit funds first.'})
                 return JsonResponse({'success': False, 'message': 'Please deposit funds first.'})
 
+            if amount < min_investment:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Minimum investment to copy {trader.name} is ${min_investment:,.2f}. You have ${amount:,.2f} available - please deposit more.'
+                })
+
             # Use the richest tier the balance qualifies for, so bigger
             # balances still earn the lower commission rate of higher tiers.
-            plan = plans.filter(price__lte=amount).order_by('-price').first() or plans.first()
+            plan = plans.filter(price__lte=amount).order_by('-price').first()
 
             plan_label = _start_copy_trading(request.user, trader, plan, amount)
             messages.success(request, f'Successfully copying {trader.name}\'s trades!')
@@ -738,6 +748,7 @@ def copy_trader_detail(request, trader_id):
         'plans': plans,
         'auto_invest': auto_invest,
         'copyable_amount': copyable_amount,
+        'min_investment': min_investment,
     }
     return render(request, 'copy_trader_detail.html', context)
 
