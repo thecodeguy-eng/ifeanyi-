@@ -134,6 +134,24 @@ class MoneySafetyTests(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.account_balance, Decimal('19.91'))
 
+    @patch('platform_app.views.get_crypto_price', return_value=Decimal('75000'))
+    def test_negative_trade_cannot_mint_balance(self, _price):
+        # The exact exploit used in production: "buy" BTC with -$1,000,000
+        for bad in ('-1000000', '-1', '0', 'NaN'):
+            self.client.post(reverse('trading'), {
+                'trade_type': 'BUY', 'from_currency': 'USD', 'to_currency': 'BTC', 'from_amount': bad,
+            })
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.account_balance, Decimal('19.91'))
+
+    @patch('platform_app.views.get_crypto_price', return_value=Decimal('75000'))
+    def test_normal_trade_still_works(self, _price):
+        self.client.post(reverse('trading'), {
+            'trade_type': 'BUY', 'from_currency': 'USD', 'to_currency': 'BTC', 'from_amount': '10',
+        })
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.account_balance, Decimal('9.91'))
+
     def test_garbage_deposit_amount_does_not_crash(self):
         for bad in ('NaN', 'Infinity', 'abc', '-5', ''):
             r = self.client.post(reverse('deposit'), {'amount': bad})

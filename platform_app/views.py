@@ -37,6 +37,7 @@ USERNAME_RE = re.compile(r'[A-Za-z0-9_.-]{3,30}')
 # Letters (any language) joined by single spaces, apostrophes, dots or dashes: "Mary-Jane", "O'Brien", "José"
 NAME_RE = re.compile(r"(?=.{1,100}$)[^\W\d_]+(?:[ '.-][^\W\d_]+)*\.?")
 MAX_CHAT_MESSAGE_LENGTH = 2000
+TRADABLE_CURRENCIES = {'USD', 'BTC', 'ETH', 'SOL', 'USDT', 'BNB', 'XRP', 'ADA', 'DOGE', 'AVAX', 'LTC', 'MATIC'}
 
 
 
@@ -564,11 +565,22 @@ def portfolio(request):
 def trading(request):
     """Trading page"""
     if request.method == 'POST':
-        trade_type = request.POST.get('trade_type')
-        from_currency = request.POST.get('from_currency')
-        to_currency = request.POST.get('to_currency')
-        from_amount = Decimal(request.POST.get('from_amount'))
-        
+        trade_type = request.POST.get('trade_type', '').upper()
+        from_currency = request.POST.get('from_currency', '').upper()
+        to_currency = request.POST.get('to_currency', '').upper()
+        # A negative amount here used to *add* to the balance (balance -= -500000),
+        # which is how attackers minted fake six/seven-figure balances.
+        from_amount = _parse_amount(request.POST.get('from_amount'), places=Decimal('0.00000001'))
+
+        if from_amount is None:
+            messages.error(request, 'Please enter a valid amount.')
+            return redirect('trading')
+
+        if trade_type not in ('BUY', 'SELL') or from_currency == to_currency or \
+                from_currency not in TRADABLE_CURRENCIES or to_currency not in TRADABLE_CURRENCIES:
+            messages.error(request, 'Invalid trade.')
+            return redirect('trading')
+
         if from_currency == 'USD':
             to_price = get_crypto_price(to_currency)
             to_amount = from_amount / to_price
@@ -589,63 +601,67 @@ def trading(request):
         fee = (from_amount * fee_percentage) / 100
         to_amount = to_amount * (1 - (fee_percentage / 100))
         
-        if from_currency == 'USD':
-            if request.user.account_balance < from_amount:
-                messages.error(request, 'Insufficient balance')
-                return redirect('trading')
-        else:
-            portfolio_item = Portfolio.objects.filter(
-                user=request.user, cryptocurrency=from_currency
-            ).first()
-            if not portfolio_item or portfolio_item.amount < from_amount:
-                messages.error(request, 'Insufficient cryptocurrency balance')
-                return redirect('trading')
-        
-        trade = Trade.objects.create(
-            user=request.user,
-            trade_type=trade_type.upper(),
-            from_currency=from_currency,
-            to_currency=to_currency,
-            from_amount=from_amount,
-            to_amount=to_amount,
-            exchange_rate=exchange_rate,
-            fee=fee,
-            status='COMPLETED'
-        )
-        
-        if from_currency == 'USD':
-            request.user.account_balance -= from_amount
-            request.user.save()
-        else:
-            portfolio_item.amount -= from_amount
-            if portfolio_item.amount <= 0:
-                portfolio_item.delete()
+        # Lock the user (and their holdings) so parallel trades can't spend the same balance twice
+        with db_transaction.atomic():
+            request.user = User.objects.select_for_update().get(pk=request.user.pk)
+
+            if from_currency == 'USD':
+                if request.user.account_balance < from_amount:
+                    messages.error(request, 'Insufficient balance')
+                    return redirect('trading')
             else:
-                portfolio_item.save()
-        
-        if to_currency == 'USD':
-            request.user.account_balance += to_amount
-            request.user.save()
-        else:
-            current_price = get_crypto_price(to_currency)
-            portfolio_item, created = Portfolio.objects.get_or_create(
+                portfolio_item = Portfolio.objects.select_for_update().filter(
+                    user=request.user, cryptocurrency=from_currency
+                ).first()
+                if not portfolio_item or portfolio_item.amount < from_amount:
+                    messages.error(request, 'Insufficient cryptocurrency balance')
+                    return redirect('trading')
+            
+            trade = Trade.objects.create(
                 user=request.user,
-                cryptocurrency=to_currency,
-                defaults={
-                    'amount': to_amount,
-                    'average_buy_price': current_price,
-                    'current_value': to_amount * current_price
-                }
+                trade_type=trade_type.upper(),
+                from_currency=from_currency,
+                to_currency=to_currency,
+                from_amount=from_amount,
+                to_amount=to_amount,
+                exchange_rate=exchange_rate,
+                fee=fee,
+                status='COMPLETED'
             )
-            if not created:
-                total_value = (portfolio_item.amount * portfolio_item.average_buy_price) + (to_amount * current_price)
-                portfolio_item.amount += to_amount
-                portfolio_item.average_buy_price = total_value / portfolio_item.amount
-                portfolio_item.current_value = portfolio_item.amount * current_price
-                portfolio_item.save()
-        
-        request.user.trading_count += 1
-        request.user.save()
+            
+            if from_currency == 'USD':
+                request.user.account_balance -= from_amount
+                request.user.save()
+            else:
+                portfolio_item.amount -= from_amount
+                if portfolio_item.amount <= 0:
+                    portfolio_item.delete()
+                else:
+                    portfolio_item.save()
+            
+            if to_currency == 'USD':
+                request.user.account_balance += to_amount
+                request.user.save()
+            else:
+                current_price = get_crypto_price(to_currency)
+                portfolio_item, created = Portfolio.objects.get_or_create(
+                    user=request.user,
+                    cryptocurrency=to_currency,
+                    defaults={
+                        'amount': to_amount,
+                        'average_buy_price': current_price,
+                        'current_value': to_amount * current_price
+                    }
+                )
+                if not created:
+                    total_value = (portfolio_item.amount * portfolio_item.average_buy_price) + (to_amount * current_price)
+                    portfolio_item.amount += to_amount
+                    portfolio_item.average_buy_price = total_value / portfolio_item.amount
+                    portfolio_item.current_value = portfolio_item.amount * current_price
+                    portfolio_item.save()
+            
+            request.user.trading_count += 1
+            request.user.save()
         
         messages.success(request, f'Trade executed successfully! Received {to_amount:.8f} {to_currency}')
         return redirect('portfolio')
@@ -705,15 +721,16 @@ def copy_trading(request):
     return render(request, 'copy_trading.html', context)
 
 
-def _parse_amount(raw):
+def _parse_amount(raw, places=Decimal('0.01')):
     """Positive, finite money amount from user input, or None ("NaN", "1e999", "-5" all rejected)."""
     try:
         amount = Decimal(str(raw).strip())
     except (InvalidOperation, ValueError, TypeError):
         return None
-    if not amount.is_finite() or amount <= 0 or amount > Decimal('1000000000'):
+    if not amount.is_finite() or amount > Decimal('1000000000'):
         return None
-    return amount.quantize(Decimal('0.01'))
+    amount = amount.quantize(places)
+    return amount if amount > 0 else None
 
 
 def _start_copy_trading(user, trader, plan, amount):
