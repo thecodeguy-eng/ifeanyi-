@@ -6,7 +6,7 @@ from decimal import Decimal
 import uuid
 from django.utils import timezone
 from datetime import timedelta
-import random
+import secrets
 
 from cloudinary.models import CloudinaryField
 
@@ -477,7 +477,7 @@ class PasswordResetCode(models.Model):
     
     @staticmethod
     def generate_code():
-        return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+        return f"{secrets.randbelow(1_000_000):06d}"
     
     def save(self, *args, **kwargs):
         if not self.pk:

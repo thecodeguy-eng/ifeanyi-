@@ -962,7 +962,7 @@
         </div>
         <div id="chat-body"></div>
         <div class="chat-footer">
-            <input type="text" id="chat-input" placeholder="Type your message…"
+            <input type="text" id="chat-input" placeholder="Type your message…" maxlength="2000"
                    onkeypress="if(event.key==='Enter')sendMessage()" autocomplete="off">
             <button onclick="sendMessage()"
                     style="padding:.55rem 1rem;border-radius:8px;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:.875rem;">
@@ -1080,6 +1080,9 @@
             displayMessages(d.messages);
         } catch(e) { console.error(e); }
     }
+    function escapeHtml(s) {
+        return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
     function displayMessages(messages) {
         const body = document.getElementById('chat-body');
         if (!messages.length) {
@@ -1093,8 +1096,8 @@
             const time   = new Date(msg.created_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
             const isUser = msg.sender_type === 'USER';
             return `<div class="chat-message ${isUser?'user':'support'}">
-                ${!isUser ? `<div style="font-size:.72rem;color:#9ca3af;margin-bottom:2px;font-weight:500;">${msg.sender_name}</div>` : ''}
-                <div class="message-bubble">${msg.message}</div>
+                ${!isUser ? `<div style="font-size:.72rem;color:#9ca3af;margin-bottom:2px;font-weight:500;">${escapeHtml(msg.sender_name)}</div>` : ''}
+                <div class="message-bubble">${escapeHtml(msg.message)}</div>
                 <div style="font-size:.7rem;color:#9ca3af;margin-top:2px;">${time}</div>
             </div>`;
         }).join('');
@@ -1112,6 +1115,7 @@
             });
             const d = await r.json();
             if (d.success) { input.value = ''; displayMessages(d.messages); }
+            else if (d.error) { alert(d.error); }
         } catch(e) { console.error(e); }
     }
     async function clearChat() {

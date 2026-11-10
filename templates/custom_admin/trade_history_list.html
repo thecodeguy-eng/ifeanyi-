@@ -174,15 +174,20 @@
     const hiddenId = document.getElementById('user-search-id');
     const dropdown = document.getElementById('user-search-dropdown');
 
+    // Usernames/emails are user-supplied - never put them into innerHTML raw.
+    function esc(s) {
+        return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+
     function renderOptions(list) {
         if (!list.length) {
             dropdown.innerHTML = '<div class="px-4 py-3 text-gray-500 text-sm">No users match</div>';
             return;
         }
         dropdown.innerHTML = list.map(u => `
-            <div class="px-4 py-2.5 hover:bg-slate-700 cursor-pointer text-sm user-option" data-id="${u.id}" data-label="${u.username}">
-                <span class="text-white font-medium">${u.username}</span>
-                <span class="text-gray-400 text-xs block">${u.email}</span>
+            <div class="px-4 py-2.5 hover:bg-slate-700 cursor-pointer text-sm user-option" data-id="${esc(u.id)}" data-label="${esc(u.username)}">
+                <span class="text-white font-medium">${esc(u.username)}</span>
+                <span class="text-gray-400 text-xs block">${esc(u.email)}</span>
             </div>
         `).join('');
 

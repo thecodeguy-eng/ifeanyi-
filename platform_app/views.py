@@ -5,17 +5,23 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.cache import cache
+from django.db import transaction as db_transaction
 from django.db.models import Sum, Q
 from django.urls import reverse
 from django.templatetags.static import static
-from decimal import Decimal
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from decimal import Decimal, InvalidOperation
 import json
+import re
 import requests
 from datetime import datetime, timedelta
 import logging
 from django.utils import timezone
 from .email_service import send_password_reset_code, send_welcome_email, send_deposit_reminder, send_admin_new_registration_email, send_admin_support_message_email
 from .geoip import get_country_from_ip, get_client_ip
+from .security import rate_limited, reset_rate_limit
 
 from .models import (
     User, WalletAddress, TradingBotPlan, UserBotSubscription,
@@ -26,6 +32,11 @@ from .models import (
 
 # Set up logging
 logger = logging.getLogger(__name__)
+
+USERNAME_RE = re.compile(r'[A-Za-z0-9_.-]{3,30}')
+# Letters (any language) joined by single spaces, apostrophes, dots or dashes: "Mary-Jane", "O'Brien", "José"
+NAME_RE = re.compile(r"(?=.{1,100}$)[^\W\d_]+(?:[ '.-][^\W\d_]+)*\.?")
+MAX_CHAT_MESSAGE_LENGTH = 2000
 
 
 
@@ -41,6 +52,11 @@ def forgot_password(request):
     """Step 1: Request password reset - send code to email"""
     if request.method == 'POST':
         email = request.POST.get('email', '').strip().lower()  # normalize email
+
+        if rate_limited(f'reset-request-ip:{get_client_ip(request)}', limit=10, window_seconds=3600) or \
+                rate_limited(f'reset-request-email:{email}', limit=3, window_seconds=3600):
+            messages.error(request, 'Too many reset requests. Please try again in an hour.')
+            return render(request, 'forgot_password.html')
 
         try:
             user = User.objects.get(email__iexact=email)
@@ -101,6 +117,14 @@ def verify_reset_code(request):
     if request.method == 'POST':
         code = request.POST.get('code', '').strip()  # strip any accidental whitespace
 
+        # A 6-digit code is only safe if guesses are capped - otherwise all
+        # 1,000,000 can be tried. After 5 misses, kill every outstanding code.
+        if rate_limited(f'reset-verify:{email.lower()}', limit=5, window_seconds=900):
+            PasswordResetCode.objects.filter(email__iexact=email, is_used=False).update(is_used=True)
+            request.session.pop('reset_email', None)
+            messages.error(request, 'Too many incorrect codes. Please request a new code in 15 minutes.')
+            return redirect('forgot_password')
+
         try:
             # Find the reset code
             reset_code = PasswordResetCode.objects.filter(
@@ -111,6 +135,7 @@ def verify_reset_code(request):
             
             # Check if code is valid
             if reset_code.is_valid():
+                reset_rate_limit(f'reset-verify:{email.lower()}')
                 # Store code in session for next step
                 request.session['reset_code_id'] = reset_code.id
                 messages.success(request, 'Code verified! Please enter your new password.')
@@ -196,7 +221,11 @@ def resend_reset_code(request):
     email = request.session.get('reset_email')
     if not email:
         return redirect('forgot_password')
-    
+
+    if rate_limited(f'reset-request-email:{email.lower()}', limit=3, window_seconds=3600):
+        messages.error(request, 'Too many reset requests. Please try again in an hour.')
+        return redirect('verify_reset_code')
+
     try:
         user = User.objects.get(email=email)
         
@@ -334,23 +363,55 @@ def home(request):
 def register(request):
     """User registration with welcome email"""
     if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        legal_first_name = request.POST.get('legal_first_name')
-        legal_last_name = request.POST.get('legal_last_name')
+        username = request.POST.get('username', '').strip()
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        legal_first_name = request.POST.get('legal_first_name', '').strip()
+        legal_last_name = request.POST.get('legal_last_name', '').strip()
         preferred_currency = request.POST.get('preferred_currency', 'USD')
-        
-        if User.objects.filter(username=username).exists():
+        ip_address = get_client_ip(request)
+
+        # Stops scripted mass sign-ups (which also flood the admin inbox)
+        if rate_limited(f'register:{ip_address}', limit=5, window_seconds=3600):
+            messages.error(request, 'Too many sign-up attempts. Please try again later.')
+            return redirect('register')
+
+        # Usernames show up across the admin pages and emails, so keep them to
+        # plain characters - this also shuts out HTML/script payloads.
+        if not USERNAME_RE.fullmatch(username):
+            messages.error(request, 'Username must be 3-30 characters: letters, numbers, dots, dashes or underscores.')
+            return redirect('register')
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            messages.error(request, 'Please enter a valid email address.')
+            return redirect('register')
+
+        if not NAME_RE.fullmatch(legal_first_name) or not NAME_RE.fullmatch(legal_last_name):
+            messages.error(request, 'Please enter your real first and last name.')
+            return redirect('register')
+
+        if preferred_currency not in dict(User.CURRENCY_CHOICES):
+            preferred_currency = 'USD'
+
+        try:
+            validate_password(password, user=User(username=username, email=email,
+                                                  legal_first_name=legal_first_name,
+                                                  legal_last_name=legal_last_name))
+        except ValidationError as e:
+            messages.error(request, ' '.join(e.messages))
+            return redirect('register')
+
+        if User.objects.filter(username__iexact=username).exists():
             messages.error(request, 'Username already exists')
             return redirect('register')
-        
-        if User.objects.filter(email=email).exists():
+
+        if User.objects.filter(email__iexact=email).exists():
             messages.error(request, 'Email already exists')
             return redirect('register')
-        
+
         # Resolve the registrant's country from their IP (best-effort, never blocks signup)
-        ip_address = get_client_ip(request)
         country = get_country_from_ip(ip_address)
 
         user = User.objects.create_user(
@@ -425,21 +486,26 @@ def register(request):
 def user_login(request):
     """User login"""
     if request.method == 'POST':
-        email = request.POST.get('email')
-        password = request.POST.get('password')
-        
-        try:
-            user_obj = User.objects.get(email=email)
-            user = authenticate(request, username=user_obj.username, password=password)
-            
-            if user is not None:
-                login(request, user)
-                return redirect('dashboard')
-            else:
-                messages.error(request, 'Invalid credentials')
-        except User.DoesNotExist:
-            messages.error(request, 'User not found')
-    
+        email = request.POST.get('email', '').strip()
+        password = request.POST.get('password', '')
+        ip_address = get_client_ip(request)
+
+        # Brute-force protection: cap attempts per IP and per targeted account
+        if rate_limited(f'login-ip:{ip_address}', limit=20, window_seconds=900) or \
+                rate_limited(f'login-email:{email.lower()}', limit=8, window_seconds=900):
+            messages.error(request, 'Too many login attempts. Please wait 15 minutes and try again.')
+            return render(request, 'login.html')
+
+        user_obj = User.objects.filter(email__iexact=email).first()
+        user = authenticate(request, username=user_obj.username, password=password) if user_obj else None
+
+        if user is not None:
+            reset_rate_limit(f'login-email:{email.lower()}')
+            login(request, user)
+            return redirect('dashboard')
+        # Same message either way so the form can't be used to discover which emails have accounts
+        messages.error(request, 'Invalid email or password')
+
     return render(request, 'login.html')
 
 
@@ -639,6 +705,17 @@ def copy_trading(request):
     return render(request, 'copy_trading.html', context)
 
 
+def _parse_amount(raw):
+    """Positive, finite money amount from user input, or None ("NaN", "1e999", "-5" all rejected)."""
+    try:
+        amount = Decimal(str(raw).strip())
+    except (InvalidOperation, ValueError, TypeError):
+        return None
+    if not amount.is_finite() or amount <= 0 or amount > Decimal('1000000000'):
+        return None
+    return amount.quantize(Decimal('0.01'))
+
+
 def _start_copy_trading(user, trader, plan, amount):
     """Shared logic: deduct balance, create subscription + transaction record."""
     commission_rate = plan.commission_percentage if plan else trader.commission_percentage
@@ -693,55 +770,61 @@ def copy_trader_detail(request, trader_id):
     min_investment = cheapest_plan.price if cheapest_plan else Decimal('0')
 
     if request.method == 'POST':
-        if auto_invest:
-            amount = copyable_amount
-            if amount <= 0:
-                if request.user.account_balance > 0:
-                    return JsonResponse({'success': False, 'message': 'Your balance includes profit, but copy trading can only use money you\'ve actually deposited. Please deposit funds first.'})
-                return JsonResponse({'success': False, 'message': 'Please deposit funds first.'})
+        # Lock the user's row for the whole check-and-deduct, so firing many
+        # requests at once can't make each one pass the balance check and
+        # spend the same money several times over.
+        with db_transaction.atomic():
+            request.user = User.objects.select_for_update().get(pk=request.user.pk)
+            copyable_amount = min(request.user.account_balance, request.user.total_deposit)
 
-            if amount < min_investment:
+            if auto_invest:
+                amount = copyable_amount
+                if amount <= 0:
+                    if request.user.account_balance > 0:
+                        return JsonResponse({'success': False, 'message': 'Your balance includes profit, but copy trading can only use money you\'ve actually deposited. Please deposit funds first.'})
+                    return JsonResponse({'success': False, 'message': 'Please deposit funds first.'})
+
+                if amount < min_investment:
+                    return JsonResponse({
+                        'success': False,
+                        'message': f'Minimum investment to copy {trader.name} is ${min_investment:,.2f}. You have ${amount:,.2f} available - please deposit more.'
+                    })
+
+                # Use the richest tier the balance qualifies for, so bigger
+                # balances still earn the lower commission rate of higher tiers.
+                plan = plans.filter(price__lte=amount).order_by('-price').first()
+
+                plan_label = _start_copy_trading(request.user, trader, plan, amount)
+                messages.success(request, f'Successfully copying {trader.name}\'s trades!')
                 return JsonResponse({
-                    'success': False,
-                    'message': f'Minimum investment to copy {trader.name} is ${min_investment:,.2f}. You have ${amount:,.2f} available - please deposit more.'
+                    'success': True,
+                    'message': f'Successfully copying {trader.name}\'s trades with ${amount:,.2f}!'
                 })
 
-            # Use the richest tier the balance qualifies for, so bigger
-            # balances still earn the lower commission rate of higher tiers.
-            plan = plans.filter(price__lte=amount).order_by('-price').first()
+            plan_id = request.POST.get('plan_id')
+            plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader=trader, is_active=True)
+
+            amount = _parse_amount(request.POST.get('amount'))
+            if amount is None:
+                return JsonResponse({'success': False, 'message': 'Invalid amount.'})
+
+            if amount < plan.price:
+                return JsonResponse({
+                    'success': False,
+                    'message': f'Minimum investment for the {plan.display_name} plan is ${plan.price:,.2f}.'
+                })
+
+            if amount > copyable_amount:
+                if copyable_amount < request.user.account_balance:
+                    return JsonResponse({'success': False, 'message': f'Copy trading can only use money you\'ve deposited (${copyable_amount:,.2f} available) - not profit sitting in your balance. Deposit more to invest this amount.'})
+                return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
 
             plan_label = _start_copy_trading(request.user, trader, plan, amount)
-            messages.success(request, f'Successfully copying {trader.name}\'s trades!')
+            messages.success(request, f'Successfully copying {trader.name}\'s trades on the {plan_label} plan!')
             return JsonResponse({
                 'success': True,
-                'message': f'Successfully copying {trader.name}\'s trades with ${amount:,.2f}!'
+                'message': f'Successfully copying {trader.name}\'s trades on the {plan_label} plan! Investment: ${amount:,.2f}'
             })
-
-        plan_id = request.POST.get('plan_id')
-        plan = get_object_or_404(CopyTraderPlan, id=plan_id, trader=trader, is_active=True)
-
-        try:
-            amount = Decimal(request.POST.get('amount', '0'))
-        except Exception:
-            return JsonResponse({'success': False, 'message': 'Invalid amount.'})
-
-        if amount < plan.price:
-            return JsonResponse({
-                'success': False,
-                'message': f'Minimum investment for the {plan.display_name} plan is ${plan.price:,.2f}.'
-            })
-
-        if amount > copyable_amount:
-            if copyable_amount < request.user.account_balance:
-                return JsonResponse({'success': False, 'message': f'Copy trading can only use money you\'ve deposited (${copyable_amount:,.2f} available) - not profit sitting in your balance. Deposit more to invest this amount.'})
-            return JsonResponse({'success': False, 'message': 'Insufficient account balance. Please deposit funds first.'})
-
-        plan_label = _start_copy_trading(request.user, trader, plan, amount)
-        messages.success(request, f'Successfully copying {trader.name}\'s trades on the {plan_label} plan!')
-        return JsonResponse({
-            'success': True,
-            'message': f'Successfully copying {trader.name}\'s trades on the {plan_label} plan! Investment: ${amount:,.2f}'
-        })
 
     context = {
         'trader': trader,
@@ -778,9 +861,8 @@ def investment_plan_detail(request, plan_id):
     plan = get_object_or_404(InvestmentPlan, id=plan_id, is_active=True)
 
     if request.method == 'POST':
-        try:
-            amount = Decimal(request.POST.get('amount', '0'))
-        except Exception:
+        amount = _parse_amount(request.POST.get('amount'))
+        if amount is None:
             return JsonResponse({'success': False, 'message': 'Invalid amount.'})
 
         # Validate minimum
@@ -797,42 +879,46 @@ def investment_plan_detail(request, plan_id):
                 'message': f'Maximum investment for this plan is ${plan.maximum_amount:,.2f}.'
             })
 
-        # Check balance
-        if request.user.account_balance < amount:
-            return JsonResponse({
-                'success': False,
-                'message': 'Insufficient account balance. Please deposit funds first.'
-            })
+        # Lock the user's row so parallel requests can't double-spend the balance
+        with db_transaction.atomic():
+            request.user = User.objects.select_for_update().get(pk=request.user.pk)
 
-        # Deduct balance
-        request.user.account_balance -= amount
-        request.user.save()
+            # Check balance
+            if request.user.account_balance < amount:
+                return JsonResponse({
+                    'success': False,
+                    'message': 'Insufficient account balance. Please deposit funds first.'
+                })
 
-        # Calculate returns
-        expected_return = (amount * plan.maturity_multiplier).quantize(Decimal('0.01'))
-        profit_amount   = (expected_return - amount).quantize(Decimal('0.01'))
-        end_date        = timezone.now() + timedelta(days=plan.duration_days)
+            # Deduct balance
+            request.user.account_balance -= amount
+            request.user.save()
 
-        # Create investment record
-        investment = UserInvestment.objects.create(
-            user=request.user,
-            plan=plan,
-            amount_invested=amount,
-            expected_return=expected_return,
-            profit_amount=profit_amount,
-            end_date=end_date,
-            status='ACTIVE',
-        )
+            # Calculate returns
+            expected_return = (amount * plan.maturity_multiplier).quantize(Decimal('0.01'))
+            profit_amount   = (expected_return - amount).quantize(Decimal('0.01'))
+            end_date        = timezone.now() + timedelta(days=plan.duration_days)
 
-        # Record transaction
-        Transaction.objects.create(
-            user=request.user,
-            transaction_type='INVESTMENT',
-            amount=amount,
-            currency=request.user.preferred_currency,
-            status='COMPLETED',
-            description=f'Investment in {plan.name} plan (#{investment.id})',
-        )
+            # Create investment record
+            investment = UserInvestment.objects.create(
+                user=request.user,
+                plan=plan,
+                amount_invested=amount,
+                expected_return=expected_return,
+                profit_amount=profit_amount,
+                end_date=end_date,
+                status='ACTIVE',
+            )
+
+            # Record transaction
+            Transaction.objects.create(
+                user=request.user,
+                transaction_type='INVESTMENT',
+                amount=amount,
+                currency=request.user.preferred_currency,
+                status='COMPLETED',
+                description=f'Investment in {plan.name} plan (#{investment.id})',
+            )
 
         logger.info(f"User {request.user.username} invested ${amount} in plan {plan.name}")
 
@@ -885,9 +971,9 @@ def my_investments(request):
 def deposit(request):
     """Deposit initiation"""
     if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount'))
+        amount = _parse_amount(request.POST.get('amount'))
 
-        if amount <= 0:
+        if amount is None:
             messages.error(request, 'Please enter a valid deposit amount.')
             return redirect('deposit')
 
@@ -1014,10 +1100,18 @@ def withdrawal(request):
         return redirect('dashboard')
     
     if request.method == 'POST':
-        amount = Decimal(request.POST.get('amount'))
-        crypto_currency = request.POST.get('cryptocurrency')
-        wallet_address = request.POST.get('wallet_address')
-        
+        amount = _parse_amount(request.POST.get('amount'))
+        crypto_currency = request.POST.get('cryptocurrency', '').strip()[:10]
+        wallet_address = request.POST.get('wallet_address', '').strip()[:200]
+
+        if amount is None:
+            messages.error(request, 'Please enter a valid withdrawal amount.')
+            return redirect('withdrawal')
+
+        if not wallet_address:
+            messages.error(request, 'Please enter your wallet address.')
+            return redirect('withdrawal')
+
         settings = PlatformSettings.objects.first()
         min_withdrawal = settings.minimum_withdrawal if settings else Decimal('50')
         
@@ -1142,7 +1236,13 @@ def send_support_message(request):
             
             if not message_text:
                 return JsonResponse({'error': 'Message cannot be empty'}, status=400)
-            
+
+            if len(message_text) > MAX_CHAT_MESSAGE_LENGTH:
+                return JsonResponse({'error': f'Message is too long (max {MAX_CHAT_MESSAGE_LENGTH} characters).'}, status=400)
+
+            if rate_limited(f'chat:{request.user.id}', limit=15, window_seconds=300):
+                return JsonResponse({'error': 'You are sending messages too quickly. Please wait a few minutes.'}, status=429)
+
             # Get or create active chat
             chat, created = SupportChat.objects.get_or_create(
                 user=request.user,
@@ -1158,12 +1258,14 @@ def send_support_message(request):
                 is_read=False
             )
 
-            # Notify the admin inbox so a real person can jump in
-            try:
-                chat_url = request.build_absolute_uri(reverse('admin_chat_detail', args=[chat.id]))
-                send_admin_support_message_email(request.user.username, message_text[:300], chat_url=chat_url)
-            except Exception as e:
-                logger.error(f"Failed to send support message admin notification: {e}")
+            # Notify the admin inbox so a real person can jump in - at most once
+            # per chat every 10 minutes, so a chatty (or hostile) user can't flood it
+            if not rate_limited(f'chat-admin-email:{chat.id}', limit=1, window_seconds=600):
+                try:
+                    chat_url = request.build_absolute_uri(reverse('admin_chat_detail', args=[chat.id]))
+                    send_admin_support_message_email(request.user.username, message_text[:300], chat_url=chat_url)
+                except Exception as e:
+                    logger.error(f"Failed to send support message admin notification: {e}")
 
             # Greet once per chat - after that, a real agent takes over
             if not chat.messages.filter(sender_type='SUPPORT').exists():
@@ -1187,7 +1289,7 @@ def send_support_message(request):
             
         except Exception as e:
             logger.error(f"Error sending support message: {e}")
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 
@@ -1219,7 +1321,7 @@ def get_chat_messages(request):
         
     except Exception as e:
         logger.error(f"Error getting chat messages: {e}")
-        return JsonResponse({'error': str(e)}, status=500)
+        return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
 
 
 @login_required
@@ -1260,7 +1362,7 @@ def clear_support_chat(request):
             
         except Exception as e:
             logger.error(f"Error clearing chat: {e}")
-            return JsonResponse({'error': str(e)}, status=500)
+            return JsonResponse({'error': 'Something went wrong. Please try again.'}, status=500)
     
     return JsonResponse({'error': 'Invalid request method'}, status=405)
 

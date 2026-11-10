@@ -1,6 +1,7 @@
 # platform_app/email_service.py
 
 import requests
+from html import escape
 from django.conf import settings
 from django.utils import timezone
 import logging
@@ -182,7 +183,7 @@ class BrevoEmailService:
                 Password Reset Request
             </h2>
             <p style="color:{b['text_muted']}; font-size:15px; line-height:1.6; margin:0 0 24px 0; text-align:center;">
-                Hello <strong style="color:{b['text_main']};">{user_name}</strong>,
+                Hello <strong style="color:{b['text_main']};">{escape(user_name)}</strong>,
                 we received a request to reset your password. Use the code below - it expires in
                 <strong style="color:{b['accent']};">15 minutes</strong>.
             </p>
@@ -237,7 +238,7 @@ class BrevoEmailService:
 
         body_html = f"""
             <h2 style="color:{b['text_main']}; margin:0 0 14px 0; font-size:22px; text-align:center;">
-                Welcome aboard, {user_name}!
+                Welcome aboard, {escape(user_name)}!
             </h2>
             <p style="color:{b['text_muted']}; font-size:15px; line-height:1.6; margin:0 0 26px 0; text-align:center;">
                 Your Mirrorwavetrades account is ready. You now have access to live markets,
@@ -256,7 +257,7 @@ class BrevoEmailService:
             </table>
         """
 
-        return self.send_email(user_email, user_name, subject, _email_shell(f"Welcome to Mirrorwavetrades, {user_name}", body_html, logo_url))
+        return self.send_email(user_email, user_name, subject, _email_shell(f"Welcome to Mirrorwavetrades, {escape(user_name)}", body_html, logo_url))
 
     def send_deposit_reminder_email(self, user_email, user_name, deposit_url=None, logo_url=None):
         """Friendly nudge to make a first deposit, sent shortly after signup."""
@@ -266,7 +267,7 @@ class BrevoEmailService:
 
         body_html = f"""
             <h2 style="color:{b['text_main']}; margin:0 0 14px 0; font-size:22px; text-align:center;">
-                Hi {user_name}, ready to make your first move?
+                Hi {escape(user_name)}, ready to make your first move?
             </h2>
             <p style="color:{b['text_muted']}; font-size:15px; line-height:1.6; margin:0 0 8px 0; text-align:center;">
                 Your account is set up, but it's still waiting for its first deposit.
@@ -290,6 +291,7 @@ class BrevoEmailService:
 
         def row(label, value, bold=False):
             weight = 'bold' if bold else 'normal'
+            value = escape(str(value))
             return f"""
             <tr>
                 <td style="padding:10px 0; border-bottom:1px solid {b['border']}; color:{b['text_muted']}; font-size:13px; width:130px;">{label}</td>
@@ -324,7 +326,7 @@ class BrevoEmailService:
             {cta_html}
         """
 
-        return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New registration: {username}", body_html, logo_url))
+        return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New registration: {escape(username)}", body_html, logo_url))
 
     def send_admin_support_message_email(self, username, message_preview, chat_url=None, logo_url=None):
         """Notify the admin inbox when a client sends a support chat message."""
@@ -351,15 +353,15 @@ class BrevoEmailService:
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
                 <tr>
                     <td bgcolor="{b['card_alt']}" style="border-radius:10px; padding:16px 18px; border-left:3px solid {b['accent']};">
-                        <p style="color:{b['text_main']}; margin:0 0 6px 0; font-size:14px; font-weight:bold;">{username}</p>
-                        <p style="color:{b['text_muted']}; margin:0; font-size:14px; line-height:1.5;">{message_preview}</p>
+                        <p style="color:{b['text_main']}; margin:0 0 6px 0; font-size:14px; font-weight:bold;">{escape(username)}</p>
+                        <p style="color:{b['text_muted']}; margin:0; font-size:14px; line-height:1.5;">{escape(message_preview)}</p>
                     </td>
                 </tr>
             </table>
             {cta_html}
         """
 
-        return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New support message from {username}", body_html, logo_url))
+        return self.send_email(self.admin_email, 'Admin', subject, _email_shell(f"New support message from {escape(username)}", body_html, logo_url))
 
 
 # Convenience functions for easy import

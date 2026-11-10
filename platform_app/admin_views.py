@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib import messages
 from django.http import JsonResponse
+from django.db import transaction as db_transaction
 from django.db.models import Sum, Count, Q, Avg
 from django.utils import timezone
 from datetime import timedelta
@@ -373,25 +374,42 @@ def admin_transaction_action(request, transaction_id):
         action = request.POST.get('action')
         
         if action == 'approve' and transaction.status == 'PENDING':
-            transaction.status = 'APPROVED'
-            user = transaction.user
-            
-            if transaction.transaction_type == 'DEPOSIT':
-                user.account_balance += transaction.amount
-                user.total_deposit += transaction.amount
-                user.save()
-            elif transaction.transaction_type == 'WITHDRAWAL':
-                if user.account_balance >= transaction.amount:
+            with db_transaction.atomic():
+                # Re-read both rows under lock: a double-clicked Approve must
+                # not credit a deposit twice, and the balance must be current.
+                transaction = Transaction.objects.select_for_update().get(pk=transaction.pk)
+                if transaction.status != 'PENDING':
+                    messages.error(request, 'This transaction was already processed.')
+                    return redirect('admin_transactions_list')
+                user = User.objects.select_for_update().get(pk=transaction.user_id)
+
+                if transaction.transaction_type == 'WITHDRAWAL' and user.account_balance < transaction.amount:
+                    # Previously this still got marked APPROVED (without deducting
+                    # anything), which reads as "go ahead and pay out".
+                    messages.error(
+                        request,
+                        f'Cannot approve: {user.username} only has ${user.account_balance:,.2f}, '
+                        f'less than the ${transaction.amount:,.2f} requested. Reject it instead.'
+                    )
+                    return redirect('admin_transactions_list')
+
+                transaction.status = 'APPROVED'
+
+                if transaction.transaction_type == 'DEPOSIT':
+                    user.account_balance += transaction.amount
+                    user.total_deposit += transaction.amount
+                    user.save()
+                elif transaction.transaction_type == 'WITHDRAWAL':
                     user.account_balance -= transaction.amount
                     user.total_withdrawal += transaction.amount
                     user.save()
-            elif transaction.transaction_type == 'BOT_PURCHASE' and transaction.bot_plan:
-                UserBotSubscription.objects.get_or_create(
-                    user=user, plan=transaction.bot_plan, is_active=True
-                )
+                elif transaction.transaction_type == 'BOT_PURCHASE' and transaction.bot_plan:
+                    UserBotSubscription.objects.get_or_create(
+                        user=user, plan=transaction.bot_plan, is_active=True
+                    )
 
-            transaction.save()
-            
+                transaction.save()
+
             SystemLog.objects.create(
                 level='INFO',
                 action='APPROVE_TRANSACTION',
