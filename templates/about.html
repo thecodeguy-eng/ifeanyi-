@@ -48,7 +48,7 @@
                 <p class="text-blue-600 text-sm font-semibold uppercase tracking-widest mb-3">Our Mission</p>
                 <h2 class="title-font text-3xl text-gray-900 mb-5">Democratizing Access to Global Markets</h2>
                 <p class="text-gray-500 leading-relaxed mb-4">For too long, sophisticated trading tools, real institutional-grade data, and access to diverse asset classes were gatekept behind high minimums and complex paperwork. We built Mirrorwavetrades to tear down those barriers.</p>
-                <p class="text-gray-500 leading-relaxed">Whether you're trading stocks, crypto, forex, or options — our platform gives you the same infrastructure used by professional fund managers, available from any device, starting with as little as $50.</p>
+                <p class="text-gray-500 leading-relaxed">Whether you're trading stocks, crypto, forex, or options — our platform gives you the same infrastructure used by professional fund managers, available from any device{% if platform_settings.minimum_deposit > 0 %}, starting with as little as ${{ platform_settings.minimum_deposit|floatformat:"-2" }}{% else %}, with no minimum deposit{% endif %}.</p>
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div class="stat-block"><p class="title-font text-3xl text-gray-900 mb-1">120,000+</p><p class="text-gray-500 text-sm">Active Traders</p></div>

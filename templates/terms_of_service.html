@@ -59,7 +59,7 @@
 
         <div class="legal-section">
             <h2 class="font-semibold text-gray-900 text-lg mb-3">5. Deposits and Withdrawals</h2>
-            <p class="text-gray-500 text-sm leading-relaxed">Deposits are processed after blockchain confirmation. Minimum deposit is $50. Withdrawal requests are subject to identity verification and manual review within 24–48 hours. A 1% withdrawal fee applies. We reserve the right to delay or refuse withdrawals if we suspect fraud or regulatory violations.</p>
+            <p class="text-gray-500 text-sm leading-relaxed">Deposits are processed after blockchain confirmation. {% if platform_settings.minimum_deposit > 0 %}Minimum deposit is ${{ platform_settings.minimum_deposit|floatformat:"-2" }}. {% else %}There is no minimum deposit. {% endif %}Withdrawal requests are subject to identity verification and manual review within 24–48 hours. A {{ platform_settings.withdrawal_fee_percentage|floatformat:"-2" }}% withdrawal fee applies. We reserve the right to delay or refuse withdrawals if we suspect fraud or regulatory violations.</p>
         </div>
 
         <div class="legal-section">

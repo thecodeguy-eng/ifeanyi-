@@ -115,6 +115,26 @@ class SupportChatSecurityTests(TestCase):
         self.assertEqual(email.call_count, 1)
 
 
+class PublicFiguresFollowSettingsTests(TestCase):
+    def test_pages_show_admin_configured_limits_and_fee(self):
+        PlatformSettings.objects.create(minimum_deposit=0, minimum_withdrawal=Decimal('10'),
+                                        withdrawal_fee_percentage=Decimal('10'))
+        self.client.force_login(make_user(withdrawal_approved=True, account_balance=Decimal('100')))
+
+        page = self.client.get(reverse('withdrawal')).content.decode()
+        self.assertIn('Minimum withdrawal: $10.00', page)
+        self.assertIn('min="10.00"', page)
+        self.assertIn('10% withdrawal fee applies', page)
+
+        terms = self.client.get(reverse('terms_of_service')).content.decode()
+        self.assertIn('There is no minimum deposit.', terms)
+        self.assertIn('A 10% withdrawal fee applies.', terms)
+
+        for name in ('crypto', 'forex', 'about'):
+            html = self.client.get(reverse(name)).content.decode()
+            self.assertNotIn('$50', html, name)
+
+
 class MoneySafetyTests(TestCase):
     def setUp(self):
         self.user = make_user(account_balance=Decimal('19.91'), total_deposit=Decimal('19.91'))

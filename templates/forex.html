@@ -523,7 +523,7 @@
 <!-- ── BOTTOM CTA ── -->
 <section class="section-cta">
   <h2>Trade Forex Smarter</h2>
-  <p>Join thousands of forex traders. Start with as little as $50.</p>
+  <p>Join thousands of forex traders. {% if platform_settings.minimum_deposit > 0 %}Start with as little as ${{ platform_settings.minimum_deposit|floatformat:"-2" }}.{% else %}Start with any amount — no minimum deposit.{% endif %}</p>
   <div class="cta-buttons">
     <a href="{% url 'register' %}" class="btn-cta-primary">
       Open Account <i class="fas fa-arrow-right"></i>

@@ -35,9 +35,9 @@
                     <label class="block text-sm font-medium mb-1.5" style="color:var(--text-main);">Withdrawal Amount</label>
                     <div class="relative">
                         <span class="absolute left-3 top-1/2 -translate-y-1/2 font-semibold text-lg" style="color:var(--text-muted);">$</span>
-                        <input type="number" name="amount" min="50" max="{{ user.account_balance }}" step="0.01" required class="amount-input" placeholder="0.00">
+                        <input type="number" name="amount" min="{{ platform_settings.minimum_withdrawal|stringformat:"s" }}" max="{{ user.account_balance }}" step="0.01" required class="amount-input" placeholder="0.00">
                     </div>
-                    <p class="text-xs mt-1.5" style="color:var(--text-muted);"><i class="fas fa-info-circle mr-1"></i>Minimum withdrawal: $50.00</p>
+                    <p class="text-xs mt-1.5" style="color:var(--text-muted);"><i class="fas fa-info-circle mr-1"></i>Minimum withdrawal: ${{ platform_settings.minimum_withdrawal|floatformat:2 }}</p>
                 </div>
 
                 <div>
@@ -65,7 +65,7 @@
                     <h3 class="text-sm font-semibold mb-2 flex items-center gap-1.5" style="color:#fbbf24;"><i class="fas fa-clock"></i>Withdrawal Process</h3>
                     <ul class="text-xs space-y-1" style="color:#fcd34d;">
                         <li>• Processing time: 24–48 hours</li>
-                        <li>• 1% withdrawal fee applies</li>
+                        <li>• {{ platform_settings.withdrawal_fee_percentage|floatformat:"-2" }}% withdrawal fee applies</li>
                         <li>• All withdrawals are manually reviewed for security</li>
                         <li>• You'll receive email confirmation once processed</li>
                     </ul>

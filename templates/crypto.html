@@ -174,7 +174,7 @@
 <section class="py-20 px-4" style="background: linear-gradient(135deg, #1e1b4b, #312e81);">
     <div class="max-w-2xl mx-auto text-center text-white">
         <h2 class="title-font text-3xl mb-4">Join the Crypto Revolution</h2>
-        <p class="text-white/70 mb-8">Start with as little as $50. No lock-in periods. Withdraw anytime.</p>
+        <p class="text-white/70 mb-8">{% if platform_settings.minimum_deposit > 0 %}Start with as little as ${{ platform_settings.minimum_deposit|floatformat:"-2" }}.{% else %}Start with any amount — no minimum deposit.{% endif %} No lock-in periods. Withdraw anytime.</p>
         <a href="{% url 'register' %}" class="inline-block px-10 py-4 font-semibold rounded-xl transition text-sm" style="background:#fff; color:#0b0f17;" onmouseover="this.style.background='#e5e7eb'" onmouseout="this.style.background='#fff'">Create Free Account <i class="fas fa-arrow-right ml-2"></i></a>
     </div>
 </section>
